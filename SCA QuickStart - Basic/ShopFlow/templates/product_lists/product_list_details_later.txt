@@ -25,6 +25,9 @@
 	var stFilterSaveForLaterRef = view.model.get('swx_filter_save_for_later_client');
 	var hasStFilterSaveForLaterRef = (!_.isNullOrEmpty(stFilterSaveForLaterRef)) ? true : false;
 
+	var collpaseClass = "collapse";
+	
+
 	if (hasStFilterSaveForLaterRef)
 	{
 		var stItems = JSON.stringify(items);
@@ -32,6 +35,7 @@
 		arrObjFilteredItems = _.getArrObjFilteredSaveForLaterItems(arrObjItems, stFilterSaveForLaterRef);
 		arrObjFilteredItemsTotal = (!_.isNullOrEmpty(arrObjFilteredItems)) ? arrObjFilteredItems.length : 0;
 		hasArrObjFilteredItems = (arrObjFilteredItemsTotal != 0) ? true : false;
+		collpaseClass = "in collapse";
 	}
 	
 
@@ -135,7 +139,7 @@
 	%>
 	</header>
 
-	<div id="saveForLaterItemsCart" style="width:75%;" class="collapse">
+	<div id="saveForLaterItemsCart" style="width:75%;" class="<%=collpaseClass%>" >
 
 		<% if (items_length > 0) { %>
 			<% if (!hasStFilterSaveForLaterRef) { %>
