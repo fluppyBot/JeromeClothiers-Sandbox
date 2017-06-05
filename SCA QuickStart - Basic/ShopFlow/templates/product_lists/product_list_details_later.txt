@@ -67,7 +67,7 @@
 
 		<h3 class="list-header-title" style="padding-bottom: 20px;border-bottom: 1px solid #eee;">
 			
-			<a href="javascript:void(0);" data-toggle="collapse" data-target="#saveForLaterItemsCart" aria-expanded="true" aria-controls="collapseOne" class="accordion-toggle"
+			<a  data-toggle="collapse" data-target="#saveForLaterItemsCart" aria-expanded="true" aria-controls="collapseOne" class="accordion-toggle"
 			 style="text-decoration:none;color:grey;">
 				<%= (type === 'predefined' || type === 'later') ? _(view.model.get('name')).translate() : view.model.get('name') %>
 			</a>
