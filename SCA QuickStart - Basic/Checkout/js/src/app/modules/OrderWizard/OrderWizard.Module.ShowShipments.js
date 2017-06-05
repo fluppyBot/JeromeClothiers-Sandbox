@@ -21,7 +21,7 @@ define('OrderWizard.Module.ShowShipments', ['Wizard.Module'], function (WizardMo
 			this.profile = this.wizard.options.profile;
 			this.options.application = this.wizard.application;
 			var userID = this.wizard.options.profile.id;
-			console.log('C:\Users\USER\Documents\JeromeClothiers\Sandbox\JeromeClothiers-Sandbox\SCA QuickStart - Basic\Checkout\js\src\app\modules\OrderWizard\OrderWizard.Module.ShowShipments.js>user',userID);
+			//console.log('C:\Users\USER\Documents\JeromeClothiers\Sandbox\JeromeClothiers-Sandbox\SCA QuickStart - Basic\Checkout\js\src\app\modules\OrderWizard\OrderWizard.Module.ShowShipments.js>user',userID);
 			
 			self.clients = [];
 
