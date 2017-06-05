@@ -81,7 +81,7 @@
 				<div class="row-fluid" style="border-bottom: solid 1px #e5e5e5; margin-bottom: 18px; padding-bottom: 10px; padding-top: 20px">
 					<div class="span12">
 						<span style="font-size: 20px; font-weight: 400; color: #a6a6a6;">
-							<a href="#fitProfilesHistory" data-toggle="collapse"   aria-expanded="true" aria-controls="collapseOne" class="accordion-toggle" style="text-decoration:none;color:grey;">
+							<a data-target="#fitProfilesHistory" data-toggle="collapse"   aria-expanded="true" aria-controls="collapseOne" class="accordion-toggle" style="text-decoration:none;color:grey;">
 								Fit Profiles
 							</a>
 						</span>
