@@ -1,0 +1,25 @@
+<% registerMacro('galleryPanel', function (images, view) { %>
+<%
+	var resizeImage = view.application.resizeImage
+	,	image_resize_id = SC.ENVIRONMENT.screenWidth < 768 ? 'thumbnail' : 'zoom'
+	,	thumbImageIndex = new Array();
+%>
+<div class="in-modal-image-gallery">
+<% if (images.length) { %>
+	<% if (images.length > 1) { %>
+		<ul class="bxslider" data-slider>
+		<% _.each(images, function (image) { %>
+			<li class="pinterest-image" data-zoom data-share-hover-pint-it-button="true">
+				<img src="<%= resizeImage(image, image_resize_id) %>" alt="<%= image.altimagetext %>" itemprop="image">
+			</li>
+		<% }) %>
+		</ul>
+	<% } else { %>
+		<% var image = images[0]; %>
+		<div class="item-detailed-image pinterest-image" data-zoom data-share-hover-pint-it-button="true">
+			<img class="center-block" src="<%= resizeImage(image, image_resize_id) %>" alt="<%= image.altimagetext %>" itemprop="image">
+		</div>
+	<% } %>
+<% } %>
+</div>
+<% }) %>

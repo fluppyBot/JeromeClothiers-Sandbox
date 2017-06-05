@@ -1,0 +1,360 @@
+<%
+	var invoice = view.model
+	,	items = invoice.get('lines')
+	,	summary = invoice.get('summary')
+	,	is_open = invoice.get('internal_status') === 'open'
+	,	bill_address = invoice.get('addresses').get(invoice.get('billaddress'))
+	,	collapse_elements = view.application.getConfig('collapseElements')
+	,	site_name = view.application.getConfig('siteSettings.displayname')
+	,	payments = invoice.get('payments')
+	,	credit_memos = invoice.get('credit_memos')
+	,	deposit_applications = invoice.get('deposit_applications')
+	,	has_adjustments = (payments && payments.length) || (credit_memos && credit_memos.length)|| (deposit_applications && deposit_applications.length)
+	,	make_a_payment_permissions = 'transactions.tranCustPymt.2, transactions.tranCustInvc.1';
+%>
+<section class="invoice-details">
+	<div class="content invoice-details-view">
+		<% if (!view.inModal) { %>
+			<header>
+				<h3>
+					<%= view.page_title %>
+					<div class="pull-right strong billing-actions hidden-phone">
+						<% if (is_open) { %>
+							<span class="invoice-details-amount"> <%= _.formatCurrency(invoice.get('amountDue')) %></span>
+						<% } else { %>
+							<span class="invoice-details-amount"> <%= summary.total_formatted %></span>
+						<% } %>
+					</div>
+				</h3>
+
+				<a href="/invoices" class="back-btn">
+					<%= _('&lt; Back to Invoices').translate() %>
+				</a>
+			</header>
+
+			<hr class="divider-small">
+		<% } %>
+
+		<!--GENERATE HEADER -->
+		<%
+			var span = (invoice.get('createdfrom') && invoice.get('createdfrom').id) ? 2 : 3
+			,	url = _.getDownloadPdfUrl({asset:'invoice-details', 'id': view.model.get('internalid')});
+		%>
+
+		<div class="header-information margin-bottom-10">
+			<div class="row-fluid">
+				<div class="span12">
+					<p class="info invoice-date">
+						<%= _('Invoice Date: $(0)').translate(invoice.get('date')) %>
+					</p>
+					<% if (invoice.get('createdfrom') && invoice.get('createdfrom').id) { %>
+					<p class="info invoice-created-from">
+						<%= _('Created from: <a href="/ordershistory/view/$(0)">$(1)</a>').translate(invoice.get('createdfrom').id, invoice.get('createdfrom').name) %>
+					</p>
+					<% } %>
+					<p class="pull-right info invoice-due-date">
+						<%= _('Status: <span class="invoice-details-status">$(0)</span>').translate(invoice.get('status')) %>
+					</p>
+					<p class="info invoice-due-date">
+						<%= _('Due Date: $(0)').translate(invoice.get('dueDate') || 'N/A') %>
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="row-fluid" name="invoice-content-layout">
+			<% if (!view.inModal) { %>
+				<div class="span8 invoice-details-notmodal-container">
+
+					<!-- ITEMS -->
+					<div class="row-fluid control-group" data-type="accordion">
+						<div class="well" data-action="items-expander">
+							<div class="well-header">
+								<%= _('Items ($(0))').translate(items.length) %>
+								<a href="#" class="pull-right"><i class="icon-plus <%= collapse_elements ? '' : 'icon-minus' %>"></i></a>
+							</div>
+						</div>
+						<div data-content="items-body" <%= collapse_elements ? 'style="display: none;"' : '' %>>
+
+						<% if (items.length) { %>
+							<div class="row-fluid nav-tabs hide-phone">
+								<div class="span4 offset1 popover-content popover-heading"><%= _('Item').translate() %></div>
+								<div class="span1 popover-content popover-heading"><%= _('Qty').translate() %></div>
+								<div class="span3 popover-content popover-heading"><%= _('Unit Price').translate() %></div>
+								<div class="span3 popover-content popover-heading responsive-align"><%= _('Amount').translate() %></div>
+							</div>
+							<%	items.each(function (item, index) { %>
+
+								<%
+
+									var link_attributes = false
+									,	itemKey = item.get('item')
+									,	url = itemKey.get('_isPurchasable') ? itemKey.get('_url') : null;
+
+									if (url && SC.ENVIRONMENT.siteType === 'ADVANCED')
+									{
+										link_attributes = SC.Utils.objectToAtrributes({
+											href: url
+										,	data: {
+												touchpoint: 'home'
+											,	hashtag: '#' + url
+											}
+										});
+									}
+									else if (url)
+									{
+										link_attributes = SC.Utils.objectToAtrributes({
+											href: url
+										});
+									}
+
+									var name = itemKey.get('_name');
+									if (link_attributes) {
+										name = '<a ' + link_attributes + '>' + name + '</a>';
+									}
+								%>
+
+								<div class="row-fluid nav-tabs item-<%= item.get('internalid') %>">
+									<div class="span1 item-image hide-phone"><img src="<%= view.options.application.resizeImage(itemKey.get('_thumbnail').url, 'tinythumb') %>" alt="<%= itemKey.get('_thumbnail').altimagetext %>"></div>
+									<div class="span4 popover-content">
+										<div class="item-displayname">
+										<%= name %>
+										</div>
+										<div class="item-id"><%= _('<span class="text-light">SKU:</span> #$(0)').translate(itemKey.get('_sku')) %></div>
+										<%= itemKey.renderAllOptionSelected() %>
+									</div>
+									<div class="span1 popover-content item-quantity"><%= _('<span class="show-phone text-light">Qty: </span>$(0)').translate(item.get('quantity')) %></div>
+									<div class="span3 popover-content item-unitprice"><%= _('<span class="show-phone text-light">Unit Price: </span>$(0)').translate(item.get('rate_formatted')) %></div>
+									<div class="span3 popover-content responsive-align item-totalprice"><%= _('<span class="show-phone text-light">Amount: </span>$(0)').translate(item.get('amount_formatted')) %></div>
+								</div>
+							<% }) %>
+						<% } %>
+						</div>
+					</div>
+
+					<!-- SALES REP -->
+					<% if (invoice.get('salesrep')) {
+						var salesrep = invoice.get('salesrep');
+					%>
+						<div class="row-fluid control-group" data-type="accordion">
+							<div class="well-secundary" data-action="items-expander">
+								<div class="well-header">
+									<%= _('Sales Rep').translate() %>
+									<a href="#" class="pull-right"><i class="icon-plus"></i></a>
+								</div>
+							</div>
+							<div data-content="items-body" style="display: none;">
+								<div class="row-fluid">
+									<div class="span6">
+										<div class="strong-text"> <%= salesrep.name %> </div>
+										<div> <%= site_name %></div>
+									</div>
+									<div class="span6">
+										<% if (salesrep.phone) { %>
+											<div> <%= _('Tel:').translate() %> </div>
+											<div> <%= salesrep.phone %> </div>
+										<% } %>
+
+										<% if (salesrep.email) { %>
+											<div class="<%= salesrep.phone ? 'invoice-details-top10-separator' : '' %>"> <%= _('Email:').translate() %> </div>
+											<div> <%= salesrep.email %> </div>
+										<% } %>
+									</div>
+								</div>
+							</div>
+						</div>
+					<% } %>
+
+					<!-- BILLING -->
+					<div class="row-fluid control-group" data-type="accordion">
+						<div class="well-secundary" data-action="items-expander">
+							<div class="well-header">
+								<%= _('Billing').translate() %>
+								<a href="#" class="pull-right"><i class="icon-plus"></i></a>
+							</div>
+						</div>
+						<div data-content="items-body" style="display: none;">
+							<div class="row-fluid">
+								<div class="span6 popover-content">
+									<% if (bill_address) { %>
+										<%= address(bill_address, {
+											hideDefaults: true
+										,	showSelect: false
+										,	hideActions: true
+										}) %>
+									<% } %>
+								</div>
+								<div class="span6 popover-content">
+
+									<div><%= _('Terms:').translate() %></div>
+									<% var paymentmethod = view.model.get('paymentmethods') && view.model.get('paymentmethods').findWhere({primary: true}); %>
+									<% if (paymentmethod && paymentmethod.get('paymentterms')) { %>
+										<span class="strong-text"><%= paymentmethod.get('paymentterms').name %></span>
+									<% } else { %>
+										<span><%= _('N/A').translate() %></span>
+									<% } %>
+									<% if (invoice.get('memo')) { %>
+										<div class="invoice-details-top10-separator"> <%= _('Memo:').translate()  %></div>
+										<span ><%=invoice.get('memo')%></span>
+									<% } %>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			<% } %>
+
+			<div class="<%= view.inModal ? 'span12' : 'span4' %>" name="summary-container">
+				<div class="row-fluid">
+					<div class="list-header">
+						<div class="nav-tabs row-fluid control-group strong">
+							<%= _('SUMMARY').translate() %>
+						</div>
+						<div class="row-fluid control-group">
+							<div class="span8 invoice-details-count">
+								<%= _('Items ($(0))').translate(items.length) %>
+							</div>
+
+							<div class="span4 text-right sub-total">
+								<%= summary.subtotal_formatted %>
+							</div>
+						</div>
+
+						<div class="row-fluid control-group">
+							<div class="span8">
+								<%= _('Tax Total').translate() %>
+							</div>
+
+							<div class="span4 pull-right text-right tax-total">
+								<%= summary.taxtotal_formatted %>
+							</div>
+						</div>
+
+						<div class="row-fluid control-group">
+							<div class="span8">
+								<%= _('Shipping').translate() %>
+							</div>
+
+							<div class="span4 text-right shipping-cost">
+								<%= summary.shippingcost_formatted %>
+							</div>
+						</div>
+
+						<div class="<% if (!has_adjustments) { %>nav-tabs<% } %> row-fluid control-group">
+							<div class="span8">
+								<%= _('Handling').translate() %>
+							</div>
+
+							<div class="span4 text-right handling-cost">
+								<%= summary.handlingcost_formatted %>
+							</div>
+						</div>
+
+						<% if (summary.giftcertapplied) { %>
+						<div class="row-fluid control-group">
+							<div class="span7">
+								<%= _('Gift Certificate').translate() %>
+							</div>
+
+							<div class="span5 text-right total">
+								<%= summary.giftcertapplied_formatted %>
+							</div>
+						</div>
+						<% } %>
+
+						<% if (has_adjustments) { %>
+							<div class="nav-tabs row-fluid control-group">
+								<div class="span8">
+									<%= _('Subtotal').translate() %>
+								</div>
+
+								<div class="span4 text-right total">
+									<%= summary.total_formatted %>
+								</div>
+							</div>
+
+							<div class="row-fluid control-group invoice-details-adjustments">
+								<span class="strong">
+									<%= _('ADJUSTMENTS').translate() %>
+								</span>
+							</div>
+
+							<!-- PAYMENTS -->
+							<% payments && payments.each(function (payment) { %>
+								<div class="row-fluid control-group">
+									<div class="span8">
+										<a href="/transactionhistory/customerpayment/<%= payment.get('internalid') %>" data-action="update-layout"> <%= _('Payment #$(0)').translate(payment.get('tranid')) %> </a>
+									</div>
+
+									<div class="span4 text-right payment-amount">
+										(<%= payment.get('appliedtoforeignamount_formatted') %>)
+									</div>
+								</div>
+							<%	}); %>
+
+							<!-- CREDIT MEMOS -->
+							<% credit_memos && credit_memos.each(function (credit_memo) { %>
+								<div class="row-fluid control-group">
+									<div class="span8">
+										<a href="/transactionhistory/creditmemo/<%= credit_memo.get('internalid') %>" data-action="update-layout"> <%= _('Credit Memo #$(0)').translate(credit_memo.get('tranid')) %> </a>
+									</div>
+
+									<div class="span4 text-right payment-amount">
+										(<%= credit_memo.get('appliedtoforeignamount_formatted') %>)
+									</div>
+								</div>
+							<%	}); %>
+
+							<!-- DEPOSIT APPLICATIONS -->
+							<% deposit_applications && deposit_applications.each(function (deposit_application) { %>
+								<div class="row-fluid control-group">
+									<div class="span8">
+										<a href="/transactionhistory/depositapplication/<%= deposit_application.get('internalid') %>" data-action="update-layout"> <%= _('Deposit Applications #$(0)').translate(deposit_application.get('tranid')) %> </a>
+									</div>
+
+									<div class="span4 pull-right text-right payment-amount">
+										(<%= deposit_application.get('appliedtoforeignamount_formatted') %>)
+									</div>
+								</div>
+							<%	}); %>
+						<% } %>
+
+						<div class="row-fluid strong">
+							<div class="span8">
+								<%= _('Amount Due').translate() %>
+							</div>
+
+							<div class="span4 text-right invoice-details-total">
+								<%= invoice.get('amountDue_formatted') %>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="margin-top-10 margin-bottom-10 invoice-detail-page-btn">
+					<% if (is_open && !view.inModal) { %>
+					<div class="row-fluid margin-top-10">
+						<a data-permissions="<%= make_a_payment_permissions %>" href="/make-a-payment" data-type="make-a-payment" class="btn btn-primary btn-large <% if (!view.inModal) { %>btn-expanded btn-block<% } %>"><%= _('Make a Payment').translate() %></a>
+					</div>
+					<% } %>
+
+					<% if (!view.inModal) { %>
+					<div class="row-fluid margin-top-10">
+						<a data-stdnav target="_blank" class="btn btn-large download-pdf-btn <% if (!view.inModal) { %>btn-expanded btn-block<% } %>" href="<%= url %>"><%= _('Download as PDF').translate() %></a>
+					</div>
+						<% if (view.isReturnable()) { %>
+						<div class="row-fluid margin-top-10">
+							<a href="/returns/new/invoice/<%= invoice.get('internalid') %>" class="btn btn-large request-return <% if (!view.inModal) { %>btn-expanded btn-block<% } %>" data-permissions="transactions.tranRtnAuth.2"><%= _('Request return').translate() %></a>
+						</div>
+						<% } %>
+					<% } %>
+
+					<% if (view.inModal) { %>
+					<a href="invoices/<%= invoice.get('internalid') %>" class="btn" data-action="update-layout"><%= _('Go to detailed page').translate() %></a>
+					<a href="#" class="btn btn-link" data-dismiss="modal"><%= _('Close').translate() %></a>
+					<% } %>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

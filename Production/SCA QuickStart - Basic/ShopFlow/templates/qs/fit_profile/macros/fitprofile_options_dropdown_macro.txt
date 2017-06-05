@@ -1,0 +1,34 @@
+<% registerMacro('fitProfileOptionDropdown', function (profile) { %>
+<div>
+<div style="width:100px;display:inline-block;" >
+	<label for="clients-options"><%= profile.profile_type %>:</label>
+	</div>
+	<% if(profile.profiles){ %>
+		<div style="display:inline-block;">
+			<div style="display:inline-block;">
+				<select class="profiles-options" data-type="<%= profile.profile_type %>" id="profiles-options-<%= profile.profile_type %>">
+					<option value=""><%= _('Select a profile').translate() %></option>
+					<%
+						var selected = false;
+						var profileID = jQuery("#profiles-options-" + profile.profile_type).attr('id');
+						var selectedValue = jQuery("#profiles-options-Jacket").val();
+					%>
+					<% _.each(profile.profiles, function(prof){ %>
+						<option value="<%= prof.get("internalid") %>"><%= prof.get("name") %></option>
+					<% }) %>
+				</select>
+			</div>
+
+			<div style="display:inline-block;padding-left:20px;" id="profile-actions-<%= profile.profile_type %>">
+				<% if(!profileID || selectedValue == "" || profile.profiles.length == 0){ %>
+					<a data-backdrop="static" data-keyboard="false"  data-toggle="show-in-modal" href="/fitprofile/new">Add</a>
+				<% } else { %>
+					<a data-backdrop="static" data-keyboard="false" data-toggle="show-in-modal" href="/fitprofile/new">Add</a> |
+					<a data-backdrop="static" data-keyboard="false" data-toggle='show-in-modal' href="/fitprofile/<%= selectedValue %>">Edit</a> |
+					<a data-backdrop="static" data-keyboard="false" data-action='remove-rec' data-type='profile' data-id='<%= selectedValue %>'>Remove</a>
+				<% } %>
+			</div>
+		</div>
+	<% } %>
+</div>
+<% }) %>

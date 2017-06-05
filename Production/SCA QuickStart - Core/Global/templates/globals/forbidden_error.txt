@@ -1,0 +1,14 @@
+<div class="view-header container">
+	<% if (view.page_header) { %>
+	<h1><%= view.page_header %></h1>
+	<% } %>
+	<div id="main-banner" class="main-banner"></div>
+</div>
+<div class="gradient-content">
+    <div class="container">
+        <div id="forbidden-error-content" class="view-body forbidden-error-content">
+            <p><%= _('Sorry! You have no permission to view this page.').translate() %></p>
+            <p><%= _('Please contact the website administrator, click <a href="/">here</a> to continue.').translate() %></p>
+        </div>
+    </div>
+</div>

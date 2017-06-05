@@ -1,0 +1,64 @@
+<% registerMacro('facetsDisplay', function (translator) { %>
+<%
+	var fileLocationPath = '/SCA QuickStart - Basic/ShopFlow/templates/items_list/macros/facets_display_macro.txt';
+	//console.log(fileLocationPath + '\n' + 'translator: ' + '\n' + JSON.stringify(translator, 'key', '\t'))
+	
+	
+	//console.log(fileLocationPath + '\n' + 'translator.cloneWithoutFacetId(\'category\').getAllFacets(): ' + '\n' + JSON.stringify(translator.cloneWithoutFacetId('category').getAllFacets(), 'key', '\t'))
+	
+	// Takes Category out and returns all the other facets 
+	var facets = translator.cloneWithoutFacetId('category').getAllFacets().sort(function (a, b) {
+		return b.config.priority - a.config.priority;
+	});
+	
+	//var facets = translator.getAllFacets()
+	//var facets = [{priority:10, behavior:'single', value:[]}];
+	
+
+	
+
+
+	var client = ""
+	,	isOrderPage = "Item Types" == SC._applications.Shopping.getLayout().currentView.category.itemid;
+
+	if (isOrderPage && Backbone.history.fragment.split("?").length > 1) {
+		var fragmentArray = Backbone.history.fragment.split("?")
+		,	clientId = "";
+	 
+		for(var i = fragmentArray.length -1; i >= 0; i--){
+			if(fragmentArray[i].match('client')){
+				clientId = fragmentArray[i].split("=")[1].split("&")[0];
+				break;
+			}
+		}
+
+		client = "?client=" + clientId;
+	}
+%>
+<% if (facets && facets.length) { %>
+<div class="facet-selections">
+	<ul class="facets-display nav nav-pills">
+		<!-- hidden-phone -->
+		<li class="disabled hidden-phone facet-selections-label">
+			<%= _('Narrowed By:').translate() %>
+		</li>
+		<!-- /hidden-phone -->
+		<% var values = []; %>
+		<% _.each(facets, function (facet) { %>
+			<% values = _.isArray(facet.value) ? facet.value : [facet.value] %>
+			<% _.each(values, function (value) { %>
+				<li class="active">
+					<a href="<%=translator.cloneForFacetId(facet.id, value).getUrl()%><%= client%>">
+					<% if (_.isObject(value)) { %>
+						<%= _('$(0) to $(1)').translate(_.formatCurrency(value.from), _.formatCurrency(value.to)) %> &times;
+					<% } else { %>
+						<%= translator.getLabelForValue(facet.id, value) %> &times;
+					<% } %>
+					</a>
+				</li>
+			<% }) %>
+		<% }) %>
+	</ul>
+</div>
+<% } %>
+<% }) %>

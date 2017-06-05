@@ -1,0 +1,4 @@
+<h1><%= _('Back in stock notification subscriptions').translate()%></h1>
+<% _.each(view,function(line){ %>
+
+<% }); %>

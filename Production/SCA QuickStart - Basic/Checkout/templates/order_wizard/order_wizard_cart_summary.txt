@@ -1,0 +1,231 @@
+<%
+	//TODO REMOVE current_position USE!!
+	var current_position = view.wizard.getStepPosition()
+	,	cart = view.wizard.model
+	,	application = view.wizard.application
+	,	current_symbol = application.getConfig('siteSettings.shopperCurrency.symbol','') //Automation purpose
+	,	summary = cart.get('summary')
+	,	promocode = cart.get('promocode')
+	,	ismultishipto = cart.get('ismultishipto')
+	,	item_count = _.reduce(cart.get('lines').pluck('quantity'), function (memo, quantity) { return memo + (parseFloat(quantity) || 1); }, 0)
+	,	is_promocode_valid = promocode && promocode.isvalid
+	,	giftcertificates = cart.get('paymentmethods').where({type: 'giftcertificate'}) || [];
+
+	
+	var orderId = '';
+	var hasOrderId = false;
+	
+	var objConfirmation = cart.get('confirmation') || {};
+	var hasObjConfirmation = (!_.isNullOrEmptyObject(objConfirmation)) ? true : false;
+	
+	if (hasObjConfirmation)
+	{
+		orderId = objConfirmation.internalid || '';
+		hasOrderId = (!_.isNullOrEmpty(orderId)) ? true : false;
+	}
+
+%>
+<div class="checkout-cart-summary box-wells">
+	<header class="checkout-cart-summary-header box-wells-header">
+		<% if (current_position.toLast > 0) { %>
+			<a href="#" class="btn btn-link btn-edit-cart pull-right" data-touchpoint="viewcart">
+                <i class="fa fa-pencil pull-right"></i>
+				<%= _('Edit Order').translate() %>
+			</a>
+		<% } %>
+
+		<h3 class="checkout-cart-summary-title">
+			<%= _('Order Summary').translate() %>
+		</h3>
+	</header>
+
+	<div class="checkout-cart-summary-body">
+		<% if (!view.getHideItems()) { %>
+		<ul class="cart-summary-items checkout-summary-items">
+		<%
+			var thumbnail = ''
+			,	item = null;
+		%>
+		<% cart.get('lines').each(function (line) { %>
+			<%
+				item = line.get('item');
+				thumbnail = item.get('_thumbnail');
+				var customPrice = 0;
+
+				if(line.get("options")){
+					var customPrices = _.where(line.get("options"), {id: "CUSTCOL_TAILOR_CUST_PRICING"});
+					if(customPrices[0].value && !_.isNaN(customPrices[0].value)){
+						customPrice = parseFloat(customPrices[0].value);
+					}
+				}
+			%>
+			<li class="cart-summary-item-cell checkout-summary-item-cell">
+				<div class="row-fluid">
+					<div class="span3 thumbnail checkout-summary-item-thumbnail">
+						<img src="<%- application.resizeImage(thumbnail.url, 'tinythumb') %>" alt="<%- thumbnail.altimagetext %>">
+					</div>
+					<div class="span9 cart-summary-item-details checkout-summary-item-details">
+						<div>
+							<strong class="cart-summary-item-name"><%= item.get('_name') %></strong>
+						</div>
+						<div class="cart-summary-item-price">
+							<span itemtype="http://schema.org/Offer" itemscope="" itemprop="offers">
+								<meta content="AUD" itemprop="priceCurrency">
+								<span data-rate="10" itemprop="price" class="lead-price"><%= _.formatCurrency(customPrice) %></span>
+								<link href="http://schema.org/OutOfStock" itemprop="availability">
+							</span>
+						</div>
+					</div>
+				</div>
+			</li>
+		<% }) %>
+		</ul>
+		<% } %>
+		<div class="cart-summary-subtotal">
+			<p class="strong">
+				<span class="pull-right cart-summary-subtotal-formatted" >
+					<%= _.formatCurrency(cart.get("options").custbody_total_tailor_price) %>
+				</span>
+				<span class="cart-summary-subtotal-label">
+					<%= _('Subtotal (<span data-type="cart-summary-subtotal-count">$(0)</span> $(1))').translate(item_count, item_count === 1 ? _('item').translate() : _('items').translate()) %>
+				</span>
+			</p>
+		</div>
+
+		<% if (is_promocode_valid || summary.giftcertapplied) { %>
+			<% if (is_promocode_valid) { %>
+			<div class="cart-summary-promocode-applied">
+				<p>
+					<strong class="lead-price pull-right">
+						<%= summary.discountrate_formatted %>
+					</strong>
+					<%= _('Promo Code Applied').translate() %>
+				</p>
+				<p class="text-success">
+					#<%= promocode.code %> - <%= _('Instant Rebate').translate() %>
+					<% if (current_position.toLast > 0) { %>
+						<a href="#" data-action="remove-promocode">
+							<i class="icon-remove"></i>
+						</a>
+					<% } %>
+				</p>
+			</div>
+			<% } %>
+
+			<% if (summary.discounttotal) { %>
+			<div class="cart-summary-discount-applied">
+				<p>
+					<span class="pull-right">
+						<%= summary.discounttotal_formatted %>
+					</span>
+					<%= _('Discount Total').translate() %>
+				</p>
+			</div>
+			<% } %>
+
+			<% if (summary.giftcertapplied) { %>
+			<div class="cart-summary-giftcertificate-applied">
+				<p>
+					<%= _('Gift Certificates Applied ($(0))').translate(giftcertificates.length) %>
+				</p>
+				<% _.each(giftcertificates, function (giftCertificate) { %>
+					<p>
+						<span class="pull-right">
+							<%= _('-$(0)').translate(giftCertificate.get('giftcertificate').amountapplied_formatted) %>
+						</span>
+						<span title="<%- giftCertificate.get('giftcertificate').code %>">
+							<%= SC.macros.formatPaymentMethod(giftCertificate) %>
+						</span>
+					</p>
+				<% }); %>
+				</div>
+			<% } %>
+		<% } %>
+
+		<div class="cart-summary-shipping-cost-applied">
+			<p>
+				<span class="pull-right cart-summary-shipping-cost-formatted">
+					<%= summary.shippingcost_formatted %>
+				</span>
+				<%= _('Shipping').translate() %>
+			</p>
+
+			<% if (summary.handlingcost) { %>
+			<p>
+				<span class="pull-right cart-summary-handling-cost-formatted">
+					<%= summary.handlingcost_formatted %>
+				</span>
+				<%= _('Handling').translate() %>
+			</p>
+			<% } %>
+			<p>
+				<span class="pull-right cart-summary-tax-total-formatted" >
+					<%= summary.taxtotal_formatted %>
+				</span>
+				<%= _('Tax').translate() %>
+			</p>
+		</div>
+
+		<div class="cart-summary-total">
+			<p class="strong">
+				<span class="pull-right cart-summary-total-formatted" >
+					<%= _.formatCurrency(parseFloat(cart.get("options").custbody_total_tailor_price) + summary.shippingcost) %>
+				</span>
+				<%= _('Total').translate() %>
+			</p>
+		</div>
+
+	<% if (current_position.toLast === 1) { %>
+		<div>
+		<% if (SC.ENVIRONMENT.siteSettings.checkout.requiretermsandconditions === 'T') { %>
+			<p><%= _('By placing your order, you are agree to our <a data-type="term-condition-link-summary" data-toggle="show-terms-summary" href="#">Terms & Conditions</a>').translate() %></p><br/>
+		<% } %>
+			<button class="btn btn-primary btn-large btn-place-order" data-action="submit-step">
+				<%= view.getContinueButtonLabel() %>
+			</button>
+		</div>
+	<% } %>
+	</div>
+</div>
+
+<% if (!is_promocode_valid && current_position.toLast > 0 && false) { %>
+<div class="box-wells">
+    <div class="box-wells-header">
+        <h3>
+            <%= _('Have a Promo Code?').translate() %>
+            <i class="fa fa-question-circle pull-right"
+               data-toggle="tooltip"
+               title="<%= _('<b>Promo Code</b><br>To redeem a promo code, simply enter your information and we will apply the offer to your purchase during checkout.').translate() %>">
+            </i>
+        </h3>
+    </div>
+    <div class="box-wells-body">
+        <div id="promo-code-container" class="promo-code-container">
+            <% if(!ismultishipto){ %>
+            <%= SC.macros.promocodeForm(promocode) %>
+            <% } else { %>
+            <div class="promocode-unsupported-summary-warning">
+                <p>
+                    <%= _('Shipping to multiple addresses does not support Promo Codes.').translate() %>
+                </p>
+                <p>
+                    <%= _('If you want to apply one, please <a href="#" data-action="change-status-multishipto-sidebar" data-type="multishipto">ship to a single address</a>.').translate() %>
+                </p>
+            </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+<% } %>
+
+
+<% if (hasObjConfirmation && hasOrderId) {%>
+
+	<div>
+		<a id="btn-download-pdf" class="btn btn-large btn-block btn-primary btn-download-pdf" target="_blank" href="https://jerome.securedcheckout.com/app/site/hosting/scriptlet.nl?script=121&deploy=1&custparam_record_id=<%=orderId%>&custparam_record_type=salesorder&custparam_template=5" style="display: block;">Download as PDF</a>
+	</div>
+	
+<% } %>
+
+
+

@@ -1,0 +1,46 @@
+<% registerMacro('categoryCell', function (item) { %>
+<div class="category-cell">
+	<% if (Backbone.history.fragment.split("?").length > 1) { %>
+			<%
+				var client = ""
+				,	isOrderPage = "Item Types" == SC._applications.Shopping.getLayout().currentView.category.itemid;
+				
+				if (isOrderPage) {
+					var fragmentArray = Backbone.history.fragment.split("?")
+					,	clientId = "";
+				 
+					for(var i = fragmentArray.length -1; i >= 0; i--){
+						if(fragmentArray[i].match('client')){
+							clientId = fragmentArray[i].split("=")[1].split("&")[0];
+							break;
+						}
+					}
+
+					client = "?client=" + clientId;
+				}
+
+			%>
+			<div class="category-cell-thumbnail thumbnail">
+				<a href="<%= item.url %><%= client %>">
+					<img src="<%= item.image %>" alt="<%= item.label %>">
+				</a>
+			</div>
+			<div class="category-cell-name">
+				<a href="<%= item.url %><%= client %>">
+					<%= item.label %>
+				</a>
+			</div>
+		<% } else {%>
+			<div class="category-cell-thumbnail thumbnail">
+				<a href="<%= item.url %>">
+					<img src="<%= item.image %>" alt="<%= item.label %>">
+				</a>
+			</div>
+			<div class="category-cell-name">
+				<a href="<%= item.url %>">
+					<%= item.label %>
+				</a>
+			</div>
+		<% } %>
+</div>
+<% }) %>

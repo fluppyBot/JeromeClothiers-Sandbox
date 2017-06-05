@@ -1,0 +1,14 @@
+<% registerMacro('correlatedItems', function (items, application) { %>
+<%
+	var macros = SC.macros
+	,	relatedWrap = function relatedWrap (item) {
+		return macros.relatedItem(item, application);
+	}
+%>
+<aside class="shopping-cart-related-items">
+	<h3><%= _('Customers who bought this item also bought').translate() %></h3>
+	<div class="row-fluid">
+		<%= macros.displayInRows(_.first(items, 6), relatedWrap, 6) %>
+	</div>
+</aside>
+<% }) %>

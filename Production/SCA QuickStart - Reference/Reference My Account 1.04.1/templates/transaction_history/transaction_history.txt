@@ -1,0 +1,71 @@
+<section class="list">
+	<header>
+		<h3><%= view.page_header %></h3>
+
+		<a href="/" class="back-btn"><%= _('&lt; Back to Account').translate() %></a>
+		<hr class="divider-small">		
+	</header>
+
+	<div data-type="list-header-placeholder"></div>
+
+	<div class="row-fluid">
+	<% if (!view.options.application.getUser().get('paymentterms')){ %>
+		<p class="list-empty"><%= _('You don\'t have any transaction terms').translate() %></p>
+	<% } else if (view.collection.length) { %>
+		<div class="list-sub-header hidden-phone">
+			<div class="row-fluid">
+				<div class="span4">
+					<span><%= _('Number').translate() %></span>
+				</div>
+				<div class="span2">
+					<span><%= _('Date').translate() %></span>
+				</div>
+				<div class="span3">
+					<span><%= _('Amount').translate() %></span>
+				</div>
+				<div class="span3 responsive-align">
+					<span><%= _('Status').translate() %></span>
+				</div>
+			</div>
+		</div>
+
+		<% view.collection.each(function (transaction) { %>
+			<%  var id = transaction.get('internalid')
+			,	transaction_number = transaction.get('tranid')
+			,	type_label = transaction.getTypeLabel(); %>
+
+				<a href="#" class="list-row" data-touchpoint="customercenter" data-id="<%= id %>" data-hashtag="#<%= transaction.getTypeUrl() %>">
+					<div class="row-fluid">
+						<div class="span4" quote-id="<%= id %>">
+							<span class="list-row-text id-record">
+								<span class="list-row-text-bigger id-record"><%= _(type_label + ' #$(0)').translate(transaction_number) %></span>
+							</span>
+						</div>
+						<div class="span2 date-start">
+							<span class="list-row-text">
+								<span class="visible-phone list-row-text-info"><%= _('Date:').translate() %> </span>
+								<%= _('$(0)').translate(transaction.get('trandate')) %>
+							</span>
+						</div>
+						<div class="span3">
+							<span class="list-row-text">
+								<span class="visible-phone list-row-text-info"><%= _('Amount:').translate() %> </span>
+								<span class="amount"><%= _('$(0)').translate(transaction.get('amount_formatted')) %></span>
+							</span>
+						</div>
+						<div class="span3 responsive-align">
+							<span class="list-row-text status">
+								<%= _('$(0)').translate(transaction.get('status')) %>
+							</span>
+						</div>
+						<div class="visible-phone span1 pull-right text-right">
+							<i class="icon-chevron-right"></i>
+						</div>
+					</div>
+				</a>
+		<% }); %>
+	<% } else if (!view.isLoading) { %>
+		<p class="list-empty"><%= _('No transactions were found').translate() %></p>
+	<% } %>
+	</div>
+</section>

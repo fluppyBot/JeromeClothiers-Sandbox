@@ -1,0 +1,40 @@
+<% registerMacro('quickLinks', function(model) { %>
+
+	<%
+		var hash = Backbone.history.getFragment() || '';
+		var is_home = hash === '' || hash === '/';
+		
+		//console.log('Global > footer: quickLinks' + '\n' + 'is_home: ' + is_home)
+	%>
+		
+	<% if (is_home) { %>
+		<div id="quick-button-overlay" class="quick-button-area home"></div>
+	<% } else { %>
+		<div id="quick-button-overlay" class="quick-button-area"></div>
+	<% } %>
+	
+	
+	<%
+		//console.log('model: ' + '\n' + JSON.stringify(model, 'key', '\t'))
+	%>
+	
+	
+	<div id="quick-button-content" class="quick-button-area">
+		<div class="container">
+			<div class="row">
+				<% _.each(model, function (quickLink) { %>			
+					<div class="span2">
+						<a href="<%= quickLink.href %>" data-touchpoint="<%= quickLink.data.touchpoint %>" data-hashtag="<%= quickLink.data.hashtag %>">
+							<div class="quick-button-image-wrapper">
+								<div style=
+									"background-image: url('/assets/images/content/quick buttons/quick_buttons.png'); 
+									 background-position: <%=quickLink.xPosition%> 0px"></div>
+							</div>
+							<div><%= quickLink.text %></div>
+						</a>
+					</div>
+				<% }) %>
+			</div>
+		</div>
+	</div>
+<%})%>

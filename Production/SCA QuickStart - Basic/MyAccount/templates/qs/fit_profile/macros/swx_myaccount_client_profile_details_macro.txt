@@ -1,0 +1,171 @@
+<% registerMacro('swxMyAccountClientProfileDetails', function (paramObjClient, paramClientId, paramCurrentUserId) { %>
+
+	<%
+		var clientInternalId = paramClientId;
+		var clientDateCreated = '';
+		var clientFirstName = 'Firstname';
+		var clientLastName = 'Lastname';
+		var clientName = '';
+		var clientEmail = '';
+		var clientPhone = '1234567';
+		var clientCompany = '';
+		var clientDateOfBirth = '';
+		var clientAddr1 = '';
+		var clientAddr2 = '';
+		var clientAddress = '';
+		var clientNotes = '';
+
+		var arrObjRef = paramObjClient;
+		var arrObjRefTotal = (!_.isNullOrEmpty(arrObjRef)) ? arrObjRef.length : 0;
+		var hasObjRef = (arrObjRefTotal != 0) ? true : false;
+
+		if (hasObjRef)
+		{
+			for (var dx = 0; dx < arrObjRefTotal; dx++)
+			{
+				var refClientInternalId = arrObjRef[dx]['internalid'];
+				var isRefClientInternalIdEqualToClientInternalId = (refClientInternalId == clientInternalId) ? true : false;
+
+				if (isRefClientInternalIdEqualToClientInternalId)
+				{
+					clientAddress = '';
+					var refClientFirstName = arrObjRef[dx]['custrecord_tc_first_name'];
+					var refClientFirstLastName = arrObjRef[dx]['custrecord_tc_last_name'];
+
+					var refClientAddr1 = arrObjRef[dx]['custrecord_tc_addr1'];
+					var refClientAddr2 = arrObjRef[dx]['custrecord_tc_addr2'];
+					var refClientState = arrObjRef[dx]['custrecord_tc_state'];
+					var refClientCountry = arrObjRef[dx]['custrecord_tc_country'];
+					var refClientZip = arrObjRef[dx]['custrecord_tc_zip'];
+
+					var hasRefClientAddr1 = (!_.isNullOrEmpty(refClientAddr1)) ? true : false;
+					var hasRefClientAddr2 = (!_.isNullOrEmpty(refClientAddr1)) ? true : false;
+					var hasRefClientState = (!_.isNullOrEmpty(refClientState)) ? true : false;
+					var hasRefClientCountry = (!_.isNullOrEmpty(refClientCountry)) ? true : false;
+					var hasRefClientZip = (!_.isNullOrEmpty(refClientZip)) ? true : false;
+
+					clientAddress += (hasRefClientAddr1) ? refClientAddr1 + ', ' : '';
+					clientAddress += (hasRefClientAddr2) ? refClientAddr1 + ', ' : '';
+					clientAddress += (hasRefClientState) ? refClientState + ', ' : '';
+					clientAddress += (hasRefClientCountry) ? refClientCountry  : '';
+					clientAddress += (hasRefClientZip) ? ', ' + refClientZip  : '';
+
+					clientName += refClientFirstName + ' ' + refClientFirstLastName;
+					clientDateCreated = arrObjRef[dx]['created'];
+					clientEmail = arrObjRef[dx]['custrecord_tc_email'];
+					clientPhone = arrObjRef[dx]['custrecord_tc_phone'];
+					clientCompany = arrObjRef[dx]['custrecord_tc_company'];
+					clientDateOfBirth = arrObjRef[dx]['custrecord_tc_dob'];
+					clientNotes = arrObjRef[dx]['custrecord_tc_notes'];
+
+					break;
+				}
+			}
+		}
+
+	%>
+
+	<div class="row-fluid">
+		<div class="span12" style="margin-bottom: 15px;"><%=clientName%></div>
+	</div>
+
+	<div class="row-fluid">
+		<div class="span6">
+
+			<div>
+				<div style="float: left; padding-right: 5px;"><span style="font-size: 12px; font-weight: 600;">Email:</span></div>
+				<div style="float: left;"><span style="font-size: 12px;"><%=clientEmail%></span></div>
+				<div style="clear: both;"></div>
+			</div>
+
+			<div>
+				<div style="float: left; padding-right: 5px;"><span style="font-size: 12px; font-weight: 600;">Phone:</span></div>
+				<div style="float: left;"><span style="font-size: 12px;"><%=clientPhone%></span></div>
+				<div style="clear: both;"></div>
+			</div>
+
+			<div>
+				<div style="float: left; padding-right: 5px;"><span style="font-size: 12px; font-weight: 600;">Company:</span></div>
+				<div style="float: left;"><span style="font-size: 12px;"><%=clientCompany%></span></div>
+				<div style="clear: both;"></div>
+			</div>
+
+		</div>
+
+		<div class="span6">
+			<div>
+				<div style="float: left; padding-right: 5px;"><span style="font-size: 12px; font-weight: 600;">DOB:</span></div>
+				<div style="float: left;"><span style="font-size: 12px;"><%=clientDateOfBirth%></span></div>
+				<div style="clear: both;"></div>
+			</div>
+
+			<div>
+				<div style="float: left; padding-right: 5px;"><span style="font-size: 12px; font-weight: 600;">Address:</span></div>
+				<div style="float: left;"><span style="font-size: 12px;"><%=clientAddress%></span></div>
+				<div style="clear: both;"></div>
+			</div>
+
+			<div>
+				<div style="float: left; padding-right: 5px;"><span style="font-size: 12px; font-weight: 600;">Date Created:</span></div>
+				<div style="float: left;"><span style="font-size: 12px;"><%=clientDateCreated%></span></div>
+				<div style="clear: both;"></div>
+			</div>
+
+
+		</div>
+
+	</div>
+
+	<div class="row-fluid">
+		<div class="span12">
+			<div><span style="font-size: 12px; font-weight: 600;">Client Notes:</span></div>
+			<div style="font-size: 12px;"><%=clientNotes%></div>
+		</div>
+	</div>
+
+	<div style="margin-top: 20px;">
+		<div class="row-fluid">
+			<div class="span8">
+				<div class="row-fluid">
+
+					<div class="span4">
+						<div>
+							<a href="/fitprofile/<%=clientInternalId%>|client" data-toggle="show-in-modal" class="btn" style="width: 100%; padding-top: 4px; padding-bottom: 4px; padding-left: 0px; padding-right: 0px;">View & Edit</a>
+						</div>
+						<div id="mobile-only" style="height: 10px;"></div>
+					</div>
+
+					<div class="span4">
+						<div><a data-id="<%=clientInternalId%>" data-type="client" data-action="remove-rec" class="btn" style="width: 100%; padding-top: 4px; padding-bottom: 4px; padding-left: 0px; padding-right: 0px;">Remove</a></div>
+						<div id="mobile-only" style="height: 10px;"></div>
+					</div>
+
+					<div class="span4">
+						<div><a href="http://store.jeromeclothiers.com/item-types?client=<%=clientInternalId%>" class="btn btn-primary" style="width: 100%; padding-top: 4px; padding-bottom: 4px; padding-left: 0px; padding-right: 0px;">Create Order</a></div>
+						<div id="mobile-only" style="height: 10px;"></div>
+					</div>
+				</div>
+
+
+			</div>
+			<div class="span4">
+
+				<div class="row-fluid">
+					<div class="span3"><div>&nbsp;</div></div>
+					<div class="span9">
+						<div><button id="swx-back-to-client-profile-search" class="btn btn-primary" style="width: 100%; padding-top: 4px; padding-bottom: 4px; padding-left: 0px; padding-right: 0px;">Back to Client Profile Search</button></div>
+						<div id="mobile-only" style="height: 10px;"></div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<div style="margin-top: 10px; margin-bottom: 20px; border-bottom: solid 1px #eaeaea;"></div>
+
+	<% _.toggleMobileNavButt() %>
+
+
+
+<% }) %>

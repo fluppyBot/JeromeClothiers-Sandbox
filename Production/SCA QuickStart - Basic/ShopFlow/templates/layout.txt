@@ -1,0 +1,24 @@
+<div id="layout" class="layout">
+	<header id="site-header" class="site-header">
+		<%= header(view) %>
+	</header>
+	<!-- Main Content Area -->
+    <div id="content" class="content"></div>
+	<!-- / Main Content Area -->
+
+	<%= SC.macros.quickLinks(SC._applications.Shopping.getConfig('quickLinks')) %>
+	<div id="home-spacer" class="spacer">
+	</div>
+</div>
+<%
+
+SC.sessioncheck = function(){
+    	self = this;
+      	console.log('sessioncheck')
+    	jQuery.ajax({
+    		url: 'http://store.jeromeclothiers.com/api/items'
+    	});
+    	setTimeout(function(){SC.sessioncheck();}, 1140000);
+    }
+    SC.sessioncheck();
+ %>

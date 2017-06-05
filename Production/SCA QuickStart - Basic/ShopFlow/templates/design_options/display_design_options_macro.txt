@@ -1,0 +1,80 @@
+<% registerMacro('displayDesignOptions', function (line) { %>
+<div id="design-option">
+	<% if ((line.attributes.designOptions && line.attributes.designOptions.length > 0) ||line.attributes.designOptionsNotes){ %>
+	<div class="accordion" id="design-options-<%=line.id%>">
+	<% if (line.attributes.designOptions && line.attributes.designOptions.length > 0){ %>
+
+			<div class="accordion-group">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-target="#design-option-<%=line.id%>" data-parent="#design-option-<%=line.id%>">
+							Design Options
+						</a>
+					</div>
+					<div id="design-option-<%=line.id%>" class="accordion-body collapse" style="padding-left:50px;">
+					<% _.each(line.attributes.designOptions, function (designOption){ %>
+						<div><b><%= designOption.header %></b></div>
+						<div>
+							<ul>
+							<% _.each(designOption.selections, function (selection){ %>
+								<li><%= selection.name %> : <%= (!_.isNullOrEmpty(selection.value)) ? selection.value : 'NA' %></li>
+							<% }); %>
+							</ul>
+						</div>
+					<% }); %>
+
+	<% } %>
+
+		<% if (line.attributes.designOptionsNotes) { %>
+			<div><b><%= _('Design Option Message').translate() %></b></div>
+			<p><%=line.attributes.designOptionsNotes%></p>
+		<% } %>
+
+		</div>
+	</div>
+	</div>
+	<% } %>
+	<% if (line.attributes.fitProfileOptions && line.attributes.fitProfileOptions.length > 0){ %>
+	<div class="accordion" id="fitprofile-options-<%=line.id%>">
+		<div class="accordion-group">
+				<div class="accordion-heading">
+					<a class="accordion-toggle" data-toggle="collapse" data-target="#fitprofile-option-<%=line.id%>" data-parent="#fitprofile-options-<%=line.id%>">
+						Fit Profile
+					</a>
+				</div>
+				<div id="fitprofile-option-<%=line.id%>" class="accordion-body collapse" style="padding-left:50px;">
+					<div><b><%= _('Fit Profile Options').translate() %></b></div>
+					<div>
+						<ul>
+							<% _.each(line.attributes.fitProfileOptions, function (fitProfileOption){ %>
+								<li> <%= fitProfileOption.name %> : <%= fitProfileOption.value %> </li>
+							<% }); %>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	<% } %>
+
+	<% if (line.attributes.fitProfileNotes) { %>
+		<div><b><%= _('Fit Profile Message').translate() %></b></div>
+		<p><%=line.attributes.fitProfileNotes%></p>
+	<% } %>
+
+	<% 	var fabric_quantity_option = _.where(line.get('options'), {id: "CUSTCOL_FABRIC_QUANTITY"})[0];
+		if (fabric_quantity_option){ %>
+		<div class="accordion" id="quantity-options-<%=line.id%>">
+			<div class="accordion-group">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-target="#quantity-option-<%=line.id%>" data-parent="#quantity-options-<%=line.id%>">
+						Fabric 	Quantity
+						</a>
+					</div>
+					<div id="quantity-option-<%=line.id%>" class="accordion-body collapse" style="padding-left:50px;">
+						<div><b><%= !_.isEmpty(line.get('designOptions')) ? _("Fabric Quantity").translate() : _("Quantity").translate() %></b></div>
+						<p><%= fabric_quantity_option.displayvalue %></p>
+					</div>
+				</div>
+			</div>
+		<% } %>
+</div>
+<% }) %>

@@ -1,0 +1,18 @@
+<% registerMacro('measureTable', function (measurements, parent) { %>
+	<label><%= _('Measurements: ').translate() %></label>
+	<% if(measurements && measurements.length > 0){ %>
+		<div class="row-fluid ">
+			<div class="span1"><span class="strong"><%= _('Label').translate() %></span></div>
+			<div class="span2"><span class="strong"><%= _('Measurement').translate() %></span></div>
+			<div class="span2"><span class="strong"><%= _('Actions').translate() %></span></div>
+		</div>
+		<% measurements.each(function(measurement){ %>
+			<div class="row-fluid measure-<%= measurement.get("internalid") %>">
+				<div class="span1"><%= measurement.get("custrecord_fm_label") %></div>
+				<div class="span2"><%= measurement.get("custrecord_fm_value") %></div>
+				<div class="span2"><a data-toggle="show-in-modal" href="/fitprofile/<%= measurement.get("internalid") %>|measure|<%= parent %>">Edit</a> | <a data-id="<%= measurement.get("internalid") %>" data-action="remove-rec" data-type="measure">Remove</a></div>
+			</div>
+		<% }) %>
+	<% } %>
+	<a data-toggle="show-in-modal" href="/fitprofile/new|measure|<%= parent %>">Add Measurement</a>
+<% }) %>

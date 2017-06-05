@@ -1,0 +1,13 @@
+<% registerMacro('merchandisingZone', function (zone) { %>
+<aside>
+	<h3><%= _(zone.title).translate() %></h3>
+	<% if (zone.description) { %>
+	<p class="description"><%= zone.description %></p>
+	<% } %>
+	<div class="merchandising-slider">
+		<% _.each(zone.items, function(item) { %>
+			<%= SC.macros.relatedItem(item, zone.application) %>
+		<% }) %>
+	</div>
+</aside>
+<% }) %>

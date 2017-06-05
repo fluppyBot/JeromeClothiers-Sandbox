@@ -1,0 +1,38 @@
+<% registerMacro('itemDetailsOptionsGrid', function (option_horizontal, option_vertical, item_model) { %>
+<%
+	var has_id = function (item) { return item.internalid; }
+	,	option_h_values = _.filter(option_horizontal.values, has_id)
+	,	option_v_values = _.filter(option_vertical.values, has_id)
+	,	option_h_id = option_horizontal.itemOptionId
+	,	option_v_id = option_vertical.itemOptionId
+	,	matrix_child = {};
+%>
+<table id="options-grid-container" class="options-grid-container" data-type="option" cellpadding="10" style="margin: 0 auto;">
+	<thead>
+		<th class="text-right"><%= option_horizontal.label %></th>
+		<% _.forEach(option_h_values, function (item) { %>
+			<th><%= item.label %></th>
+		<% }) %>
+	</thead>
+	<tbody>
+	<% _.forEach(option_v_values, function (item_v, i) { %>
+		<tr>
+			<td class="text-right"><%= option_vertical.label %> <%= item_v.label %></td>
+			<% _.forEach(option_h_values, function (item_h, j) { %>
+				<td>
+					<%
+						matrix_child[option_h_id] = item_h.label;
+						matrix_child[option_v_id] = item_v.label;
+					%>
+					<% if (item_h.isAvailable && item_v.isAvailable && (!option_horizontal.isMatrixDimension || !option_vertical.isMatrixDimension || item_model.isCombinationAvailable(combo))) { %>
+						<input type="number" name="quantity-" id="quantity-" class="input-mini quantity text-center" value="0" min="0" style="margin-bottom: 0;">
+					<% } else { %>
+						<span class="label label-important"><%= _('Unavailable').translate() %></span>
+					<% } %>
+				</td>
+			<% }) %>
+		</tr>
+	<% }) %>
+	</tbody>
+</table>
+<% }) %>

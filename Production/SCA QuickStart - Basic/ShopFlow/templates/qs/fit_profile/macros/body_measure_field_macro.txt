@@ -1,0 +1,77 @@
+<% registerMacro('bodyMeasureField', function (field, value, fieldset, baseAllowance, allowance) {
+	var type = field.type
+	,	label = field.label
+	,	name = field.name
+	,	inputHtml = ""
+	,	finishValue = 0;
+	var range = {
+		"Neck" :{min:31,max:59},
+		"Shoulder" :{min:37,max:67},
+		"Chest" :{min:86,max:184},
+		"Waist" :{min:76,max:182},
+		"Hips" :{min:82,max:184},
+		"Upperarm" :{min:32,max:60},
+		"Sleeve-Left" :{min:52,max:79},
+		"Sleeve-Right" :{min:52,max:79},
+		"Cuff-Left" :{min:21,max:33},
+		"Cuff-Right" :{min:21,max:33},
+		"Back-Length" :{min:67,max:95}
+	};
+
+	if(type == "select"){
+		inputHtml = '<select class="input input-small" id="' + name + '" name="' + name + '">';
+		if(field.options && field.options.length){
+			_.each(field.options, function(option){
+				if(value == option){
+					inputHtml = inputHtml + '<option value="' + option + '" selected>' + option + '</option>'
+				} else {
+					inputHtml = inputHtml + '<option value="' + option + '" >' + option + '</option>'
+				}
+
+			});
+		}
+		inputHtml = inputHtml + '</select>'
+	} else {
+		inputHtml = '<input class="input input-small body-measure-fld" type="number" step="any" id="' + name + '" name="' + name + '" value="' + value + '"/>'
+	}
+
+
+	if(value) {
+		if(allowance){
+			finishValue = parseFloat(value) + parseFloat(allowance);
+		} else {
+			if(baseAllowance){
+				allowance = baseAllowance;//(parseFloat(value) * (parseFloat(baseAllowance) / 100))
+				//finishValue = (parseFloat(value) * (parseFloat(baseAllowance) / 100)) + parseFloat(value);
+				finishValue = parseFloat(value) + parseFloat(baseAllowance);
+			} else {
+				finishValue = value;
+			}
+		}
+		finishValue = Math.round(finishValue * 10) / 10;
+	}
+%>
+	<div class="row-fluid">
+		<div class="span2"><%= label %></div>
+		<div class="span3-profile">
+			<%= inputHtml %>
+		</div>
+		<% if(fieldset == "body-measurement"){ %>
+			<div class="span3-profile">
+				<input class="input input-small allowance-fld" type="number" step="any" id="allowance_<%= name %>" name="allowance-<%= name %>" value="<%= allowance ? allowance : baseAllowance %>"/>
+			</div>
+			<div class="span3-profile">
+			<% if(range[name]!= null){ %>
+				<span min-value="<%= range[name].min %>" max-value="<%= range[name].max %>" id="finish_<%= name %>"><%= finishValue %></span>
+				<% }else{ %>
+				<span id="finish_<%= name %>"><%= finishValue %></span>
+				<% } %>
+			</div>
+			<div class="span3-profile">
+				<% if(range[name] != null){ %>
+				<span id="range_<%= name %>">(<%= range[name].min %>-<%= range[name].max %>)</span>
+				<% } %>
+			</div>
+		<% } %>
+	</div>
+<% }) %>

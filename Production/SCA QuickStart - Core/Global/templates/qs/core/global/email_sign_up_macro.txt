@@ -1,0 +1,7 @@
+<% registerMacro('emailSignUp', function (view) { %>
+<form id="email-sign-up-form">
+    <div class="alert-placeholder"></div>
+    <input placeholder="E-Mail" name="email" type="text"/>
+    <button class="btn btn-primary"><%= _('Submit').translate() %></button>
+</form>
+<% })%>

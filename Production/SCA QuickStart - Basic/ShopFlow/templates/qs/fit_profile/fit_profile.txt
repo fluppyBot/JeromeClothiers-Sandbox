@@ -1,0 +1,83 @@
+<%
+	
+	
+	//var macros = SC.macros;
+	var clientCollection = view.model.client_collection;
+	var stClientCollection = JSON.stringify(clientCollection, 'key', '\t');
+	var arrObjClientCollection = (!_.isNullOrEmpty(stClientCollection)) ? JSON.parse(stClientCollection) : [];
+	
+	var filterClientName = view.model.get('swx_order_client_name');
+	var filterClientEmail = view.model.get('swx_order_client_email');
+	var filterClientPhone = view.model.get('swx_order_client_phone');
+
+	var objFilters = {};
+	objFilters['name'] = filterClientName;
+	objFilters['email'] = filterClientEmail;
+	objFilters['phone'] = filterClientPhone;
+	
+	var arrObjClient = _.getArrObjOrderClientList(arrObjClientCollection, objFilters)
+	
+
+%>
+
+<div class="container">
+	<h3>Tailor's Client</h3>
+	<% if(view.model.client_collection){ %>
+		<div style="display: none;">
+			<%= clientsOptionDropdown(view.model.client_collection, view.options.application.getUser().get("internalid")) %>
+		</div>
+	<% } %>
+	
+	<div data-type="alert-placeholder"></div>
+	<div id="swx-order-client-contents" style="margin-bottom: 20px;">
+			<div class="row-fluid" style="border-bottom: solid 1px #e5e5e5; margin-bottom: 20px;">
+				<div class="span3">
+					<div class="control-group">
+						<label for="swx-order-client-name" class="control-label">Name</label>
+						<div class="controls">
+							<input type="text" value="<%=filterClientName%>" name="swx-order-client-name" id="swx-order-client-name" class="input-large" style="width: 100%;">
+						</div>
+					</div>
+				</div>	
+	
+				<div class="span3">
+					<div class="control-group">
+						<label for="swx-order-client-email" class="control-label">Email</label>
+						<div class="controls">
+							<input type="text" value="<%=filterClientEmail%>" name="swx-order-client-email" id="swx-order-client-email" class="input-large" style="width: 100%;">
+						</div>
+					</div>
+				</div>	
+	
+				<div class="span3">
+					<div class="control-group">
+						<label for="swx-order-client-phone" class="control-label">Phone</label>
+						<div class="controls">
+							<input type="text" value="<%=filterClientPhone%>" name="swx-order-client-phone" id="swx-order-client-phone" class="input-large" style="width: 100%;">
+						</div>
+					</div>
+				</div>	
+	
+				<div class="span3">
+					<div class="control-group">
+						<label for="swx-order-client-search" class="control-label">&nbsp;</label>
+						<div class="controls">
+							<div class="row-fluid">
+								<div class="span6"><button id="swx-order-client-search" class="btn btn-primary" style="width: 100%;">Search</button></div>
+								<div class="span6"><button id="swx-order-client-add" class="btn btn-primary" style="width: 100%;">Add</button></div>
+							</div>
+							
+						</div>
+					</div>
+
+				</div>	
+			</div>
+		
+			<div id="swx-order-client-list">
+				<%=swxOrderClientList(arrObjClient)%>	
+			</div>
+
+			<% _.toggleMobileNavButt() %>
+		
+	</div>
+</div>
