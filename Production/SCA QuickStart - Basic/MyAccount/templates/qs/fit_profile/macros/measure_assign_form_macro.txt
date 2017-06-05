@@ -1,0 +1,39 @@
+<% registerMacro('measureAssignForm', function (measure, parent, measurements) { %>
+<select id="measurements-options">
+	<% measurements.each(function(data){ %> 
+		<option value="<%= data.get('internalid') %>"><%= data.get('custrecord_fm_label') %> : <%= data.get('custrecord_fm_value') %></option>
+	<% }) %>
+	<option value=""><%= _('Add a new measurement').translate() %></option>
+</select>
+<form id="measure_form" class="<%= measurements.length > 0 ? 'hide' : '' %>">
+<fieldset>
+	<div data-type="alert-placeholder"></div>
+	<input type="hidden" value="<%= parent %>" name="custrecord_fm_fit_profile" data-rectype="field">
+	<input type="hidden" value="<%= SC._applications.MyAccount.getUser().get("internalid") %>" name="custrecord_fm_tailor" data-rectype="field">
+
+	<div class="control-group" data-input="custrecord_fm_label">
+		<label class="control-label" for="custrecord_fm_label">
+			<%= _('Measurement Label').translate() %>
+			<small>
+				<%= _('(required)').translate() %>
+			</small>
+		</label>
+		<div class="controls">
+			<input type="text" class="input-xlarge" id="custrecord_fm_label" name="custrecord_fm_label" value="<%- measure.get("custrecord_fm_label") %>" data-rectype="field">
+		</div>
+	</div>
+	
+	<div class="control-group"  data-input="custrecord_fm_value">
+		<label class="control-label" for="custrecord_fm_value">
+			<%= _('Measurement Value').translate() %>
+			<small>
+				<%= _('(required)').translate() %>
+			</small>
+		</label>
+		<div class="controls">
+			<input type="text" class="input-xlarge" id="custrecord_fm_value" name="custrecord_fm_value" value="<%- measure.get("custrecord_fm_value") %>" data-rectype="field">
+		</div>
+	</div>
+</fieldset>
+</form>
+<% }) %>

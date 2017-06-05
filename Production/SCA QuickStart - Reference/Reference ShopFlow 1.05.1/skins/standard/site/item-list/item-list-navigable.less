@@ -1,0 +1,94 @@
+@baseSpace: 9px;
+
+.item-list-navigable {
+	border-bottom: #ddd 1px solid;
+	padding: @baseSpace 0;
+
+	@media (min-width: 768px) {
+		.clearfix();
+	}
+
+	form, label, input {
+		margin-bottom: 0;
+	}
+
+	.item {
+		@media (min-width: 768px) {
+			float: left;
+			margin-right: 5%;
+			width: 65%;
+		}
+
+		@media (min-width: 980px) {
+			width: 75%;
+		}
+	}
+
+	.thumbnail {
+		float: left;
+		margin-right: 5%;
+		width: 30%;
+
+		@media (min-width: 980px) {
+			width: 25%;
+		}
+	}
+
+	.info {
+		float: left;
+		width: 65%;
+
+		@media (min-width: 980px) {
+			width: 70%;
+		}
+	}
+
+	.details {
+		@media (min-width: 980px) {
+			float: left;
+			margin-right: 5%;
+			width: 60%;
+		}
+	}
+
+	.summary {
+		@media (min-width: 980px) {
+			float: left;
+			width: 35%;
+		}	
+	}
+
+	.name, .price, .sku, .quantity, .cart-option {
+		margin-bottom: @baseSpace / 2;
+	}
+
+	.option-label, .sku, .quantity, .amount-label {
+		.text-light;
+	}
+
+	input[name="quantity"] {
+		display: block;
+	}
+
+	.alert-placeholder {
+		clear: both;
+	}
+
+	.actions {
+		@media (min-width: 768px) {
+			float: left;
+			width: 30%;
+		}
+
+		@media (min-width: 980px) {
+			width: 20%;
+		}
+	}
+
+	.btn {
+		box-sizing: border-box;
+		display: block;
+		margin-top: @baseSpace;
+		width: 100%;
+	}
+}

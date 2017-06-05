@@ -1,0 +1,103 @@
+<% registerMacro('measureForm', function (fields, values) { %>
+
+	<% if(fields && fields.fieldset && fields.fieldset.length){ %>
+		<h4 class="section-header"><%= _('Measurement Details').translate() %></h4>
+
+		<% _.each(fields.fieldset, function(fieldset){ %>
+			<% if(fieldset.name == 'main'){ %>
+				<div class="main-section">
+					<% if(fields.type == 'Body'){ %>
+						<% _.each(fieldset.fields, function(field){
+							var mainBodyValue = null
+							,	fieldValue = _.where(values, {name: field.name})
+							if(fieldValue.length){
+								mainBodyValue = fieldValue[0].value;
+							}
+						%>
+							<%= SC.macros.bodyMeasureField(field, mainBodyValue, fieldset.name) %>
+						<% }) %>
+					<% } else { %>
+						<% _.each(fieldset.fields, function(field){
+							var mainBlockValue = null
+							,	fieldValue = _.where(values, {name: field.name})
+							if(fieldValue.length){
+								mainBlockValue = fieldValue[0].value;
+								if (fieldValue.length > 1 && field.type == "select") { // for select items with a similar name to a measurement
+									mainBlockValue = fieldValue[fieldValue.length - 1].value; // select types seem to always get the last item
+								} else {
+									mainBlockValue = fieldValue[0].value;
+								}
+							}
+						%>
+							<%= SC.macros.blockMeasureField(field, mainBlockValue) %>
+						<% }) %>
+					<% } %>
+				</div>
+			<% } else { %>
+				<div class="<%= fieldset.name %>-section">
+					<h4><%= fieldset.label %></h4>
+					<hr />
+					<% if(fields.type == 'Body'){ %>
+						<% if(fieldset.name == "body-measurement"){ %>
+							<div class="row-fluid">
+								<div class="span3-profile offset2"><%= _('Measurement').translate() %></div>
+								<div class="span3-profile"><%= _('Allowance').translate() %></div>
+								<div class="span3-profile"><%= _('Finished').translate() %></div>
+								<div class="span3-profile"><%= _('Range').translate() %></div>
+							</div>
+						<% } %>
+						<% _.each(fieldset.fields, function(field){
+							var bodyValue = null
+							,	allowance = null
+							,	baseAllowance = null
+							,	fieldValue = _.where(values, {name: field.name})
+							,	allowFieldValue = _.where(values, {name: "allowance-" + field.name})
+							,	lookUpField = _.where(values, {name: fields["lookup-key"]});
+							if(values) {
+								if(fieldValue.length){
+									if (fieldValue.length > 1 && field.type == "select") { // for select items with a similar name to a measurement
+										bodyValue = fieldValue[fieldValue.length - 1].value; // select types seem to always get the last item
+									} else {
+										bodyValue = fieldValue[0].value;
+									}
+								}
+								if(allowFieldValue.length){
+									allowance = allowFieldValue[0].value;
+								}
+								if(lookUpField.length){
+									baseAllowance = _.where(fields["lookup-value"][lookUpField[0].value], {field: field.name})[0];
+									baseAllowance = baseAllowance && baseAllowance.value ? baseAllowance.value : 0;
+								}
+							} else {
+								baseAllowance = _.where(fields["lookup-value"]["Very Slim"], {field: field.name})[0];
+								baseAllowance = baseAllowance && baseAllowance.value ? baseAllowance.value : 0;
+							}
+
+						%>
+							<%= SC.macros.bodyMeasureField(field, bodyValue, fieldset.name, baseAllowance, allowance) %>
+						<% }) %>
+					<% } else { %>
+						<div class="row-fluid">
+							<div class="span3 offset2"><%= fieldset["max-label"] %></div>
+							<div class="span3"><%= fieldset["min-label"] %></div>
+						</div>
+						<% _.each(fieldset.fields, function(field){
+							var blockValueMin = _.where(values, {name: field.name + "-min"})[0]
+							,	blockValueMax = _.where(values, {name: field.name + "-max"})[0]
+							,	value = [blockValueMin, blockValueMax];
+						%>
+							<%= SC.macros.blockMeasureField(field, value, fields.increment) %>
+						<% }) %>
+					<% } %>
+				</div>
+			<% } %>
+		<% }) %>
+
+		<div class="form-actions">
+			<button class="btn btn-primary" type="submit">Submit</button>
+			<button data-action="reset" class="btn hide" type="reset">Cancel</button>
+		</div>
+
+	<% } %>
+
+<% }) %>

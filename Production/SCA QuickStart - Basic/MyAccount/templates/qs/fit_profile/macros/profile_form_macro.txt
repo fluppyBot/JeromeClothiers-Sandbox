@@ -1,0 +1,104 @@
+<% registerMacro('profileForm', function (model, paramEvent) { 
+	var profile = model.profile_collection && model.get("current_profile") ? model.profile_collection.where({internalid: model.get("current_profile")})[0] : null
+	,	parent = model.get("current_client");
+	
+	var eventValue = (!_.isNullOrEmpty(paramEvent) && paramEvent == 'add') ? 'add' : 'viewedit';
+	var isAddEvent = (eventValue == 'add') ? true : false;
+	var isViewEdit = (eventValue == 'viewedit') ? true : false;
+
+%>
+
+
+<button id="butt-modal" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modal-xyla" style="display: none;">Modal Butt</button>
+<div class="modal fade" id="modal-xyla" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+	  <div class="modal-content">
+		 <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+
+				<% if (isAddEvent) { %>
+					<h3 id="h3-profile-header" class="modal-title">Add Fit Profile</h3>	
+				<% } %>
+				
+				<% if (isViewEdit) { %>
+					<h3 id="h3-profile-header" class="modal-title">View/Edit Fit Profile</h3>	
+				<% } %>
+		 </div>
+		 <div id="div-modal-body" class="modal-body">
+		 
+				<form id="profile-form">
+					<fieldset>
+						<!-- <div data-type="alert-placeholder"></div> -->
+						<input type="hidden" value="<%= parent %>" name="custrecord_fp_client" data-rectype="field">
+						<div class="control-group" data-input="name">
+							<label class="control-label" for="name">
+								<%= _('Fit Profile Name').translate() %>
+								<small>
+									<%= _('(required)').translate() %>
+								</small>
+							</label>
+							<div class="controls">
+								<input type="text" class="input-xlarge" id="name" name="name" value="<%- profile ? profile.get("name") : null %>" data-rectype="field">
+							</div>
+						</div>
+						<div class="row-fluid">
+							<div class="control-group span3"  data-input="custrecord_fp_product_type">
+								<label class="control-label" for="custrecord_fp_product_type">
+									<%= _('Product Type').translate() %>
+									<small>
+										<%= _('(required)').translate() %>
+									</small>
+								</label>
+								<div class="controls">
+									<%= SC.macros.itemTypeDropdown(_.pluck(model.measurement_config, "item_type"), profile ? profile.get("custrecord_fp_product_type") : null) %>
+								</div>
+							</div>
+				
+							<div class="span3" id="measure-type">
+								<% if(profile){ 
+									var selectedItemType = _.where(model.measurement_config, {item_type: profile.get("custrecord_fp_product_type")})[0]
+									,	measurementType = _.pluck(selectedItemType.measurement, "type");
+								%>
+									<%= SC.macros.measureTypeDropdown(measurementType, profile ? profile.get("custrecord_fp_measure_type") : null) %>
+								<% } %>
+							</div>
+						</div>
+						<div id="measure-form">
+							<% if(profile){ 
+								var selectedItemTypeMeasure = profile.get("custrecord_fp_product_type")
+								,	measurementTypeMeasure = profile.get("custrecord_fp_measure_type")
+								,	fieldsForm = null;
+				
+								if(measurementTypeMeasure && selectedItemTypeMeasure){
+									fieldsForm = _.where(model.measurement_config, {item_type: selectedItemTypeMeasure})[0];
+									fieldsForm = _.where(fieldsForm.measurement, {type: measurementTypeMeasure})[0];
+									
+									model.selected_measurement = fieldsForm;			
+							%>
+								<%
+									var swxFpMeasureValue = profile ? JSON.parse(profile.get("custrecord_fp_measure_value")) : null;	
+								%>
+								<%= SC.macros.measureForm(fieldsForm, swxFpMeasureValue, eventValue) %>
+							<% 
+								}
+							} 
+							%>			
+						</div>
+					</fieldset>
+				</form>
+		 </div>
+		 <div class="modal-footer">
+		 
+				<div class="form-actions" style="margin: 0px; border: none; padding: 0px;">
+					<button id="butt-modal-close" type="button" class="btn" data-dismiss="modal" style="font-weight: 600;">Cancel</button>
+					<button id="butt-modal-submit" type="button" class="btn" style="font-weight: 600; margin-left: 5px; display: none;">Submit</button>
+					<button id="butt-modal-remove" type="button" class="btn" style="font-weight: 600; margin-left: 5px; display: none;">Remove</button>
+					<button id="butt-modal-copy" type="button" class="btn" style="font-weight: 600; margin-left: 5px; display: none;">Copy</button>
+				</div>
+				
+				
+		 </div>
+	  </div><!-- /.modal-content -->
+</div>
+
+<% }) %>

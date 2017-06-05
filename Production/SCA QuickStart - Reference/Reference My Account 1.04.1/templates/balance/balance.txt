@@ -1,0 +1,71 @@
+<%
+	var application = view.application
+	,	user = application.getUser()
+	,	live_payment = application.getLivePayment()
+	,	company = user.get('companyname')
+	,	percentage = Math.min(((user.get('balance') * 100) / user.get('creditlimit')), 100);
+%>
+<section>
+	<h3 class="billing-heading">
+		<%=_('Account Balance').translate()%>
+	</h3>
+	<a href="/" class="back-btn">
+		<%= _('&lt; Back to Account').translate() %>
+	</a>
+	<hr class="divider-small">
+	<div class="billing-account-balance">
+		<% if (company) { %>
+			<p class="lead"><b><%= company %></b></p>
+		<% } %>
+		<div class="progress balance-indicator">
+			<div class="bar" style="width: <%= percentage %>%;">
+				<div class="due-on <%= percentage > 8 ? (percentage < 92 ? 'pull-right' : 'text-right') : '' %>">
+					<span class="light hidden-phone"><%= _('Outstanding Balance').translate() %></span> <br> <span class="lead"><b><%= user.get('balance_formatted') %></b></span>
+					<div class="arrow arrow-v down-arrow"></div>
+				</div>
+			</div>
+		</div>
+		<p class="text-right">
+			<span class="light hidden-phone"><%= _('Available').translate() %></span>
+			<br class="hidden-phone">
+			<b><%= user.get('balance_available_formatted') %></b>
+		</p>
+		<hr>
+		<div class="row-fluid billing-balance-summary">
+			<div class="span6">
+				<ul class="unstyled">
+					<li><%= _('Credit Limit: <span>$(0)</span>').translate(user.get('creditlimit_formatted')) %></li>
+					<li><b><%= _('Outstanding Balance: <span>$(0)</span>').translate(user.get('balance_formatted')) %></b></li>
+					<li><%= _('Available: <span>$(0)</span>').translate(user.get('balance_available_formatted')) %></li>
+				</ul>
+			</div>
+			<div class="span6">
+				<hr class="visible-phone">
+				<ul class="unstyled">
+					<li><%= _('Deposits: <span>$(0)</span>').translate(live_payment.get('depositsremaining_formatted') || 'N/A') %></li>
+					<li><%= _('Credit Memos: <span>$(0)</span>').translate(live_payment.get('creditmemosremaining_formatted') || 'N/A') %></li>
+				</ul>
+			</div>
+		</div>
+		<hr>
+		<div class="row-fluid billing-balance-summary-extra">
+			<div class="span3">
+				<b><%= _('Term: <span>$(0)</span>').translate((user.get('paymentterms') && user.get('paymentterms').name) || 'N/A') %></b>
+			</div>
+			<div class="span3">
+				<b><%= _('Currency: <span>$(0)</span>').translate(application.getConfig('siteSettings.shopperCurrency.code')) %></b>
+			</div>
+			<div class="span4">
+				<b><%= _('Credit Limit: <span>$(0)</span>').translate(user.get('creditlimit_formatted')) %></b>
+			</div>
+		</div>
+	</div>
+	<div class="form-actions clearfix">
+		<% if (application.getLivePayment().get('invoices').length) { %>
+			<a data-permissions="transactions.tranCustPymt.2, transactions.tranCustInvc.1" href="/make-a-payment" class="btn btn-large btn-primary pull-right balance-actions-margin btn-expanded"><%= _('Continue to Payment').translate() %></a>
+		<% } else { %>
+			<button data-permissions="transactions.tranCustPymt.2, transactions.tranCustInvc.1" class="btn btn-large btn-primary pull-right balance-actions-margin btn-expanded" disabled><%= _('No payment due').translate() %></button>
+		<% } %>
+		<a href="/printstatement" data-permissions="transactions.tranStatement.2" class="btn btn-large pull-right balance-actions-margin btn-expanded"><%= _('Print a Statement').translate() %></a>
+	</div>
+</section>

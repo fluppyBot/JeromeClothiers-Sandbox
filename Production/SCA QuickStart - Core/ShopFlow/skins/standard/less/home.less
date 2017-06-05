@@ -1,0 +1,42 @@
+.bx-wrapper {
+    .bx-prev {
+        background: url(../../img/libs/bxslider/controls.png) no-repeat 0 -32px;
+    }
+    .bx-next {
+        background: url(../../img/libs/bxslider/controls.png) no-repeat -43px -32px;
+    }
+    //Width for home slider only.
+    #home-slider {
+      img {
+        width: 100% !important;
+      }
+    }
+}
+.full-gradient-home {
+  border-top: 1px solid #E0E0E0;
+  padding-top: 20px;
+  .gradient-background (@startColor: #F9F9F9, @endColor: #FFFFFF, @size: 180px);
+}
+.merchandising {
+  display: @home-merchandising-visibility;
+  .bx-wrapper .bx-viewport {
+    background: transparent;
+    max-height: 300px;
+  }
+  .item-cell-grid {
+    text-align: center;
+    border-top: none;
+    a.btn-expanded {
+      display: @home-merchandising-button;
+    }
+  }
+  h3 {
+    text-align: center;
+  }
+}
+.cdelivery {
+  display: @home-content-visibility;
+  h3 {
+    text-align: center;
+  }
+}

@@ -1,0 +1,16 @@
+<div class="view-header container">
+	<%= breadcrumb(view.getBreadcrumb()) %>
+	<div id="main-banner" class="main-banner"></div>
+</div>
+<div class="gradient-content">
+    <div class="container">
+        <% if (view.page_header && !view.inModal) { %>
+        <h1><%= view.page_header %></h1>
+        <% } %>
+        <% if (view.page && view.page.get('content')) { %>
+            <div id="landing-page-content" class="view-body container landing-page-content">
+                <%= view.page.get('content') %>
+            </div>
+        <% } %>
+    </div>
+</div>

@@ -1,0 +1,15 @@
+<header class="payment-wizard-layout-header">
+	<div class="hidden-phone">
+		<a class="pull-right btn continue-shopping" href="/" data-action="update-layout">
+			<%= _('Go to Account Overview').translate() %>
+		</a>
+	</div>
+	
+	<h2><%= _('Make a Payment').translate() %></h2>
+	<a href="/" class="back-btn" data-action="update-layout">
+		<%= _('&lt; Back to Account').translate() %>
+	</a>
+
+	<hr class="divider-small">
+</header>
+<div id="wizard-content" class="wizard-content payment-wizard-content"></div>

@@ -1,0 +1,25 @@
+<% registerMacro('designOptionFields', function (fields, values, mode) { %>
+	<% if (fields && fields.length > 1) { %>
+		<ul class="nav nav-tabs design-option-list">
+		<% _.each(fields, function (field, count) { %>
+			<li class="<%= count == 0 ? 'active' : '' %>">
+				<a data-target="#design-option-<%= field["item_type"] %>" data-toggle="tab" data-type="<%- field["item_type"] %>" href="#">
+					<%= field["item_type"] %>
+				</a>
+			</li>
+		<% }) %>
+		</ul>
+	<% }  %>
+
+	<div class="tab-content">
+	<% _.each(fields, function (field, count) { %>
+		<div class="tab-pane <%= count == 0 ? 'active' : '' %> design-option-<%= field["item_type"] %>" id="design-option-<%= field["item_type"] %>">
+			<% if(mode == "multi"){ %>
+				<%= SC.macros.designOptionMultiField(field, values) %>
+			<% } else { %>
+				<%= SC.macros.designOptionSingleField(field, count) %>
+			<% } %>
+		</div>
+	<% }) %>
+	</div>
+<% }) %>

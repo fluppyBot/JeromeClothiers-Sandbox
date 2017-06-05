@@ -1,0 +1,196 @@
+<% registerMacro('shoppingCartOptionDefault', function (option, value, model) { %>
+	<% if(option.cartOptionId == 'custcol_designoptions_jacket'){ %>
+		<%
+			type_option = _.where(window.design_options, {item_type: "Jacket"})[0],
+			option_values = JSON.parse(value.label),
+			formatted_values = [];
+			
+			_.each(option_values, function(option_value){
+				if(!_.isUndefined(type_option)){
+					var fields = _.pluck(type_option.options, "fields")
+					_.each(fields, function(field){
+						var selectedField = _.where(field, {name: option_value.name})
+
+						if(selectedField && selectedField.length){
+							selectedField = selectedField[0]
+							for(var i = 0;i < selectedField.values.length; i++){
+								if(selectedField.values[i] == option_value.value){
+									var value = new Object();
+									value.label = selectedField.label;
+									value.value = selectedField.texts[i];
+									formatted_values.push(value);
+								}
+							}
+						}
+
+					});
+				}
+			});
+		%>
+		<div class="cart-option" data-cart-option-id="<%= option.cartOptionId %>" data-item-option-id="<%= option.itemOptionId %>">
+			<span class="option-value"><%= option.label || option.name.replace(':', '') %></span>: 
+			
+			<% _.each(formatted_values, function(formatted_value){ %>
+				<div class="row-fluid">
+					<span class="option-label"><%= formatted_value.label %> </span>:
+					<span class="option-value"><%= formatted_value.value %></span>
+				</div>
+			<% }); %>
+		</div>
+	<% } else if(option.cartOptionId == 'custcol_designoptions_overcoat'){ %>
+		<%
+			type_option = _.where(window.design_options, {item_type: "Overcoat"})[0],
+			option_values = JSON.parse(value.label),
+			formatted_values = [];
+			if(!_.isUndefined(type_option)){
+				_.each(option_values, function(option_value){
+					var fields = _.pluck(type_option.options, "fields")
+					_.each(fields, function(field){
+						var selectedField = _.where(field, {name: option_value.name})
+
+						if(selectedField && selectedField.length){
+							selectedField = selectedField[0]
+							for(var i = 0;i < selectedField.values.length; i++){
+								if(selectedField.values[i] == option_value.value){
+									var value = new Object();
+									value.label = selectedField.label;
+									value.value = selectedField.texts[i];
+									formatted_values.push(value);
+								}
+							}
+						}
+
+					});
+				});
+			}
+		%>
+		<div class="cart-option" data-cart-option-id="<%= option.cartOptionId %>" data-item-option-id="<%= option.itemOptionId %>">
+			<span class="option-value"><%= option.label || option.name.replace(':', '') %></span>: 
+			
+			<% _.each(formatted_values, function(formatted_value){ %>
+				<div class="row-fluid">
+					<span class="option-label"><%= formatted_value.label %> </span>:
+					<span class="option-value"><%= formatted_value.value %></span>
+				</div>
+			<% }); %>
+		</div>
+	<% } else if(option.cartOptionId == 'custcol_designoptions_shirt'){ %>
+		<%
+			type_option = _.where(window.design_options, {item_type: "Shirt"})[0],
+			option_values = JSON.parse(value.label),
+			formatted_values = [];
+			if(!_.isUndefined(type_option)){
+				_.each(option_values, function(option_value){
+					var fields = _.pluck(type_option.options, "fields")
+					_.each(fields, function(field){
+						var selectedField = _.where(field, {name: option_value.name})
+
+						if(selectedField && selectedField.length){
+							selectedField = selectedField[0]
+							for(var i = 0;i < selectedField.values.length; i++){
+								if(selectedField.values[i] == option_value.value){
+									var value = new Object();
+									value.label = selectedField.label;
+									value.value = selectedField.texts[i];
+									formatted_values.push(value);
+								}
+							}
+						}
+
+					});
+				});
+			}
+		%>
+		<div class="cart-option" data-cart-option-id="<%= option.cartOptionId %>" data-item-option-id="<%= option.itemOptionId %>">
+			<span class="option-value"><%= option.label || option.name.replace(':', '') %></span>: 
+			
+			<% _.each(formatted_values, function(formatted_value){ %>
+				<div class="row-fluid">
+					<span class="option-label"><%= formatted_value.label %> </span>:
+					<span class="option-value"><%= formatted_value.value %></span>
+				</div>
+			<% }); %>
+		</div>
+	<% } else if(option.cartOptionId == 'custcol_designoptions_trouser'){ %>
+		<%
+			type_option = _.where(window.design_options, {item_type: "Trouser"})[0],
+			option_values = JSON.parse(value.label),
+			formatted_values = [];
+			if(!_.isUndefined(type_option)){
+				_.each(option_values, function(option_value){
+					var fields = _.pluck(type_option.options, "fields")
+					_.each(fields, function(field){
+						var selectedField = _.where(field, {name: option_value.name})
+
+						if(selectedField && selectedField.length){
+							selectedField = selectedField[0]
+							for(var i = 0;i < selectedField.values.length; i++){
+								if(selectedField.values[i] == option_value.value){
+									var value = new Object();
+									value.label = selectedField.label;
+									value.value = selectedField.texts[i];
+									formatted_values.push(value);
+								}
+							}
+						}
+
+					});
+				});
+			}
+		%>
+		<div class="cart-option" data-cart-option-id="<%= option.cartOptionId %>" data-item-option-id="<%= option.itemOptionId %>">
+			<span class="option-value"><%= option.label || option.name.replace(':', '') %></span>: 
+			
+			<% _.each(formatted_values, function(formatted_value){ %>
+				<div class="row-fluid">
+					<span class="option-label"><%= formatted_value.label %> </span>:
+					<span class="option-value"><%= formatted_value.value %></span>
+				</div>
+			<% }); %>
+		</div>
+	<% } else if(option.cartOptionId == 'custcol_designoptions_waistcoat'){ %>
+		<%
+			type_option = _.where(window.design_options, {item_type: "Waistcoat"})[0],
+			option_values = JSON.parse(value.label),
+			formatted_values = [];
+			if(!_.isUndefined(type_option)){
+				_.each(option_values, function(option_value){
+					var fields = _.pluck(type_option.options, "fields")
+					_.each(fields, function(field){
+						var selectedField = _.where(field, {name: option_value.name})
+
+						if(selectedField && selectedField.length){
+							selectedField = selectedField[0]
+							for(var i = 0;i < selectedField.values.length; i++){
+								if(selectedField.values[i] == option_value.value){
+									var value = new Object();
+									value.label = selectedField.label;
+									value.value = selectedField.texts[i];
+									formatted_values.push(value);
+								}
+							}
+						}
+
+					});
+				});
+			}
+		%>
+		<div class="cart-option" data-cart-option-id="<%= option.cartOptionId %>" data-item-option-id="<%= option.itemOptionId %>">
+			<span class="option-value"><%= option.label || option.name.replace(':', '') %></span>: 
+			
+			<% _.each(formatted_values, function(formatted_value){ %>
+				<div class="row-fluid">
+					<span class="option-label"><%= formatted_value.label %> </span>:
+					<span class="option-value"><%= formatted_value.value %></span>
+				</div>
+			<% }); %>
+		</div>
+	<% } else { %>
+		<div class="cart-option" data-cart-option-id="<%= option.cartOptionId %>" data-item-option-id="<%= option.itemOptionId %>">
+			<span class="option-label">
+				<%= option.label || option.name.replace(':', '') %></span>: <span class="option-value"><%= value.label %>
+			</span>
+		</div><!--br / --> <!-- WHAT THE BLOODY FUCK HELL IS THIS BR TAG ?!!!!! -->
+	<% } %>
+
+<% }) %>

@@ -1,0 +1,2 @@
+AddType application/x-font-woff .woff
+Header set Access-Control-Allow-Origin "*"

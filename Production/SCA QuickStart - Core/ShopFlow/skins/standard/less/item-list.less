@@ -1,0 +1,329 @@
+//Item list and category list ----------------------------------------------------
+//--------------------------------------------------------------------------------
+
+//Item list ======================================================================
+//Left nav (facets)
+.well-facet {
+  border: @facet-box-border;
+  background: @facet-box-bk;
+  padding: 5px;
+  margin-bottom: 20px;
+  .border-radius(@facet-box-radius, @facet-box-radius, @facet-box-radius, @facet-box-radius);
+  .well-facet-header {
+    border-bottom: @facet-box-border;
+    border-width: 0 0 1px 0;
+    margin: 0 -6px;
+    padding: 5px 14px 14px;
+    display: @facet-box-narrow;
+    h3 {
+      padding: 0;
+      margin: 0;
+    }
+  }
+  .well-facet-body {
+    padding: 0;
+    .well-section {
+      border-bottom: none;
+      border-top: none;
+    }
+    h3 {
+      border-bottom: 1px solid #D8D9D4;
+      font-weight: 400;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+    .filters {
+      //common facet lists
+      ul.nav-list {
+        li {
+          a {
+            margin:2px -30px ;
+            .fa.fa-close {
+              display: none;
+            }
+          }
+          &.active {
+            a {
+              margin:2px -15px 5px;
+              background: @facet-selected;
+              color: #FFF;
+              font-weight: 400;
+              padding: 7px 15px;
+              text-shadow: 1px 1px 1px darken(@facet-selected, 30%);
+              .border-radius(5px, 5px, 5px, 5px);
+              .fa.fa-close {
+                display: inline-block;
+                font-weight: lighter;
+                float: right;
+                margin-top: 2px;
+                color: darken(@facet-selected, 20%);
+                text-shadow: 1px 0px 0px darken(@facet-selected, 30%);
+              }
+              &:hover {
+                text-decoration: none;
+                background: darken(@facet-selected, 5%);
+                span {
+                  text-decoration: none;
+                }
+              }
+            }
+          }
+        }
+      }
+      //color Facet list
+      ul.color-tiles {
+        padding-left: 0;
+        li {
+          a {
+            margin: 0;
+            padding: 0;
+            span {
+
+            }
+          }
+        }
+      }
+      //Range facet selector
+      .progress.slider {
+          background: lighten(@facet-range, 30%);
+          .bar {
+            background: @facet-range;
+          }
+        .slider-control {
+          background: none;
+          padding: 0;
+          font-size: 20px;
+          .fa-stack {
+            width: 1em;
+            height: 1em;
+            line-height: 1em;
+            .fa-circle {
+              color: darken(@facet-range, 5%);
+              text-shadow: 0px 0px 3px darken(@facet-range, 40%);
+            }
+            .fa-dot-circle-o {
+              color: darken(@facet-range, 15%);
+            }
+          }
+        }
+      }
+    }
+    .facets-container {
+      .facet-well:last-child {
+        //border-bottom: 1px solid #D8D9D4;
+      }
+    }
+  }
+}
+
+//Banner on top
+.banner-section-top {
+  padding-bottom: 15px;
+}
+
+//head container (for product list)
+.facet-header {
+  overflow-x: auto;
+  border-bottom: @side-box-border;
+  //phone (less than 767px)
+  @media (max-width: 767px){
+    overflow-x: inherit;
+    position: relative;
+    min-height: 60px;
+    border-bottom: @side-box-border;
+    background: none;
+    .item-listing-display {
+      position: absolute;
+      left: 0;
+      top: -40px;
+      a {
+        height: 30px;
+      }
+    }
+  }
+  h1 {
+    padding-bottom: 8px;
+    color: @font-optional-color;
+    font-size: 20px;
+    border-bottom: @side-box-border;
+    .total-items {
+      color: @font-optional-color;
+      font-weight: normal;
+    }
+  }
+}
+//Fixes for phone in small screens
+@media (max-width: 380px){
+  p.h1 {
+    font-size: 20px;
+  }
+  .narrow-by-btn {
+    margin: 0;
+  }
+}
+
+//Facet Navigation Responsive (tablets)
+@media (min-width: 767px) and (max-width: 979px) {
+  .facet-browse {
+    nav.span3 {
+      position: relative;
+    }
+  }
+  #faceted-navigation {
+    background: #FFF;
+    border: 1px solid #ccc;
+    left: 107px;
+    top: 77px;
+    width: 249px;
+  }
+}
+//Facet Navigation Responsive (phones)
+@media (max-width: 767px){
+  #faceted-navigation {
+    background: #FFF;
+    width: 95%;
+    margin: auto;
+    border: 1px solid #ccc;
+    margin-top: 20px;
+    .well-facet-header {
+      display: block;
+      height: 40px;
+      .narrow-show {
+        display: none;
+      }
+    }
+  }
+  //selected facets
+  .facet-selections {
+    position: relative;
+    .span10 {
+      float: left;
+      padding-top: 56px;
+    }
+    .span2 {
+      position: absolute;
+      top: 0;
+      right: 0px;
+    }
+    .facet-clear-all {
+      width: 100%;
+    }
+  }
+}
+
+//view by buttons
+.item-listing-display {
+  .btn {
+    background: none;
+    border: 1px solid @view-by-color;
+    margin-left: 5px !important;
+    .border-radius(3px, 3px, 3px, 3px) !important;
+    padding: 2px 4px;
+    line-height: 0;
+    i {
+      background: none;
+      height: auto;
+      width: auto;
+      font-size: 20px;
+      color: @view-by-color;
+    }
+    &:hover {
+      background: none;
+      i {
+        color: darken(@view-by-color, 10%);
+      }
+    }
+    &.active {
+      i {
+        color: @view-by-color-active;
+      }
+    }
+  }
+}
+
+//Sort By
+.item-listing-sorting {
+  .sort-selector-label {
+    margin-left: -60px;
+    position: relative;
+    top: -3px;
+  }
+  select {
+    padding: 2px 6px;
+  }
+}
+
+//Pagination
+.pagination-small {
+  margin-top: 3px;
+  ul>li>a { padding: 5px 10px;}
+}
+
+//Facet selection (selected facets above product list)
+.facet-selections {
+  .facet-selections-label {
+    display: none;
+  }
+  li.active {
+    a {
+      background: @facet-selected;
+      color: #FFF;
+      font-weight: 400;
+      text-shadow: 1px 1px 1px darken(@facet-selected, 30%);
+      font-size: 13px;
+      &:hover {
+        text-decoration: none;
+        background: darken(@facet-selected, 5%);
+      }
+    }
+  }
+  a.btn.facet-clear-all {
+    .buttonBackground(#cccccc, #cccccc, #444, none, #cccccc);
+    box-shadow: none;
+    border: none;
+  }
+}
+
+//Item Cell
+#item-list {
+  //Item cell image
+  .item-cell-thumbnail {
+
+  }
+  //Item cell details (price, rating and name)
+  h2.item-cell-name {
+    a {
+      color: @ink-0;
+      font-size: 16px;
+    }
+  }
+}
+
+//Quick View
+.modal-product-detail {
+  .add-to-cart-form {
+    padding: 10px 0 10px 0;
+    div {
+      >label {
+        height: 15px;
+      }
+      .btn.add-to-cart {
+         margin-top: 11px;
+      }
+    }
+  }
+}
+
+//Specifics for Category List
+#category-navigation.well-facet {
+  .well-header {
+    padding-left: 8px;
+  }
+  .well-facet-body {
+    h3.heading {
+      padding: 4px 0;
+      margin-bottom: 8px;
+    }
+  }
+}

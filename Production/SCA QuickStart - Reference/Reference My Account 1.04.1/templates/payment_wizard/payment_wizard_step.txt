@@ -1,0 +1,35 @@
+
+<h4><%= view.wizard.steps[view.wizard.currentStep].options.stepGroup.name %></h4>
+<hr>
+<% if (!view.hideBreadcrumb) { %>
+	<%= paymentWizardBreadcrumb(view.wizard.stepGroups) %>
+<% } %>
+
+<div data-type="alert-placeholder-step"></div>
+
+<div class="step-navigation-buttons-top payment-next-button">
+	<button class="btn btn-primary btn-large btn-expanded btn-continue" data-action="submit-step">
+		<%= view.continueButtonLabel %>
+	</button>
+</div>
+
+
+<div class="row-fluid">
+	<div id="wizard-step-content" class="wizard-step-content span8"></div>
+	<div id="wizard-step-content-right" class="wizard-step-content span4"></div>
+</div>
+
+<% if (!view.hideBackButton || !view.hideContinueButton) { %>
+	<div class="step-navigation-buttons form-actions">
+		<% if (!view.hideBackButton) { %>
+			<button class="btn btn-large btn-back" data-action="previous-step">
+				<%= _('Back').translate() %>
+			</button>
+		<% } %>
+		<% if (!view.hideContinueButton) { %>
+			<button class="btn btn-primary btn-large btn-continue" data-action="submit-step">
+				<%= view.continueButtonLabel %>
+			</button>
+		<% } %>
+	</div>
+<% } %>

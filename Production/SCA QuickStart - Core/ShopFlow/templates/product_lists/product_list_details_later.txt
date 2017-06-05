@@ -1,0 +1,240 @@
+<%
+	var config = view.application.Configuration.product_lists
+	,	items = view.model.get('items')
+	, 	out_of_stock_items = items.filter(function(product_list_item) { return !product_list_item.get('item').ispurchasable; })
+	,	type = view.model.get('type').name
+	,	items_length = items.length
+	,	items_length_message = '';
+
+	if (items_length === 0)
+	{
+		items_length_message = _('(No items yet)').translate();
+	}
+	else if (items_length === 1)
+	{
+		items_length_message = _('($(0) Item)').translate(items_length);
+	}
+	else if (items_length > 1)
+	{
+		items_length_message = _('($(0) Items)').translate(items_length);
+	}
+
+	var arrObjFilteredItems = [];
+	var arrObjFilteredItemsTotal = 0;
+	var hasArrObjFilteredItems = false;
+	var stFilterSaveForLaterRef = view.model.get('swx_filter_save_for_later_client');
+	var hasStFilterSaveForLaterRef = (!_.isNullOrEmpty(stFilterSaveForLaterRef)) ? true : false;
+
+	if (hasStFilterSaveForLaterRef)
+	{
+		var stItems = JSON.stringify(items);
+		var arrObjItems = JSON.parse(stItems)
+		arrObjFilteredItems = _.getArrObjFilteredSaveForLaterItems(arrObjItems, stFilterSaveForLaterRef);
+		arrObjFilteredItemsTotal = (!_.isNullOrEmpty(arrObjFilteredItems)) ? arrObjFilteredItems.length : 0;
+		hasArrObjFilteredItems = (arrObjFilteredItemsTotal != 0) ? true : false;
+	}
+	
+
+%>
+<header>
+	<h3 class="list-header-title">
+		<%= (type === 'predefined' || type === 'later') ? _(view.model.get('name')).translate() : view.model.get('name') %> 
+		<% if (!hasStFilterSaveForLaterRef) { %>
+			<span class="product-list-details-count"><%= items_length_message %></span>
+		<% } %>
+
+		<% if (hasStFilterSaveForLaterRef) { %>
+			
+			<% if (hasArrObjFilteredItems) { %>
+				
+				<% if (arrObjFilteredItemsTotal == 1) { %>
+					<span class="product-list-details-count">(<%= arrObjFilteredItemsTotal %> <%= _('Item found for Client ').translate() %> "<%= stFilterSaveForLaterRef %>")</span>
+				<% } %>
+				
+				<% if (arrObjFilteredItemsTotal != 1) { %>
+					<span class="product-list-details-count">(<%= arrObjFilteredItemsTotal %> <%= _('Items found for Client ').translate() %> "<%= stFilterSaveForLaterRef %>")</span>
+				<% } %>
+
+			<% } %>
+			
+			<% if (!hasArrObjFilteredItems) { %>
+				<span class="product-list-details-count">(<%= _('No Items found for Client ').translate() %> "<%= stFilterSaveForLaterRef %>")</span>
+			<% } %>
+			
+		<% } %>
+
+	</h3> 
+	
+	<% if (items_length > 0) { %>
+		<!--
+		<span class="product-list-details-explanation">
+			<%= _('To buy an item now, click "Add to Cart"').translate() %>
+		</span>
+		-->
+		
+		<% if (!hasStFilterSaveForLaterRef) { %>
+				<div class="row-fluid">
+					<div class="span8">
+						<span><%= _('To buy an item now, click "Add to Cart"').translate() %></span>
+					</div>
+		
+					<div class="span4">
+		
+						<div class="row-fluid">
+							<div class="span6">
+								<!--		
+								<div class="control-group">
+									<label for="swx_filter_save_for_later_client" class="control-label"></label>
+									<div class="controls">
+										<input type="text" value="" name="swx_filter_save_for_later_client" id="swx_filter_save_for_later_client" placeholder="<%= _('Filter By Client Name').translate() %>" class="input-large" style="width: 100%;">
+									</div>
+								</div>
+								-->
+		
+								<div>
+									<input type="text" value="<%=stFilterSaveForLaterRef%>" name="swx_filter_save_for_later_client" id="swx_filter_save_for_later_client" placeholder="<%= _('Filter By Client Name').translate() %>" class="input-large" style="width: 93%;">
+								</div>
+		
+							</div>			
+		
+							<div class="span3">
+								<div><button id="swx-butt-save-for-later-filter" class="btn btn-primary" style="width: 100%;">Filter</button></div>
+							</div>			
+		
+							<div class="span3">
+								<div><button id="swx-butt-save-for-later-filter-clear" class="btn btn-primary" style="width: 100%;">Clear</button></div>
+							</div>			
+						</div>
+					</div>
+				</div>
+		<% } %>
+		
+		<% if (hasStFilterSaveForLaterRef) { %>
+			
+			<% if (hasArrObjFilteredItems) { %>
+			
+				<div class="row-fluid">
+					<div class="span8">
+						<span><%= _('To buy an item now, click "Add to Cart"').translate() %></span>
+					</div>
+		
+					<div class="span4">
+		
+						<div class="row-fluid">
+							<div class="span6">
+								<!--		
+								<div class="control-group">
+									<label for="swx_filter_save_for_later_client" class="control-label"></label>
+									<div class="controls">
+										<input type="text" value="" name="swx_filter_save_for_later_client" id="swx_filter_save_for_later_client" placeholder="<%= _('Filter By Client Name').translate() %>" class="input-large" style="width: 100%;">
+									</div>
+								</div>
+								-->
+		
+								<div>
+									<input type="text" value="<%=stFilterSaveForLaterRef%>" name="swx_filter_save_for_later_client" id="swx_filter_save_for_later_client" placeholder="<%= _('Filter By Client Name').translate() %>" class="input-large" style="width: 93%;">
+								</div>
+		
+							</div>			
+		
+							<div class="span3">
+								<div><button id="swx-butt-save-for-later-filter" class="btn btn-primary" style="width: 100%;">Filter</button></div>
+							</div>			
+		
+							<div class="span3">
+								<div><button id="swx-butt-save-for-later-filter-clear" class="btn btn-primary" style="width: 100%;">Clear</button></div>
+							</div>			
+						</div>
+					</div>
+				</div>
+
+			<% } %>
+			
+			<% if (!hasArrObjFilteredItems) { %>
+			
+				<div class="row-fluid">
+					<div class="span8">
+						<span>&nbsp;</span>
+					</div>
+		
+					<div class="span4">
+		
+						<div class="row-fluid">
+							<div class="span6">
+								<div>
+									<input type="text" value="<%=stFilterSaveForLaterRef%>" name="swx_filter_save_for_later_client" id="swx_filter_save_for_later_client" placeholder="<%= _('Filter By Client Name').translate() %>" class="input-large" style="width: 93%;">
+								</div>
+		
+							</div>			
+		
+							<div class="span3">
+								<div><button id="swx-butt-save-for-later-filter" class="btn btn-primary" style="width: 100%;">Filter</button></div>
+							</div>			
+		
+							<div class="span3">
+								<div><button id="swx-butt-save-for-later-filter-clear" class="btn btn-primary" style="width: 100%;">Clear</button></div>
+							</div>			
+						</div>
+					</div>
+				</div>
+			
+			<% } %>
+			
+			
+		<% } %>
+		
+	<% } %>
+
+	<div data-confirm-message class="confirm-message"></div>
+
+<% if(view.model) { 
+	var items = view.model.get('items');
+	if(items_length > 0)
+	{				
+		var productListDisplay = null;
+		
+		if (!hasStFilterSaveForLaterRef)
+		{
+			productListDisplay = function (row)
+			{
+				return SC.macros['productListDisplayLater'](row, view);
+			}		
+		
+		}
+		
+		if (hasStFilterSaveForLaterRef)
+		{
+			productListDisplay = function (row)
+			{
+				return SC.macros['productListDisplayLater'](row, view, null, arrObjFilteredItems, 'T');
+			}		
+		}
+		
+		/**
+		var productListDisplay = function (row)
+		{
+			return SC.macros['productListDisplayLater'](row, view);
+		}
+		**/
+	%>	
+</header>
+
+<% /* TODO: pagination and sub title - commented!
+<div class="product-list-sub-header">
+	<div class="pull-right" data-type="product-list-actions">	
+		<!-- PAGINATION -->
+	</div>
+</div>
+*/ %>
+
+
+<div class="product-list-items" data-type="product-list-items">	
+	<%= displayInRows(items.models, productListDisplay, 1) %>
+</div>
+
+	<% } else { %>
+		<span class="product-list-header-no-items">
+			<%= _('You don\'t have items in this list yet.').translate() %>	
+		</span>
+	<% } %>	
+<% } %>

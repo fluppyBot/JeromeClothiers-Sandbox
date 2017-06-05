@@ -1,0 +1,43 @@
+<% registerMacro('blockMeasureField', function (field, value, increment) {
+	var type = field.type
+	,	label = field.label
+	,	name = field.name
+	,	inputHtml = "";
+
+	if(type == "select"){
+
+		if(field.options && field.options.length){
+			inputHtml = '<div class="span3"><select class="input input-small" id="body-' + name + '" name="' + name + '">';
+			_.each(field.options, function(option){
+				var selected = value == option ? 'selected' : '';
+				inputHtml = inputHtml + '<option value="' + option + '" ' + selected + '>' + option + '</option>'
+			});
+			inputHtml = inputHtml + '</select></div>';
+		} else {
+			if(!_.isUndefined(field.max) && !_.isNull(field.max)){
+				inputHtml = inputHtml + '<div class="span3"><select class="input input-small block-measurement-fld" id="' + name + '-max" name="' + name + '-max">'
+				for(var i = 0; i <= field.max; i = i + increment){
+					var selected = !_.isUndefined(value[1]) && parseFloat(value[1].value) == i ? 'selected' : '';
+					inputHtml = inputHtml + '<option value="' + i + '" ' + selected + '>' + i + '</option>'
+				}
+				inputHtml = inputHtml + '</select></div>'
+			}
+			if(!_.isUndefined(field.min) && !_.isNull(field.min)){
+				inputHtml = inputHtml + '<div class="span3"><select class="input input-small block-measurement-fld" id="' + name + '-min" name="' + name + '-min">'
+				for(var i = 0; i >= field.min; i = i - increment){
+					var selected = !_.isUndefined(value[0]) && parseFloat(value[0].value) == i ? 'selected' : '';
+					inputHtml = inputHtml + '<option value="' + i + '" ' + selected + '>' + i + '</option>'
+				}
+				inputHtml = inputHtml + '</select></div>'
+			}
+		}
+
+	} else {
+		inputHtml = '<input class="input input-small" type="text" id="' + name + '" name="' + name + '" />'
+	}
+%>
+<div class="row-fluid">
+	<div class="span2"><%= label %></div>
+	<%= inputHtml %>
+</div>
+<% }) %>

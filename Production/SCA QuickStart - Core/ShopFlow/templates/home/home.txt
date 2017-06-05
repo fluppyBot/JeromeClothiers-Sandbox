@@ -1,0 +1,18 @@
+<section>
+    <div class="span4" data-cms-area="home_banner_1" data-cms-area-filters="global"></div>
+    <div class="span4" data-cms-area="home_banner_2" data-cms-area-filters="path"></div>
+    <div class="span4" data-cms-area="home_banner_3" data-cms-area-filters="path"></div>
+    <div class="slider-wrapper container">
+        <div id="home-slider" class="home-slider"></div>
+    </div>
+    <!-- Home Merchandising zone -->
+    <div class="full-gradient-home merchandising">
+        <div id="home-merchandising" class="home-merchandising container" data-type="merchandising-zone" data-id="home-merchandising"></div>
+    </div>
+    <!-- / Home Merchandising zone -->
+    <!-- Home content delivery zone -->
+    <div class="full-gradient-home cdelivery">
+        <div id="home-promo-content" class="home-promo-content container"></div>
+    </div>
+    <!-- / Home content delivery zone -->
+</section>

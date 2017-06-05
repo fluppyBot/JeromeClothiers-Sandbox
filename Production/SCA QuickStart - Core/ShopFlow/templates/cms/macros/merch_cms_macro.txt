@@ -1,0 +1,28 @@
+<% registerMacro('merch_cms', function (zone) { %>
+<% var items_per_row = 4; %>
+<% var grid_columns = 12 / items_per_row; %>
+<aside>
+	<div class="row-fluid">
+		<div class="row-fluid">
+			<% _.each(zone.items, function (item, index) { %>
+				<% if ((index % items_per_row) == 0 && index > 0) { %>
+					</div>
+					<div class="row-fluid">
+				<% } %>
+				<div class="span<%= grid_columns %>">
+					<% var item_url = '/'+ item.urlcomponent; %>
+					<div class="item-cell item-cell-grid">
+						<a class="thumbnail" href="<%= item_url %>">
+							<img src="<%= item.cms.merch.image.url %>" alt="<%= item.cms.merch.image.alt_text %>" />
+						</a>
+						<h5>
+							<a href="<%= item_url %>"><%= item.name %></a>
+						</h5>
+						<a class="btn btn-small btn-primary btn-expanded" href="<%= item_url %>"><%= _('See more').translate() %></a>
+					</div>
+				</div>
+			<% }); %>
+		</div>
+	</div>
+</aside>
+<% }); %>

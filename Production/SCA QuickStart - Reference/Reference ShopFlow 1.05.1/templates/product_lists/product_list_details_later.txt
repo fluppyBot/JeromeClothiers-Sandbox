@@ -1,0 +1,63 @@
+<%
+	var config = view.application.Configuration.product_lists
+	,	items = view.model.get('items')
+	, 	out_of_stock_items = items.filter(function(product_list_item) { return !product_list_item.get('item').ispurchasable; })
+	,	type = view.model.get('type').name
+	,	items_length = items.length
+	,	items_length_message = '';
+
+	if (items_length === 0)
+	{
+		items_length_message = _('(No items yet)').translate();
+	}
+	else if (items_length === 1)
+	{
+		items_length_message = _('($(0) Item)').translate(items_length);
+	}
+	else if (items_length > 1)
+	{
+		items_length_message = _('($(0) Items)').translate(items_length);
+	}
+%>
+<header>
+	<h3 class="list-header-title">
+		<%= (type === 'predefined' || type === 'later') ? _(view.model.get('name')).translate() : view.model.get('name') %> 
+		<span class="product-list-details-count"><%= items_length_message %></span>
+	</h3> 
+	
+	<% if (items_length > 0) { %>
+		<span class="product-list-details-explanation">
+			<%= _('To buy an item now, click "Add to Cart"').translate() %>
+		</span>
+	<% } %>
+
+	<div data-confirm-message class="confirm-message"></div>
+
+<% if(view.model) { 
+	var items = view.model.get('items');
+	if(items_length > 0) {				
+		var productListDisplay = function (row) {
+			return SC.macros['productListDisplayLater'](row, view);
+		}		
+	%>	
+</header>
+
+<% /* TODO: pagination and sub title - commented!
+<div class="product-list-sub-header">
+	<div class="pull-right" data-type="product-list-actions">	
+		<!-- PAGINATION -->
+	</div>
+</div>
+*/ %>
+
+
+<div class="product-list-items" data-type="product-list-items">	
+	<%= displayInRows(items.models, productListDisplay, 1) %>
+</div>
+
+	<% } else { %>
+		<span class="product-list-header-no-items">
+			<%= _('You don\'t have items in this list yet.').translate() %>	
+		</span>
+	<% } %>	
+<% } %>

@@ -1,0 +1,316 @@
+<%
+
+    var config = SC.projectConfig,
+        combConfig = config.combiners,
+        method = request.getMethod(),
+        result = {},
+        errorResult = false,
+        wrongPass = false,
+        passRequired = !!combConfig.password && combConfig.password.required,
+        password = passRequired && combConfig.password.value;
+
+    switch (method) {
+        case 'POST': {
+
+            var combine = {};
+
+            var params = request.getAllParameters(),
+                regex = /^combine\[(.*)\]/,
+                res = null, info, app, notEmpty = false;
+
+            if(!passRequired || (passRequired && params['password'] && params['password'] === password)) {
+
+                if(passRequired) {
+                    delete params['password'];
+                }
+
+                for(var param in params) {
+                    res = regex.exec(param);
+                    if(res && res.length > 1) {
+                        info = res[1].split('][');
+                        app = info[0];
+                        if(info[1]) {
+                            if(combine[app] != "all") {
+                                if(!(combine[app] instanceof Array)) {
+                                    combine[app] = [];
+                                }
+                                combine[app].push(info[1]);
+                                notEmpty = true;
+                            }
+                        } else {
+                            combine[app] = "all";
+                            notEmpty = true;
+                        }
+                    }
+                }
+
+                if(notEmpty) {
+                    var resultStr = nlapiRequestURL(nlapiResolveURL('SUITELET', combConfig.suitelet.script, combConfig.suitelet.deploy, true), { config: JSON.stringify(config), combine: JSON.stringify(combine) }).getBody();
+
+                    if(resultStr) {
+                        try {
+                            result = JSON.parse(resultStr) || {};
+                        }
+                        catch (e){
+                            result = {};
+                            errorResult = true;
+                        }
+                    }
+                }
+            } else {
+                method = "GET";
+                wrongPass = true;
+            }
+
+            break;
+        }
+    }
+
+%>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <title>CAT - Combiners Auto-Trigger</title>
+        <link rel="stylesheet" type="text/css" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+        <style>
+            .container { position: relative; max-width: 700px/*980px*/; margin: auto; }
+            .logo { display: block; position: absolute; right: 12px; top: 8px; }
+            .action-btns { text-align: right; }
+            .batch-action,
+            .batch-group-action { cursor: pointer; }
+            label.combine-folder.text-muted { cursor: not-allowed; }
+            .result .glyphicon { vertical-align: top; }
+            .password { padding: 6px; border-radius: 5px; border: 1px solid #adadad; vertical-align: middle; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+
+            <h1><a href="">CAT - Combiners Auto-Trigger</a></h1>
+            <span class="logo"><img alt="" src="" /></span>
+
+            <% if(method === "GET") { %>
+
+            <div class="auto-trigger-selector">
+
+                <p>Select the desired SSP Applications, and/or folders in them, in which you want to trigger the combiners. If the containing folder is not of type "SuiteCommerce Advanced Site Templates", it will be set to it.</p>
+                <p>Current Hosting Files Folder: <code><%= config.hosting_files_folder %></code></p>
+                <p class="text-primary">Check the whole SSP to <strong>combine it entirely</strong>, or select <strong>each folder separately</strong>.</p>
+                <% if(wrongPass) { %>
+                <div class="alert alert-danger" role="alert">
+                    <strong>Wrong password!</strong> Please enter your information and try again.
+                </div>
+                <% } %>
+                <form action="" method="post" class="selector-form form-horizontal">
+                    <% function showAppGroup(checked) { %>
+                        <div class="form-group">
+                            <div class="col-md-12 batch-group-actions">
+                                <a class="batch-group-action batch-group-select-all">Select All</a> -
+                                <a class="batch-group-action batch-group-enable-folders">Deselect Applications</a> -
+                                <a class="batch-group-action batch-group-deselect-all">Deselect Everything</a>
+                            </div>
+                            <% for(var appKey in combConfig.applications) { %>
+                            <% var app = combConfig.applications[appKey]; %>
+                            <div class="col-md-4 application">
+                                <div class="checkbox col-md-12">
+                                    <label for="<%= appKey %>" class="combine-app">
+                                        <input type="checkbox" name="combine[<%= appKey %>]" value="T"<% if(checked) { %> checked="checked"<% } %> id="<%= appKey %>" />
+                                        <%= app.folder %>
+                                    </label>
+                                </div>
+                                <div class="col-md-offset-1 col-md-11 folder-group">
+                                    <% for(var combineKey in app.combine) { %>
+                                    <% var combine = app.combine[combineKey]; %>
+                                    <div class="checkbox">
+                                        <label for="<%= appKey %>_<%= combine.replace(/\//g,'-') %>" class="combine-folder <% if(checked) { %> text-muted <% } %>">
+                                            <input type="checkbox" name="combine[<%= appKey %>][<%= combine %>]" value="T"<% if(checked) { %> checked="checked" disabled="disabled"<% } %> id="<%= appKey %>_<%= combine.replace(/\//g,'-') %>" />
+                                            <%= combine %>
+                                        </label>
+                                    </div>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <% } %>
+                        </div>
+                    <% } %>
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <h3>SSP Applications</h3>
+                            <% showAppGroup(true); %>
+                        </div>
+                    </div>
+                    <div class="form-group action-btns">
+                        <div class="col-md-12">
+                            <!--span class="batch-actions">
+                                <a class="batch-action batch-select-all">Select All</a> -
+                                <a class="batch-action batch-enable-folders">Deselect Applications</a> -
+                                <a class="batch-action batch-deselect-all">Deselect Everything</a>
+                            </span-->
+                            <% if(passRequired) { %>
+                            <input type="password" placeholder="Enter Password" name="password" class="password" required="required">
+                            <% } %>
+                            <button type="submit" class="btn btn-primary">Run</button>
+                            <button type="reset" class="btn btn-default">Reset</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <% } else if(method === "POST") { %>
+
+            <div class="auto-trigger-results">
+                <p class="text-warning">DISCLAIMER: <strong>The combiner being triggered doesn't imply that the combined file is successfully created</strong>. Wrong rules inside the combiner, missing files, minification errors, etc. may prevent the combination from working.</p>
+                <h2>Results</h2>
+                <div class="results col-md-12">
+                <% for(var app in result) { %>
+
+                    <%
+                        var appConfig = combConfig.applications[app];
+                    %>
+                    <h3><%= appConfig.folder %></h3>
+
+                    <div class="app-results">
+                        <%
+                            var folders = result[app],
+                                count = 0;
+                        %>
+                        <div class="row">
+                        <% for(var folderName in folders) { %>
+                            <% if(count > 0 && count % 3 == 0) { %>
+                        </div>
+                        <div class="row">
+                            <% } %>
+                            <% var folder = folders[folderName]; %>
+                            <div class="result col-md-4">
+                                <h4 class="<% if(folder.status == 200) { %> text-success <% } else { %> text-danger <% } %>"><%= folderName %> <span class="glyphicon glyphicon-<% if(folder.status == 200) { %>ok<% } else { %>remove<% } %>"></span></h4>
+                                <p><%= folder.message %></p>
+                                <% if(folder.status != 200) { %>
+                                <p>Combiner file path:</p>
+                                <pre><%= folder.path %></pre>
+                                <% } %>
+                            </div>
+                            <% count++; %>
+                        <% } %>
+                        </div>
+                    </div>
+                <% } %>
+                </div>
+                <% if(errorResult) { %>
+                <div class="results-error">
+                    <%= resultStr %>
+                </div>
+                <% } %>
+
+            </div>
+
+            <% } %>
+        </div>
+
+        <script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script type="text/javascript" src="//underscorejs.org/underscore-min.js"></script>
+        <script type="text/javascript" src="//backbonejs.org/backbone-min.js"></script>
+        <script type="text/javascript">
+
+            var SelectorView = Backbone.View.extend({
+
+                events: {
+                    'reset form.selector-form': 'formReset',
+                    'change .combine-folder input[type="checkbox"]': 'toggleFolderCheckbox',
+                    'change .combine-app input[type="checkbox"]': 'toggleAppCheckbox',
+                    'click .batch-select-all': 'selectAll',
+                    'click .batch-deselect-all': 'deselectAll',
+                    'click .batch-group-select-all': 'selectAllGroup',
+                    'click .batch-group-deselect-all': 'deselectAllGroup',
+                    'click .batch-enable-folders': 'enableAllFolders',
+                    'click .batch-group-enable-folders': 'enableGroupFolders'
+                },
+
+                formReset: function(e) {
+                    var $inputs = this.$('input[type="checkbox"]');
+                    setTimeout(function() {
+                        $inputs.trigger('change');
+                    }, 1);
+                },
+                toggleFolderCheckbox: function(e) {
+                    var $checkbox = $(e.target),
+                        $application = $checkbox.parents('.application'),
+                        $folders = $application.eq(0).find('.combine-folder'),
+                        $inputs = $folders.children('input[type="checkbox"]'),
+                        $appCheckbox = $application.find('.combine-app input[type="checkbox"]');
+                    var allChecked = _.every($inputs.toArray(), function(element) { return $(element).is(':checked'); });
+                    if(allChecked) {
+                        $appCheckbox.prop('checked', true).trigger('change');
+                    }
+                },
+                toggleAppCheckbox: function(e) {
+                    var $checkbox = $(e.target),
+                        $folders = $checkbox.parents('.application').eq(0).find('.combine-folder'),
+                        $inputs = $folders.children('input[type="checkbox"]');
+                    if($checkbox.is(':checked')) {
+                        $inputs.prop('disabled', true);
+                        $folders.addClass('text-muted');
+                    } else {
+                        $inputs.prop('disabled', false);
+                        $folders.removeClass('text-muted');
+                    }
+                },
+                toggleBatch: function(e, select, $context) {
+                    var $apps = $context.find('.combine-app input[type="checkbox"]'),
+                        $folders = $context.find('.combine-folder'),
+                        $inputs = $folders.children('input[type="checkbox"]');
+                    if(select) {
+                        $inputs.prop('checked', true);
+                        $apps.prop('checked', true).trigger('change');
+                    } else {
+                        $apps.prop('checked', false).trigger('change');
+                        $inputs.prop('checked', false);
+                    }
+                },
+                selectAll: function(e) {
+                    this.toggleBatch(e, true, this.$el);
+                },
+                deselectAll: function(e) {
+                    this.toggleBatch(e, false, this.$el);
+                },
+                selectAllGroup: function(e) {
+                    this.toggleBatch(e, true, $(e.target).parents('.form-group').eq(0));
+                },
+                deselectAllGroup: function(e) {
+                    this.toggleBatch(e, false, $(e.target).parents('.form-group').eq(0));
+                },
+                toggleFolders: function(e, enable, $context) {
+                    var $apps = $context.find('.combine-app input[type="checkbox"]');
+                    if(enable) {
+                        $apps.prop('checked', false).trigger('change');
+                    }
+                },
+                enableAllFolders: function(e) {
+                    this.toggleFolders(e, true, this.$el);
+                },
+                enableGroupFolders: function(e) {
+                    this.toggleFolders(e, true, $(e.target).parents('.form-group').eq(0));
+                }
+
+            });
+            var ResultsView = Backbone.View.extend({});
+            $(function() {
+
+                $('.logo img').attr('src', 'data:image/jpeg;base64,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');
+
+                var $selector = $('.auto-trigger-selector'),
+                    $results = $('.auto-trigger-results');
+                if($selector.length) {
+                    new SelectorView({
+                        el: $selector.get(0)
+                    });
+                } else if($results.length) {
+                    new ResultsView({
+                        el: $results.get(0)
+                    });
+                }
+
+            });
+        </script>
+    </body>
+</html>

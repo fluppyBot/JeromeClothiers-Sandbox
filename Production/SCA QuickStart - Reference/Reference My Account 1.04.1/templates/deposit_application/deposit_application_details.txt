@@ -1,0 +1,82 @@
+<section>
+	<header>
+		<h3>
+			<%= _('Deposit Application <span class="strong deposit-number">#$(0)</span>').translate(view.model.get('tranid')) %>
+			<span class="strong pull-right hidden-phone deposit-amount"><%= view.model.get('total_formatted') %></span>
+		</h3>
+		<a href="/transactionhistory" class="back-btn">
+			<%= _('&lt; Back to Transaction History').translate() %>
+		</a>		
+	</header>
+
+	<hr class="divider-small">
+
+	<% var collapse_elements = view.options.application.getConfig('collapseElements'); %>
+
+	<div class="header-information margin-bottom-10">
+		<div class="row-fluid">
+			<div class="span12">
+				<p class="info deposit-transaction-date"><%= _('Transaction Date: $(0)').translate(view.model.get('trandate')) %></p>
+				<p class="info">
+					<%= _('From:').translate() %>
+					<a href="/transactionhistory/customerdeposit/<%- view.model.get('deposit').internalid %>" class="deposit-link"><%- view.model.get('deposit').name %></a>
+				</p> 
+				<p class="info">
+					<%= _('Deposit Date: <span class="deposit-date">$(0)</span>').translate(view.model.get('depositdate')) %>
+				</p>
+			</div>
+		</div>
+	</div>
+
+	<div class="row-fluid control-group" data-type="accordion">
+		<div class="well" data-action="items-expander">
+			<div class="well-header">
+				<%= _('Applied to Invoices').translate() %>
+				<a href="#" class="pull-right"><i class="icon-plus <%= collapse_elements ? '' : 'icon-minus' %>"></i></a>
+			</div>
+		</div>
+		<div data-content="items-body" <%= collapse_elements ? 'style="display: none;"' : '' %>>
+			<% if (view.model.get('invoices') && view.model.get('invoices').length) { %>
+			<div class="row-fluid nav-tabs hide-phone">
+				<div class="span4 popover-content popover-heading"><%= _('Number').translate() %></div>
+				<div class="span5 popover-content popover-heading"><%= _('Transaction Date').translate() %></div>
+				<div class="span3 popover-content popover-heading responsive-align"><%= _('Amount').translate() %></div>
+			</div>
+			<%	view.model.get('invoices').each(function (invoice, index) { %>
+				<div class="row-fluid nav-tabs deposit-invoice invoice-<%= invoice.get('internalid') %>">
+					<div class="span4 text-left popover-content"><span class="show-phone text-light"><%= _('Number: ').translate() %></span><a href="/invoices/<%= invoice.get('internalid') %>" class="invoice-number"><%= _('$(0)').translate(invoice.get('refnum')) %></a></div>
+					<div class="span5 text-left popover-content"><%= _('<span class="show-phone text-light">Transaction Date: </span><span class="invoice-date">$(0)</span>').translate(invoice.get('applydate')) %></div>
+					<div class="span3 popover-content responsive-align"><%= _('<span class="show-phone text-light">Amount: </span><span class="invoice-amount">$(0)</span>').translate(invoice.get('amount_formatted')) %></div>
+				</div>
+			<% }) %>
+			<div class="control-group"></div>
+			<div class="row-fluid">
+				<div class="offset5 span4 text-right">
+					<span class="lead popover-content hide-phone"><%= _('Applied Amount').translate() %></span>
+				</div>	
+				<div class="span3 text-right">
+					<span class="lead strong popover-content"><%= _('<span class="show-phone">Applied Amount: </span><span class="deposit-total">$(0)</span>').translate(view.model.get('total_formatted')) %></span>
+				</div>	
+			</div>
+		<% } %>
+		</div>
+	</div>
+
+	<% if (view.model.get('memo')) { %>
+		<div class="row-fluid control-group" data-type="accordion">
+			<div class="well" data-action="items-expander">
+				<div class="well-header">
+					<%= _('More Details').translate() %>
+					<a href="#" class="pull-right"><i class="icon-plus <%= collapse_elements ? '' : 'icon-minus' %>"></i></a>
+				</div>
+			</div>
+			<div class="row-fluid" data-content="items-body" <%= collapse_elements ? 'style="display: none;"' : '' %>>
+				<div class="span12 popover-content">				
+					<div>Memo:</div>
+					<div class="deposit-memo"><%= view.model.get('memo') %></div>
+				</div>
+			</div>
+		</div>
+	<% } %>
+
+</section>

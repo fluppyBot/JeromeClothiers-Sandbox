@@ -1,0 +1,41 @@
+<% registerMacro('designOptionSingleField', function (fields, values) { %>
+<% 
+	var favouriteOptions;
+	if (SC._applications.MyAccount.getUser().get('favouriteOptions') && SC._applications.MyAccount.getUser().get('favouriteOptions') != ""){
+		favouriteOptions = JSON.parse(SC._applications.MyAccount.getUser().get('favouriteOptions'));
+	} else {
+		favouriteOptions = "";
+	}
+	
+%>
+	<% if (fields && fields.options.length > 1) { %>
+			
+			<div class="canvas_jacket">
+				<% _.each(fields.options, function (field, count) { %>
+					<div class="control-group" data-input="canvas_canvas_jacket">
+						<h4><%= field.label %></h4>
+						<hr />
+						<% _.each(field.fields, function (field_item, count) { %>
+							<label class="control-label" for="canvas_canvas_jacket"><%= field_item.label %></label>
+							<div class="controls">
+								
+								<select id="<%= field_item.name %>" class="input-xlarge" name="<%= field_item.name %>" data-type="fav-option-customization">
+									<% _.each(field_item.texts, function (texts, count) { %>
+										<option	
+											<% if (favouriteOptions != "" && favouriteOptions[field_item.name] && favouriteOptions[field_item.name] == field_item.values[count] ){ %>
+												selected="selected" 
+											<% } %> 
+											value="<%= field_item.values[count] %>"> 
+												<%= texts %> 
+										</option>
+									<% }) %>	
+								</select>
+							</div>
+						<% }) %>
+					</div>
+				<% }) %>
+			</div>
+			
+	<% }  %>
+	
+<% }) %>

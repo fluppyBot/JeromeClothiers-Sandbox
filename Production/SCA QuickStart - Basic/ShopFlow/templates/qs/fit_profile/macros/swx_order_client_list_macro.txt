@@ -1,0 +1,124 @@
+<% registerMacro('swxOrderClientList', function (paramClientList) { %>
+
+	<%
+		var arrObjClientList = paramClientList;
+		var arrObjClientListTotal = (!_.isNullOrEmpty(arrObjClientList)) ? arrObjClientList.length : 0;
+		var hasArrObjClientList = (arrObjClientListTotal != 0) ? true : false;
+	%>
+
+	<% if (hasArrObjClientList) { %>
+
+		<!-- start header -->
+		<div id="desktop-only" class="row-fluid back-btn" style="border-bottom: solid 1px #e5e5e5; margin-bottom: 8px;">
+			
+			<div class="span8">
+				<div class="row-fluid">
+					<div class="span3" style="padding-bottom: 8px;"><div style="font-weight: 600;">Client Name</div></div>
+					<div class="span4"><div style="font-weight: 600;">Email</div></div>
+					<div class="span3"><div style="font-weight: 600;">Phone</div></div>
+					<div class="span2"><div style="font-weight: 600;">State</div></div>
+				</div>
+			</div>
+			<div class="span4">
+				<div class="row-fluid">
+					<div class="span4"><div>&nbsp;</div></div>
+					<div class="span4"><div>&nbsp;</div></div>
+					<div class="span4"><div>&nbsp;</div></div>
+				</div>
+			</div>
+		</div>
+	
+		<!-- end header -->
+	
+		<% for (var dx = 0; dx < arrObjClientListTotal; dx++) { %>
+		
+			<%
+				var clientNameValue = ''; 
+				var clientInternalId = arrObjClientList[dx]['internalid'];
+				var clientEmail = arrObjClientList[dx]['custrecord_tc_email'];
+				var clientPhone = arrObjClientList[dx]['custrecord_tc_phone'];
+				var clientState = arrObjClientList[dx]['custrecord_tc_state'];
+				var clientFirstName = arrObjClientList[dx]['custrecord_tc_first_name'];
+				var clientLastName = arrObjClientList[dx]['custrecord_tc_last_name'];
+				var hasClientFirstName = (!_.isNullOrEmpty(clientFirstName)) ? true : false;
+				var hasClientLastName = (!_.isNullOrEmpty(clientLastName)) ? true : false;
+				clientNameValue += (hasClientFirstName) ? clientFirstName + ' ' : '';
+				clientNameValue += (hasClientLastName) ? clientLastName : '';
+
+						
+			%>
+			
+			<!-- start row contents -->
+			<div class="row-fluid" style="border-bottom: solid 1px #e5e5e5; margin-bottom: 8px;">
+				
+				<div class="span8" style="padding-top: 8px;">
+				
+					<div class="row-fluid">
+						<div class="span3">
+							<div id="mobile-only" style="float: left; font-size: 12px; font-weight: 600; padding-right: 8px; white-space: nowrap;">Client Name:</div>	
+							<div style="float: left; font-size: 12px;"><%= clientNameValue %></div>
+							<div style="clear: both;"></div>
+						</div>
+					
+						<div class="span4">
+							<div id="mobile-only" style="float: left; font-size: 12px; font-weight: 600; padding-right: 8px; white-space: nowrap;">Email:</div>	
+							<div style="float: left; font-size: 12px;"><%= clientEmail %></div>
+							<div style="clear: both;"></div>
+						</div>
+		
+						<div class="span3">
+							<div id="mobile-only" style="float: left; font-size: 12px; font-weight: 600; padding-right: 8px; white-space: nowrap;">Phone:</div>
+							<div style="float: left; font-size: 12px;"><%= clientPhone %></div>
+							<div style="clear: both;"></div>
+						</div>
+		
+						<div class="span2">
+							<div id="mobile-only" style="float: left; font-size: 12px; font-weight: 600; padding-right: 8px; white-space: nowrap;">State:</div>
+							<div style="float: left; font-size: 12px;"><%= clientState %></div>
+							<div style="clear: both;"></div>
+						</div>
+		
+					</div>
+						
+				</div>
+			
+				<div class="span4" style="padding-bottom: 8px;">
+						
+					<div class="row-fluid">
+		
+						<div class="span4">
+							<div id="mobile-only" style="height: 10px;"></div>
+							<div>
+								<!--button id="" class="btn" style="width: 100%;">Edit</button-->
+								<a href="/tailorclientdetails/<%=clientInternalId%>|client" data-toggle="show-in-modal" class="btn" style="width: 100%; padding-top: 4px; padding-bottom: 4px; padding-left: 0px; padding-right: 0px;">Edit</a>
+							</div>
+							<div id="mobile-only" style="height: 10px;"></div>
+						</div>
+		
+						<div class="span4">
+							<div><a data-id="<%=clientInternalId%>" data-type="client" data-action="remove-rec" class="btn" style="width: 100%; padding-top: 4px; padding-bottom: 4px; padding-left: 0px; padding-right: 0px;">Remove</a></div>	
+							<div id="mobile-only" style="height: 10px;"></div>
+						</div>
+		
+						<div class="span4">
+							<div><a href="/item-types?client=<%=clientInternalId%>" data-touchpoint="home" data-hashtag="#/item-types?client=<%=clientInternalId%>" class="btn btn-primary" style="width: 100%; padding-top: 4px; padding-bottom: 4px; padding-left: 0px; padding-right: 0px;">Create Order</a></div>	
+							<div id="mobile-only" style="height: 10px;"></div>
+						</div>
+					</div>
+				</div>
+		
+			</div>
+			<!-- end row contents -->
+				
+		<% } %>
+		
+		<% _.toggleMobileNavButt() %>
+
+
+	<% } %>
+	
+	<% if (!hasArrObjClientList) { %>
+	
+	<% } %>
+	
+<% }) %>

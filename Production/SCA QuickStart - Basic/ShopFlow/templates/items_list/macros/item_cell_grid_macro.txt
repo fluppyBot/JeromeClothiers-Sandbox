@@ -1,0 +1,162 @@
+<% registerMacro('itemCellGrid', function (item, view) { %>
+<%
+	var min_qty = parseInt(item.get('_minimumQuantity'), 10)
+	,	thumbnail = item.get('_thumbnail')
+	,	macros = SC.macros
+	,	stock_info = item.getStockInfo()
+	,	isOrderPage = "Item Types" == SC._applications.Shopping.getLayout().currentView.category.itemid;
+
+	var client = ""
+	,	isOrderPage = "Item Types" == SC._applications.Shopping.getLayout().currentView.category.itemid;
+
+	if (isOrderPage && Backbone.history.fragment.split("?").length > 1) {
+		var fragmentArray = Backbone.history.fragment.split("?")
+		,	clientId = "";
+	 
+		//for(var i = fragmentArray.length -1; i >= 0; i--){
+		for(var i = 0; i <= fragmentArray.length; i++){
+			if(fragmentArray[i].match('client')){
+				clientId = fragmentArray[i].split("=")[1].split("&")[0];
+				break;
+			}
+		}
+		
+		client = "?client=" + clientId;
+	}
+%>
+<% if (isOrderPage && Backbone.history.fragment.split("?").length > 1) { %>
+	<div class="item-cell item-cell-grid" data-type="item" data-item-id="<%= item.get('_id') %>" itemprop="itemListElement" itemscope itemtype="http://schema.org/Product">
+		<meta itemprop="url" content="<%= item.get('_url') %>">
+		<div class="item-cell-thumbnail thumbnail">
+			<a href="<%= item.get('_url') %><%= client %>">
+				<img src="<%= view.options.application.resizeImage(thumbnail.url, 'thumbnail') %>" alt="<%= thumbnail.altimagetext %>" itemprop="image">
+			</a>
+		</div>
+		<h2 class="item-cell-name">
+			<a href="<%= item.get('_url') %><%= client %>">
+				<span itemprop="name">
+					<%= item.get('_name') %>
+				</span>
+			</a>
+		</h2>
+		<div class="item-cell-price">
+			<%= macros.showItemPrice(item.getPrice(), stock_info.isInStock) %>
+		</div>
+		<div class="options-container">
+			<%= item && item.renderAllOptionSelector(
+				_.where(item.getPosibleOptions(), {showSelectorInList: true})	
+			) %>
+		</div>
+		<!-- <div class="item-cell-stock"> -->
+			<%/*= macros.itemDetailsStock(stock_info)*/%>
+		<!-- </div> -->
+
+		<!-- April CSD Issue #072 -->
+		<!-- Stock Availability -->
+		<div class="item">
+			<span> Availability :</span>
+			<% if (item.get('custitem_ps_item_available')){ %>
+				<span class="fabric-available" itemprop="custitem_ps_item_available">
+					In Stock
+				</span>
+			<% } else { %>
+				<span class="fabric-unavailable" itemprop="custitem_ps_item_available">
+					Out of Stock
+				</span>
+			<% } %>
+		</div>
+		<!-- Stock Availability Date-->
+		<div class="item">
+			<% if (!item.get('custitem_ps_item_available')){ %>
+				<span> Availability Date:</span>
+				<span class="fabric-unavailable" itemprop="custitem_ps_item_availability_date">
+					<%= item.get('custitem_ps_item_availability_date') %>
+				</span>
+			<% } %>
+		</div>
+		<% if (view.options.application.getConfig('addToCartFromFacetsView') && item.isReadyForCart()) { %>
+			<form data-toggle="add-to-cart">
+				<input type="hidden" value="<%= item.get('_id') %>" name="item_id">
+				<div class="input-append">
+					<input name="quantity" class="input-mini" type="number" min="1" value="<%- min_qty %>">
+					<input type="submit" class="btn btn-primary" value="Add to Cart">
+				</div>
+			</form>
+		<% } %>
+	</div>
+
+<% } else {%>
+
+	
+		<div class="item-cell item-cell-grid" data-type="item" data-item-id="<%= item.get('_id') %>" itemprop="itemListElement" itemscope itemtype="http://schema.org/Product">
+			<meta itemprop="url" content="<%= item.get('_url') %>">
+			<div class="item-cell-thumbnail thumbnail">
+				<img src="<%= view.options.application.resizeImage(thumbnail.url, 'thumbnail') %>" alt="<%= thumbnail.altimagetext %>" itemprop="image">
+			</div>
+			<h4 class="item">
+				<span itemprop="name">
+					<b><%= item.get('_name') %></b>
+				</span>
+			</h4>
+			<div class="item">
+				<span> Supplier :</span> 
+				<span itemprop="manufacturer">
+					<%= item.get('manufacturer') %>
+				</span>
+			</div>
+			<div class="item">
+				<span> Availability :</span>
+				<% if (item.get('custitem_ps_item_available')){ %>
+					<span class="fabric-available" itemprop="custitem_ps_item_available">
+						In Stock
+					</span>
+				<% } else { %>
+					<span class="fabric-unavailable" itemprop="custitem_ps_item_available">
+						Out of Stock
+					</span>
+				<% } %>
+			</div>
+		</div>
+	
+	
+	<% /*	
+		<div class="item-cell item-cell-grid" data-type="item" data-item-id="<%= item.get('_id') %>" itemprop="itemListElement" itemscope itemtype="http://schema.org/Product">
+			<meta itemprop="url" content="<%= item.get('_url') %>">
+			<div class="item-cell-thumbnail thumbnail">
+				<a href="<%= item.get('_url') %>">
+					<img src="<%= view.options.application.resizeImage(thumbnail.url, 'thumbnail') %>" alt="<%= thumbnail.altimagetext %>" itemprop="image">
+				</a>
+			</div>
+			<h2 class="item-cell-name">
+				<a href="<%= item.get('_url') %>">
+					<span itemprop="name">
+						<%= item.get('_name') %>
+					</span>
+				</a>
+			</h2>
+			<div class="item-cell-price">
+				<%= macros.showItemPrice(item.getPrice(), stock_info.isInStock) %>
+			</div>
+			<div class="options-container">
+				<%= item && item.renderAllOptionSelector(
+					_.where(item.getPosibleOptions(), {showSelectorInList: true})	
+				) %>
+			</div>
+			<div class="item-cell-stock">
+				<%= macros.itemDetailsStock(stock_info) %>
+			</div>
+			<% if (view.options.application.getConfig('addToCartFromFacetsView') && item.isReadyForCart()) { %>
+				<form data-toggle="add-to-cart">
+					<input type="hidden" value="<%= item.get('_id') %>" name="item_id">
+					<div class="input-append">
+						<input name="quantity" class="input-mini" type="number" min="1" value="<%- min_qty %>">
+						<input type="submit" class="btn btn-primary" value="Add to Cart">
+					</div>
+				</form>
+			<% } %>
+		</div>
+	<% */ %>
+
+<% } %>
+
+<% }) %>

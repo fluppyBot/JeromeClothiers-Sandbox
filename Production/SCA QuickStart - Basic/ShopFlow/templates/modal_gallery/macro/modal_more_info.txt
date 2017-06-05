@@ -1,0 +1,5 @@
+<% registerMacro('displayMoreInfo', function (selectedOption) { %>
+	<a data-toggle="show-in-modal" href="/imagegallery/<%= escape(selectedOption) %>">
+		<i class="icon-question-sign summary-promocode-help"></i>
+	</a>
+<% }) %>

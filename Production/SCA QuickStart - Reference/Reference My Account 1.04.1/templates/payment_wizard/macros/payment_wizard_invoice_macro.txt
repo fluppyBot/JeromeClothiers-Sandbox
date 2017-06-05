@@ -1,0 +1,59 @@
+<% registerMacro('paymentWizardInvoice', function (invoice) { %>
+<%
+	var invoice_id = invoice.get('internalid')
+	,	is_paid = invoice.get('due') === 0
+	,	duedate = invoice.get('duedate')
+	,	is_overdue = invoice.get('isOverdue')
+	,	invoice_number = invoice.get('tranid') || invoice.get('refnum')
+	,	is_journal_invoice = !(invoice_number)
+	,	translated_duedate = _('$(0)').translate(duedate || '');
+%>
+
+<div class="list-row selectable <%= invoice.get('apply') ? 'active' : '' %> <%= is_paid ? 'disabled' : '' %>" data-type="invoice" data-id="<%= invoice_id %>">
+	<div class="row-fluid">
+		<div class="span1">
+			<input type="checkbox" value="<%= invoice_id %>" data-action="select" <%= invoice.get('apply') ? 'checked' : '' %> <%= is_paid ? 'disabled' : '' %>>
+		</div>
+		<div class="span3">
+				<% //If the invoice is an ordinary one
+				if (!is_journal_invoice) { %>
+					<span class="list-row-text">
+						<a class="list-row-text-bigger input-margin invoice-number" href="invoices/<%= invoice_id %>" data-toggle="show-in-modal"><%= _('Invoice #$(0)').translate(invoice_number) %></a>
+					</span>
+				<% //or is a journal invoice (the ones created when the user has an initial  Opening Balance > 0)
+				} else { %>
+					<span class="list-row-text">
+						<label class="info-label invoice-number"><%= _('Journal').translate() %></label>
+					</span>
+				<% } %>
+		</div>
+		<div class="span5 offset-xs-1">
+			<span class="list-row-text">
+				<span class="visible-phone list-row-text-info"><%= _('Due date: ').translate() %> </span>
+				<%= is_overdue ? '<span class="date-overdue invoice-due-date">' + translated_duedate + '</span> <i class="icon-flag"></i>' : translated_duedate || '&nbsp;' %>
+				<% if (invoice.get('discountapplies') && invoice.isPayFull()) { %>
+					<br>
+					<small class="text-success">
+						<%= _('Applied Discount: $(0) - until $(1)').translate(invoice.get('discount_formatted'), invoice.get('discdate')) %>
+					</small>
+				<% } %>
+				<% if (is_paid) { %>
+					<br>
+					<small class="text-success">
+						<%= _('Processing Payments').translate() %>
+					</small>
+				<% } %>
+			</span>
+		</div>
+		<div class="span3 offset-xs-1 responsive-align">
+			<span class="list-row-text">
+				<span class="visible-phone list-row-text-info"><%= _('Amount:').translate() %> </span>
+				<span class="amount invoice-remaining-amount"><%= _('$(0)').translate(invoice.get('amount_formatted')) %></span>
+				<br/>
+				<a class="list-link visible-phone" data-toggle="show-in-modal" href="invoices/<%= invoice_id %>"><%= _('View Details').translate() %></a>
+				<a data-action="edit" class="list-link <%= invoice.get('apply') ? '' : 'hidden' %>" href="#"><%= invoice.isPayFull() ? _('Edit Payment').translate() : _('Partial Payment').translate() %></a>
+			</span>
+		</div>
+	</div>
+</div>
+<% }) %>
