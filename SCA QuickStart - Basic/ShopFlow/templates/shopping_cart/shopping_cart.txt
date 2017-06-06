@@ -34,7 +34,7 @@
 <style>
     .breadcrumb.hidden-phone{
         margin-bottom: 0px;
-        padding-top: 5px;
+        
         padding-bottom: 0px;
     }
 
