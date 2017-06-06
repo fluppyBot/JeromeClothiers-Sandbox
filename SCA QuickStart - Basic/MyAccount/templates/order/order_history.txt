@@ -65,7 +65,7 @@
 				</tr>
 			</thead>
 			<tbody style="font-size: 12px;">
-			<% _.each(view.collection.models, function (order, index) { %>
+			<% _.each(view.collection.models, function (order, index) {  console.log('order_history',order); %>
 				<tr>
 					<td><%= order.get('date').substr(0,order.get('date').length-4) + order.get('date').substr(order.get('date').length-2) %></td>
 					<!--td><%= order.get('order_number') %></td-->
