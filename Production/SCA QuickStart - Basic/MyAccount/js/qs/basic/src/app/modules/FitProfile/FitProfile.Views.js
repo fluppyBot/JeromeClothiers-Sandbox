@@ -231,7 +231,10 @@ define('FitProFile.Views',  ['Client.Model', 'Profile.Model'], function (ClientM
 	,	swxFitProfileModalButtRemove: function(e)
 		{
 			var $ = jQuery;
-			jQuery("[id='swx-fitprofile-remove']").click();
+						var message = _("Are you sure that you want to delete this client and their fit profiles?").translate();
+				if (window.confirm(message)) {
+					jQuery("[id='swx-fitprofile-remove']").click();
+				}
 		}
 
 	,	swxFitProfileModalButtCopy: function(e)
@@ -470,8 +473,8 @@ define('FitProFile.Views',  ['Client.Model', 'Profile.Model'], function (ClientM
 		,	'change #fit' : "updateAllowanceLookup"
 		,	'change .block-measurement-fld' : 'disableCounterBlockField'
 		,	'submit #profile-form' : 'submitProfile'
-		}
 
+		}
 	,	initialize: function (options)
 		{
 			this.model = options.model;
@@ -705,6 +708,8 @@ define('FitProFile.Views',  ['Client.Model', 'Profile.Model'], function (ClientM
 				"Back-Length" :{min:67,max:95}
 			};
 			var finishMeasurements = jQuery('#profile-form span[id*="finish_"]');
+			var	measureTypeValue = jQuery("#in-modal-custrecord_fp_measure_type").val() ?
+					jQuery("#in-modal-custrecord_fp_measure_type").val() : jQuery("#custrecord_fp_measure_type").val();
 			var hasErrors = false;
 			for(var i=0; i<finishMeasurements.length; i++){
 					if(finishMeasurements[i].attributes['min-value'] && finishMeasurements[i].attributes['max-value']){
@@ -722,6 +727,16 @@ define('FitProFile.Views',  ['Client.Model', 'Profile.Model'], function (ClientM
 			if(hasErrors){
 				alert('Body measurements finished value is not within the range.');
 				return false;
+			}
+			if(measureTypeValue == 'Block'){
+				if(jQuery('#body-fit').val() == 'Select' || !jQuery('#body-fit').val()){
+					alert(_('Please enter Fit Value').translate());
+					return false;
+				}
+				if(jQuery('#body-block').val() == 'Select' || !jQuery('#body-block').val()) {
+					alert(_('Please enter Block Value').translate());
+					return false;
+				}
 			}
 			var formValues = jQuery(e.target).serialize().split("&")
 			,	self = this

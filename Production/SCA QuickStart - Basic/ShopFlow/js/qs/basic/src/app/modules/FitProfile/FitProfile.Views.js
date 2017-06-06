@@ -200,6 +200,9 @@ define('FitProFile.Views',  ['Client.Model', 'Profile.Model','Profile.Collection
 
 	,	removeRec : function(e){
 			e.preventDefault();
+			var message = _("Are you sure that you want to delete this client and their fit profiles?").translate();
+
+			if (window.confirm(message)) {
 			var selector = jQuery(e.target)
 			,	id = selector.data("id")
 			,	type = selector.data("type")
@@ -216,6 +219,7 @@ define('FitProFile.Views',  ['Client.Model', 'Profile.Model','Profile.Collection
 				self.options.application.trigger('profileRefresh');
 				//jQuery("#" + selector.context.parentNode.id).val();
 			});
+		}
 		}
 	});
 
@@ -446,6 +450,7 @@ define('FitProFile.Views',  ['Client.Model', 'Profile.Model','Profile.Collection
 			,	self = this
 			,	dataToSend = new Array()
 			,	measurementValues = new Array()
+
 			,	profileNameValue = jQuery("#in-modal-name").val() ?
 					jQuery("#in-modal-name").val() : jQuery("#name").val()
 			, 	productTypeValue = jQuery("#in-modal-custrecord_fp_product_type").val() ?
@@ -453,14 +458,14 @@ define('FitProFile.Views',  ['Client.Model', 'Profile.Model','Profile.Collection
 			, 	measureTypeValue = jQuery("#in-modal-custrecord_fp_measure_type").val() ?
 					jQuery("#in-modal-custrecord_fp_measure_type").val() : jQuery("#custrecord_fp_measure_type").val()
 			if(measureTypeValue == 'Block'){
-				// if(jQuery('#in-modal-body-fit').val() == 'Select' || !jQuery('#in-modal-body-fit').val()){
-				// 	this.showError(_('Please enter Fit Value').translate());
-				// 	return false;
-				// }
-				// if(jQuery('#in-modal-body-block').val() == 'Select' || !jQuery('#in-modal-body-block').val()) {
-				// 	this.showError(_('Please enter Block Value').translate());
-				// 	return false;
-				// }
+				if(jQuery('#body-fit').val() == 'Select' || !jQuery('#body-fit').val()){
+					this.showError(_('Please enter Fit Value').translate());
+					return false;
+				}
+				if(jQuery('#body-block').val() == 'Select' || !jQuery('#body-block').val()) {
+					this.showError(_('Please enter Block Value').translate());
+					return false;
+				}
 
 			}
 			this.model.set("name", jQuery("#in-modal-name").val());
