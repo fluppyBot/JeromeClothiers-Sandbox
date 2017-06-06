@@ -31,7 +31,7 @@
                 <div class="row-fluid" style="border-bottom: solid 1px #e5e5e5; margin-bottom: 18px; padding-bottom: 10px;">
                     <div class="span12">
                         <span style="font-size: 20px; font-weight: 400; color: #a6a6a6;">
-							<a href="#fitProfileSaveOrdersListBody" data-toggle="collapse"   aria-expanded="true" aria-controls="collapseOne" class="accordion-toggle" style="text-decoration:none;color:grey;">
+							<a data-target="#fitProfileSaveOrdersListBody" data-toggle="collapse"   aria-expanded="true" aria-controls="collapseOne" class="accordion-toggle" style="text-decoration:none;color:grey;">
 								Save Items
 							</a>
 						</span>

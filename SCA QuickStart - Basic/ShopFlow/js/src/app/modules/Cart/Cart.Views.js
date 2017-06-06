@@ -241,6 +241,8 @@ define('Cart.Views', ['ErrorManagement', 'FitProfile.Model', 'ItemDetails.Model'
 				line.set('designOptions', designOptions);
 
 			});
+
+			jQuery('#saveForLaterItemsCart').attr("class","in collapse");
 		}
 
 
@@ -262,6 +264,7 @@ define('Cart.Views', ['ErrorManagement', 'FitProfile.Model', 'ItemDetails.Model'
 				function ()
 				{
 					self.showContent();
+					jQuery('#saveForLaterItemsCart').attr("class","in collapse");
 				}
 			).error(
 				function (jqXhr)
