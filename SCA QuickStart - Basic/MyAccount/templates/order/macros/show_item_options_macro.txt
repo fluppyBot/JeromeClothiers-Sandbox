@@ -101,7 +101,7 @@
 <div class="holdproduction">
 	<%= HoldProduction.name + ': '+ HoldProduction.value %>
 </div>-->
-<div id="design-option">
+<div id="design-option" style="margin-top: 5px;">
 	<div class="accordion" id="design-options-<%=lineid%>">
 
 
