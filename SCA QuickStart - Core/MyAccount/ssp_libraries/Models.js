@@ -461,8 +461,13 @@ Application.defineModel('Profile', {
 // ----------
 // Handles fetching orders
 Application.defineModel('PlacedOrder', {
+  setDateNeeded:function(options){
+      var recid = options.solinekey.split('_')[0];
+      nlapiRequestURL('https://forms.netsuite.com/app/site/hosting/scriptlet.nl?script=181&deploy=1&compid=3857857&h=bf9b68501c2e0a0da79f&recid='+recid+'&solinekey='+options.solinekey+'&dateneeded='+options.dateneeded);
 
-	list: function (page, clientName)
+    }
+
+	, list: function (page, clientName)
 	{
 		'use strict';
 		// if the store has multiple currencies we add the currency column to the query
@@ -483,6 +488,9 @@ Application.defineModel('PlacedOrder', {
 			];
 
 
+    // columns.push(new nlobjSearchColumn('custcol_expected_delivery_date'))//This
+     columns.push(new nlobjSearchColumn('custcol_expected_production_date'))
+    // columns.push(new nlobjSearchColumn('custcol_tailor_delivery_days'))
 		columns.push(new nlobjSearchColumn('custcol_so_id'))
 		columns.push(new nlobjSearchColumn('item'))
 		columns.push(new nlobjSearchColumn('custcol_avt_date_needed'))//This
@@ -495,10 +503,7 @@ Application.defineModel('PlacedOrder', {
     columns.push(new nlobjSearchColumn('custcol_avt_tracking'))
 		columns.push(new nlobjSearchColumn('custcol_avt_solinestatus'))
     columns.push(new nlobjSearchColumn('custcol_avt_saleorder_line_key'))
-    columns.push(new nlobjSearchColumn('custcol_expected_delivery_date'))//This
-    columns.push(new nlobjSearchColumn('custcol_expected_production_date'))
-    columns.push(new nlobjSearchColumn('custcol_tailor_delivery_days'))
-		//columns.push(new nlobjSearchColumn('custcol_avt_hold_fabric'))
+		columns.push(new nlobjSearchColumn('custcol_avt_cmt_tracking'))
 
 		// used for filtering via clientName
 		if (clientName){
@@ -530,16 +535,35 @@ Application.defineModel('PlacedOrder', {
 
 		result.records = _.map(result.records || [], function (record)
 		{
-      var dateneeded=record.getValue('custcol_avt_date_needed');
+      var dateneeded=record.getValue('custcol_avt_date_needed');//this
       var expdeliverydate = record.getValue('custcol_expected_delivery_date');
       var fabricstatus = record.getValue('custcol_avt_fabric_status');
       var cmtstatus = record.getValue('custcol_avt_cmt_status');
       var datesent = record.getValue('custcol_avt_cmt_date_sent');
-      var custcol_expected_production_date = record.getValue('custcol_expected_production_date');
+      var custcol_expected_production_date = record.getValue('custcol_expected_production_date');//this
       var cmtstatuscheck = false, fabstatuscheck = false,expFabDateNeeded, dateNeeded, confirmedDate;
       var custcol_tailor_delivery_days = record.getValue('custcol_tailor_delivery_days');
       var today = new Date();
-      if(cmtstatus == '1' && fabricstatus != '1'){
+      var cmtstatustext = "";
+
+      if(cmtstatus){
+
+        cmtstatustext += record.getText('custcol_avt_cmt_status');
+      }
+      if(datesent){
+        if(cmtstatustext!="") cmtstatustext +='-';
+        cmtstatustext += datesent;
+      }
+      else if(custcol_expected_production_date){
+        if(cmtstatustext!="") cmtstatustext +='-';
+        cmtstatustext += custcol_expected_production_date;
+      }
+      if(record.getValue('custcol_avt_cmt_tracking')){
+        if(cmtstatustext!="") cmtstatustext +='-';
+        cmtstatustext += record.getValue('custcol_avt_cmt_tracking');
+      }
+
+      if((cmtstatus == '1') && fabricstatus != '1'){
 					//check the dates of the fabric should be sent vs today
 					if(custcol_expected_production_date){
 					  expFabDateNeeded = nlapiStringToDate(custcol_expected_production_date);
@@ -548,7 +572,7 @@ Application.defineModel('PlacedOrder', {
 						else
 							fabstatuscheck = false;
 					}
-					else{					
+					else{
 						fabstatuscheck = false;
 					}
 				}
@@ -558,7 +582,7 @@ Application.defineModel('PlacedOrder', {
 				else{
 					fabricstatuscheck = false;
 				}
-        if(cmtstatus == '4'){			
+        if(cmtstatus == 4){
   					cmtstatuscheck = true;
   				}else if (dateneeded){
   					dateNeeded = nlapiStringToDate(dateneeded)
@@ -566,10 +590,10 @@ Application.defineModel('PlacedOrder', {
   						confirmedDate = nlapiStringToDate(datesent);
   						confirmedDate.setDate(confirmedDate.getDate()+ parseFloat(custcol_tailor_delivery_days?custcol_tailor_delivery_days:0));
   					}
-  					else if(mylist[x].custcol_expected_production_date){
+  					else if(custcol_expected_production_date){
   						confirmedDate = nlapiStringToDate(expdeliverydate);
   					}
-  					
+
   					if(confirmedDate){
   						if(confirmedDate > dateNeeded)
   							cmtstatuscheck = true;
@@ -578,11 +602,11 @@ Application.defineModel('PlacedOrder', {
   					}else{
   						cmtstatuscheck = false
   					}
-  					
+
   				}else{
   					cmtstatuscheck = false;
           }
-  				
+
       if(record.getValue('custcol_avt_date_needed')){
         dateneeded = nlapiStringToDate(record.getValue('custcol_avt_date_needed'));
         dateneeded = dateneeded.getFullYear()+ '-' + ('0' + (dateneeded.getMonth()+1)).slice(-2)+ '-'+
@@ -610,9 +634,9 @@ Application.defineModel('PlacedOrder', {
 			//,	fabricstatus: record.getText('custcol_avt_fabric_status')
 			//,	cmtstatus: record.getText('custcol_avt_cmt_status')
       ,	dateneeded: dateneeded
-      ,	tranline_status: cmtstatuscheck || fabstatuscheck//record.getText('custcol_avt_solinestatus')
+      ,	tranline_status: cmtstatuscheck || fabricstatuscheck//record.getText('custcol_avt_solinestatus')
 			,	fabricstatus: record.getValue('custcol_avt_fabric_text')
-			,	cmtstatus: record.getValue('custcol_avt_cmt_status_text')
+			,	cmtstatus: cmtstatustext//record.getValue('custcol_avt_cmt_status_text')
       , solinekey: record.getValue('custcol_avt_saleorder_line_key')
 			};
 		});

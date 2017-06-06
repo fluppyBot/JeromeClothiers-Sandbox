@@ -19,6 +19,8 @@
 		items_length_message = _('($(0) Items)').translate(items_length);
 	}
 
+	console.log('product_list_details_later.txt',view);
+
 	var arrObjFilteredItems = [];
 	var arrObjFilteredItemsTotal = 0;
 	var hasArrObjFilteredItems = false;

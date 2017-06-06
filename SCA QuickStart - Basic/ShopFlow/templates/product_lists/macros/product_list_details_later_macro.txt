@@ -70,8 +70,8 @@
 		{
 			isDisplay = true;	
 		}
-		console.log('isFiltered');
 		
+		//console.log('isFiltered');
 		jQuery('#saveForLaterItemsCart').attr("class","in collapse");
 	}
 	
