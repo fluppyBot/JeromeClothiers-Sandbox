@@ -63,8 +63,7 @@
 				<p class="shipto-address"><%= ( ( shipaddress && shipaddress.getFormattedAddress() ) || _('N/A').translate()).replace(/\n/g, '<br>') %></p>
 			</td>
 			<td colspan="2">
-				<!--INFO: Remove by Comsmetic Changes Phase 1-->
-				<!--<p><b><%= _('Delivery Method').translate() %></b></p>
+				<p><b><%= _('Delivery Method').translate() %></b></p>
 				<p class="delivery-method">
 				<% if (ship_group.tracking_numbers_summary.length) { %>
 					<% _.each(ship_group.tracking_numbers_summary, function (tracking_number, index) { %>
@@ -75,7 +74,7 @@
 				<% } else { %>
 					<%= _('No Delivery Method Selected').translate() %>
 				<% } %>
-				</p>-->
+				</p>
 			</td>
 		</tr>
 		<% var shipment_index = 0; %>

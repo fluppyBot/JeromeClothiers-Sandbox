@@ -53,34 +53,34 @@
 			<thead style="font-size: 12px;">
 				<tr>
 					<th><%= _('Order Date').translate() %></th>
-					<th><%= _('Order Number').translate() %></th>
+					<th>Order#</th>
 					<th><%= _('Client Name').translate() %></th>
 					<th><%= _('Item').translate() %></th>
 					<th><%= _('Fabric Status').translate() %></th>
 					<th><%= _('CMT Status').translate() %></th>
 					<!--th><%= _('Order Total').translate() %></th-->
 					<th><%= _('Date Needed').translate() %></th>
-					<th><%= _('Status').translate() %></th>
+					<th style="text-align:center;"><%= _('Status').translate() %></th>
 					<th></th>
 				</tr>
 			</thead>
 			<tbody style="font-size: 12px;">
 			<% _.each(view.collection.models, function (order, index) { %>
 				<tr>
-					<td><%= order.get('date') %></td>
+					<td><%= order.get('date').substr(0,order.get('date').length-4) + order.get('date').substr(order.get('date').length-2) %></td>
 					<!--td><%= order.get('order_number') %></td-->
 					<td><%= order.get('so_id') %></td>
 					<td><%= order.get('client_name') %></td>
 					<td><%= order.get('item') %></td>
 					<td><%= order.get('fabricstatus') %></td>
-					<td><%= order.get('cmtstatus') %></td>
+					<td ><%= order.get('cmtstatus') %></td>
 					<!--td><%= order.get('summary').total_formatted %></td-->
 					<td><input name="oh_dateneeded" placeholder="" id="<%= order.get('solinekey') %>" type="date" value="<%= order.get('dateneeded') %>" style="width:100px;font-size:10px;"></td>
 					<!--td><%= order.get('status') %></td-->
-					<td><% if(order.get('tranline_status')){ %>
-						<img src="https://checkout.sandbox.netsuite.com/c.3857857/myaccount/img/red.png">
+					<td style="text-align:center;"><% if(order.get('tranline_status')){ %>
+						<img src="https://checkout.netsuite.com/c.3857857/myaccount/img/red.png">
 						<% }else{ %>
-						<img src="https://checkout.sandbox.netsuite.com/c.3857857/myaccount/img/green.png">
+						<img src="https://checkout.netsuite.com/c.3857857/myaccount/img/green.png">
 						<% } %>
 					</td>
 					<td>

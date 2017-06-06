@@ -14,24 +14,24 @@ define('OrderHistory.Router',  ['OrderHistory.Views', 'PlacedOrder.Model','Place
 		,	'ordershistory?:options': 'ordersHistory'
 		,	'ordershistory/view/:id': 'orderDetails'
 		}
-		
+
 	,	initialize: function (application)
 		{
 			this.application = application;
 		}
-		
+
 	// list orders
 	,	savedorders: function(options)
 		{
 			window.location = SC._applications.MyAccount.getConfig().siteSettings.touchpoints.home + "#cart";
 		}
-	,	ordersHistory: function (options) 
+	,	ordersHistory: function (options)
 		{
 			options = (options) ? SC.Utils.parseUrlOptions(options) : {page: 1};
-			
+
 			options.page = options.page || 1;
 			options.search = options.search || "";
-			
+
 			var collection = new Collection(options.search)
 			,	view = new Views.List({
 					application: this.application
@@ -47,8 +47,9 @@ define('OrderHistory.Router',  ['OrderHistory.Views', 'PlacedOrder.Model','Place
 				,	data: options
 				,	reset: true
 				});
+			//collection.on('change:dateneeded',this.someAction, this);
 		}
-		
+
 	// view order's detail
 	,	orderDetails: function (id)
 		{

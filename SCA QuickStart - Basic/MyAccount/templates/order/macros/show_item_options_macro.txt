@@ -95,12 +95,12 @@
 <div class="clientname">
 	<%= ClientName.name + ': '+ ClientName.value %>
 </div>
-<!--<div class="holdfabric">
+<div class="holdfabric">
 	<%= HoldFabric.name + ': '+ HoldFabric.value %>
 </div>
 <div class="holdproduction">
 	<%= HoldProduction.name + ': '+ HoldProduction.value %>
-</div>-->
+</div>
 <div id="design-option">
 	<div class="accordion" id="design-options-<%=lineid%>">
 
