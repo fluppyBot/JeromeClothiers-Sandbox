@@ -4,7 +4,7 @@
 		var arrObjOrderTotal = (!_.isNullOrEmpty(arrObjOrder)) ? arrObjOrder.length : 0;
 		var hasArrObjOrder = (arrObjOrderTotal != 0) ? true : false;
 		
-		console.log('arrObjOrderTotal: ' + arrObjOrderTotal)
+		console.log('paramArrObjOrder: ',paramArrObjOrder)
 	%>
 		<% if (hasArrObjOrder) { %>
 
@@ -59,6 +59,22 @@
 				var orderCmtStatus = arrObjOrder[dx]['cmtstatus'] || '&nbsp;';
 				var orderDateNeeded = arrObjOrder[dx]['dateneeded'] || '&nbsp;';
 				var orderTranLineStatus = arrObjOrder[dx]['tranline_status'] || '&nbsp;';
+
+				var odNeededMonth = "";
+				var odNeededDay = "";
+				var odNeededYear = "";
+				var odNeededFormat = "";
+
+				var splitOrderDateNeeded = orderDateNeeded.split('/');
+				console.log('splitOrderDateNeeded',splitOrderDateNeeded);
+				if(splitOrderDateNeeded.length>0){
+					odNeededDay = splitOrderDateNeeded[0];
+					odNeededMonth = splitOrderDateNeeded[1];
+					odNeededYear = splitOrderDateNeeded[2];
+					odNeededFormat = odNeededYear+"-"+ odNeededMonth+"-"+odNeededDay;
+					console.log('odNeededFormat',odNeededFormat);
+				}
+
 				%>
 							<!-- start row contents -->
 							<div class="row-fluid" style="border-bottom: solid 1px #e5e5e5; margin-bottom: 8px;">
@@ -109,7 +125,7 @@
 										<div class="span2">
 											<div id="mobile-only" style="float: left; font-size: 12px; font-weight: 600; padding-right: 8px; white-space: nowrap;">Date Needed:</div>
 											<div style="float: left; font-size: 12px;">
-												<%= orderDateNeeded %>
+												<input name="oh_dateneeded" placeholder=""  type="date" value="<%=odNeededFormat%>" style="width:100px;font-size:10px;">
 											</div>
 											<div style="clear: both;"></div>
 										</div>
