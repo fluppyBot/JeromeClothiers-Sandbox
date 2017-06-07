@@ -413,7 +413,7 @@ define('FitProFile.Views',  ['Client.Model', 'Profile.Model','Profile.Collection
 		}
 	,	submitProfile: function(e){
 			e.preventDefault();
-
+			console.log(e);
 			var range = {
 				"Neck" :{min:31,max:59},
 				"Shoulder" :{min:37,max:67},
@@ -429,7 +429,6 @@ define('FitProFile.Views',  ['Client.Model', 'Profile.Model','Profile.Collection
 			};
 			var finishMeasurements = jQuery('#in-modal-profile-form span[id*="finish_"]');
 			var hasErrors = false;
-			var inmodal = e.target.elements.block.id.indexOf('in-modal')>0?true:false;
 			for(var i=0; i<finishMeasurements.length; i++){
 					if(finishMeasurements[i].attributes['min-value'] && finishMeasurements[i].attributes['max-value']){
 					var min = parseFloat(finishMeasurements[i].attributes['min-value'].value),
@@ -459,7 +458,9 @@ define('FitProFile.Views',  ['Client.Model', 'Profile.Model','Profile.Collection
 					jQuery("#in-modal-custrecord_fp_product_type").val() : jQuery("#custrecord_fp_product_type").val()
 			, 	measureTypeValue = jQuery("#in-modal-custrecord_fp_measure_type").val() ?
 					jQuery("#in-modal-custrecord_fp_measure_type").val() : jQuery("#custrecord_fp_measure_type").val()
+
 			if(measureTypeValue == 'Block'){
+				var inmodal = e.target.elements.block.id.indexOf('in-modal')!=-1?true:false;
 				if(inmodal){
 					if(jQuery('#in-modal-body-fit').val() == 'Select' || !jQuery('#in-modal-body-fit').val()){
 						this.showError(_('Please enter Fit Value').translate());

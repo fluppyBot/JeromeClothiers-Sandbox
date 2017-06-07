@@ -654,7 +654,7 @@ var Application = _.extend({
 	{
 		'use strict';
 
-		options = options || {}; 
+		options = options || {};
 
 		var results_per_page = options.results_per_page || SC.Configuration.results_per_page
 		,	page = options.page || 1
@@ -674,10 +674,10 @@ var Application = _.extend({
 			};
 
 		if (!do_real_count || options.column_count)
-		{	
+		{
 			var column_count = options.column_count || new nlobjSearchColumn('internalid', null, 'count')
 			,	count_result = nlapiSearchRecord(record_type, null, filters, [column_count]);
-			
+
 			result.totalRecordsFound = parseInt(count_result[0].getValue(column_count), 10);
 		}
 
@@ -691,7 +691,7 @@ var Application = _.extend({
 				result.totalRecordsFound = search.getResults(0, 1000).length;
 			}
 		}
-		
+
 		return result;
 	}
 
@@ -699,7 +699,7 @@ var Application = _.extend({
 	{
 		'use strict';
 
-		options = options || {}; 
+		options = options || {};
 
 		var results_per_page = options.results_per_page || SC.Configuration.results_per_page
 		,	page = options.page || 1
@@ -722,10 +722,10 @@ var Application = _.extend({
 
 		/**
 		if (!do_real_count || options.column_count)
-		{	
+		{
 			var column_count = options.column_count || new nlobjSearchColumn('internalid', null, 'count')
 			,	count_result = nlapiSearchRecord(record_type, null, filters, [column_count]);
-			
+
 			result.totalRecordsFound = parseInt(count_result[0].getValue(column_count), 10);
 		}
 
@@ -746,7 +746,7 @@ var Application = _.extend({
 
 			result.totalRecordsFound = search.getResults(0, 1000).length;
 
-		
+
 		return result;
 	}
 
@@ -936,11 +936,11 @@ function toCurrency (amount)
 }
 
 // returns true if and only if the given record type name is present in the current account - useful for checking if a bundle is installed or not in this account.
-function recordTypeExists (record_type_name) 
+function recordTypeExists (record_type_name)
 {
 	'use strict';
 
-	try 
+	try
 	{
 		nlapiCreateRecord(record_type_name);
 	}

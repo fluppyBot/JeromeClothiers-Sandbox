@@ -467,7 +467,7 @@ define('FitProFile.Views',  ['Client.Model', 'Profile.Model'], function (ClientM
 	,	events: {
 			'change select#custrecord_fp_product_type' : 'getMeasurementType'
 		,	'change select#custrecord_fp_measure_type' : 'buildMesureForm'
-        ,   'change select#body-fit': 'rebuildMeasureForm'
+    //    ,   'change select#body-fit': 'rebuildMeasureForm'
 		,	'change .allowance-fld' : 'updateFinalMeasure'
 		,	'change .body-measure-fld' : 'updateFinalMeasure'
 		,	'change #fit' : "updateAllowanceLookup"

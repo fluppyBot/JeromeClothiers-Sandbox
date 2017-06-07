@@ -474,7 +474,7 @@ Application.defineModel('PlacedOrder', {
 		var	isMultiCurrency = context.getFeature('MULTICURRENCY')
 		,	total_field = 'custbody_total_tailor_price'
 		,	filters = [
-				new nlobjSearchFilter('entity', null, 'is', nlapiGetUser())
+				  new nlobjSearchFilter('entity', null, 'is', nlapiGetUser())
 			  , new nlobjSearchFilter('custcol_itm_category_url', null, 'isnotempty')
 			]
 		,	columns = [
@@ -487,9 +487,8 @@ Application.defineModel('PlacedOrder', {
 			,	new nlobjSearchColumn('custbody_customer_name')
 			];
 
-
     // columns.push(new nlobjSearchColumn('custcol_expected_delivery_date'))//This
-     columns.push(new nlobjSearchColumn('custcol_expected_production_date'))
+    columns.push(new nlobjSearchColumn('custcol_expected_production_date'))
     // columns.push(new nlobjSearchColumn('custcol_tailor_delivery_days'))
 		columns.push(new nlobjSearchColumn('custcol_so_id'))
 		columns.push(new nlobjSearchColumn('item'))
@@ -505,37 +504,64 @@ Application.defineModel('PlacedOrder', {
     columns.push(new nlobjSearchColumn('custcol_avt_saleorder_line_key'))
 		columns.push(new nlobjSearchColumn('custcol_avt_cmt_tracking'))
 
-		// used for filtering via clientName
-		if (clientName){
-			filters.push(new nlobjSearchFilter('custcol_tailor_client_name', null, 'contains', clientName));
-			filters.push(new nlobjSearchFilter('mainline', null, 'is', 'F'));
-		} else {
-			//filters.push(new nlobjSearchFilter('mainline', null, 'is', 'T'));
-			filters.push(new nlobjSearchFilter('mainline', null, 'is', 'F'));
-
-		}
-
 		if (isMultiCurrency)
 		{
 			columns.push(new nlobjSearchColumn('currency'));
 		}
+    // used for filtering via clientName
 
-		// if the site is multisite we add the siteid to the search filter
+		if (clientName){
+      nlapiLogExecution('debug','ClientName',clientName);
+      var fil_client = new nlobjSearchFilter('custcol_tailor_client_name', null, 'contains', clientName);
+      fil_client.isor = true;
+      fil_client.leftparens = 1;
+			filters.push(fil_client);
+			//filters.push(new nlobjSearchFilter('mainline', null, 'is', 'T'));
+			filters.push(new nlobjSearchFilter('mainline', null, 'is', 'F'));
+
+		}
+    else{
+      filters.push(new nlobjSearchFilter('mainline', null, 'is', 'F'));
+    }
+
+		//if the site is multisite we add the siteid to the search filter
 		if (context.getFeature('MULTISITE') && session.getSiteSettings(['siteid']).siteid)
 		{
 			filters.push(new nlobjSearchFilter('website', null, 'anyof', [session.getSiteSettings(['siteid']).siteid,'@NONE@']));
 		}
-
 		var result = Application.getSalesOrderPaginatedSearchResults({
 				record_type: 'salesorder'
 			,	filters: filters
 			,	columns: columns
 			,	page: page
-			});
+		});
 
+    if(clientName){
+      filters = [
+  				  new nlobjSearchFilter('entity', null, 'is', nlapiGetUser())
+  			  , new nlobjSearchFilter('custcol_itm_category_url', null, 'isnotempty')
+  			]
+      var fil_soid = new nlobjSearchFilter('custcol_so_id', null, 'startswith', clientName);
+      filters.push(fil_soid);
+      filters.push(new nlobjSearchFilter('mainline', null, 'is', 'F'));
+      if (context.getFeature('MULTISITE') && session.getSiteSettings(['siteid']).siteid)
+  		{
+  			filters.push(new nlobjSearchFilter('website', null, 'anyof', [session.getSiteSettings(['siteid']).siteid,'@NONE@']));
+  		}
+      var newresult = Application.getSalesOrderPaginatedSearchResults({
+  				record_type: 'salesorder'
+  			,	filters: filters
+  			,	columns: columns
+  			,	page: page
+  		});
+
+      if(newresult.records.length>0){
+        result.records = result.records.concat(newresult.records);
+      }
+    }
 		result.records = _.map(result.records || [], function (record)
 		{
-      var dateneeded=record.getValue('custcol_avt_date_needed');//this
+      var dateneeded = record.getValue('custcol_avt_date_needed');//this
       var expdeliverydate = record.getValue('custcol_expected_delivery_date');
       var fabricstatus = record.getValue('custcol_avt_fabric_status');
       var cmtstatus = record.getValue('custcol_avt_cmt_status');
@@ -577,10 +603,10 @@ Application.defineModel('PlacedOrder', {
 					}
 				}
 				else if(fabricstatus == '1'){
-					fabricstatuscheck = true;
+					fabstatuscheck = true;
 				}
 				else{
-					fabricstatuscheck = false;
+					fabstatuscheck = false;
 				}
         if(cmtstatus == 4){
   					cmtstatuscheck = true;
@@ -634,14 +660,12 @@ Application.defineModel('PlacedOrder', {
 			//,	fabricstatus: record.getText('custcol_avt_fabric_status')
 			//,	cmtstatus: record.getText('custcol_avt_cmt_status')
       ,	dateneeded: dateneeded
-      ,	tranline_status: cmtstatuscheck || fabricstatuscheck//record.getText('custcol_avt_solinestatus')
+      ,	tranline_status: cmtstatuscheck || fabstatuscheck//record.getText('custcol_avt_solinestatus')
 			,	fabricstatus: record.getValue('custcol_avt_fabric_text')
 			,	cmtstatus: cmtstatustext//record.getValue('custcol_avt_cmt_status_text')
       , solinekey: record.getValue('custcol_avt_saleorder_line_key')
 			};
 		});
-
-		nlapiLogExecution("DEBUG", "clientName", JSON.stringify(result.records));
 
 		/**
 		var arrObjRecords = [];
