@@ -44,6 +44,29 @@ define('OrderWizard.Router', ['Wizard.Router', 'OrderWizard.Step', 'Order.Model'
 
 	,	runStep: function(options)
 		{
+			var self = this;
+			var clientids =[];
+			console.log(this);
+			// if(this.currentStep == 'opc'){
+			// 	var cart = SC.Application('Checkout').getCart();
+			// 	cart.get('lines').each(function (line){
+			// 		var itemoptions = line.get('item').get('options');
+			// 		for(var i=0;i<itemoptions.length;i++){
+			// 			if(itemoptions[i].id == "CUSTCOL_TAILOR_CLIENT"){
+			// 				if(clientids.length == 0){
+			// 					clientids.push(itemoptions[i].value)
+			// 				}
+			// 				else{
+			// 					if(clientids.indexOf(itemoptions[i].value) == -1){
+			// 						//self.submitErrorHandler('Cannot Process Items with Multiple Clients');
+			// 						//self.manageError('Cannot Process Items with Multiple Clients', self);
+			// 						return ;
+			// 					}
+			// 				}
+			// 			}
+			// 		}
+			// 	});
+			// }
 			// Computes the position of the user in the flow
 			var url = (options) ? Backbone.history.fragment.replace('?' + options, '') : Backbone.history.fragment
 			,	position = this.getStepPosition(url)
@@ -51,7 +74,7 @@ define('OrderWizard.Router', ['Wizard.Router', 'OrderWizard.Step', 'Order.Model'
 			,	content = ''
 			,	page_header = ''
 			,	last_order_id = options && ~options.indexOf('last_order_id=');
-			
+
 			if (last_order_id || !this.application.getCart().getTotalItemCount())
 			{
 				if(this.application.getUser().get('isGuest') !== 'T' && last_order_id)

@@ -1,4 +1,4 @@
-<% registerMacro('measureForm', function (fields, values) { %>
+<% registerMacro('measureForm', function (fields, values) { console.log(fields); console.log(values)%>
 
 	<% if(fields && fields.fieldset && fields.fieldset.length){ %>
 		<h4 class="section-header"><%= _('Measurement Details').translate() %></h4>
@@ -8,6 +8,7 @@
 				<div class="main-section">
 					<% if(fields.type == 'Body'){ %>
 						<% _.each(fieldset.fields, function(field){
+
 							var mainBodyValue = null
 							,	fieldValue = _.where(values, {name: field.name})
 							if(fieldValue.length){
