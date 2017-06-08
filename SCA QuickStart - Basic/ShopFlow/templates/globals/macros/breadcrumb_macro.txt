@@ -40,7 +40,7 @@
 
 			</span>
 		<% } %>
-		<div id="banner-breadcrumb-bottom" class="content-banner banner-breadcrumb-bottom"></div>
+		<div id="banner-breadcrumb-bottom" class="content-banner banner-breadcrumb-bottom" style="margin-bottom:1.5%;"></div>
 
 <% } %>
 <% }) %>
