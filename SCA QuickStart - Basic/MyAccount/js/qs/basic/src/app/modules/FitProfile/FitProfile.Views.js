@@ -1,7 +1,7 @@
 // Profile.Views.js
 // -----------------------
 // Views for profile's operations
-define('FitProFile.Views', ['Client.Model', 'Profile.Model'], function (ClientModel, ProfileModel) {
+define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'PlacedOrder.Collection'], function (ClientModel, ProfileModel, Collection) {
 	'use strict';
 
 	var Views = {};
@@ -31,6 +31,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model'], function (ClientMo
 			, 'click [id=butt-modal-copy]': 'swxFitProfileModalButtCopy'
 			, 'click [id=butt-modal-remove]': 'swxFitProfileModalButtRemove'
 			, 'click [id=swx-later-add-order]': 'swxFitProfileAddOrder'
+			, 'blur [name="oh_dateneeded"]': 'updateDateNeeded'
 
 		}
 		, initialize: function (options) {
@@ -38,6 +39,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model'], function (ClientMo
 			this.application = options.application;
 			SC.clients = options.clients;
 			this.cart = this.application.getCart();
+			this.clientOrderHistory = [];
 
 			//console.log('initialize>this.cart', this.cart);
 
@@ -48,9 +50,26 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model'], function (ClientMo
 			this.model.set('swx_is_display_client_details', '');
 			this.model.set('swx_client_profile_order_history', '');
 
+
+
 		}
 
+		, updateDateNeeded: function (e) {
+			console.log('updateDateNeeded trigger from FitProfile.Views.js');
 
+			e.preventDefault();
+			var valueofdate = e.target.value;
+			if (valueofdate) {
+				var today = new Date(valueofdate);
+				this.clientOrderHistory.each(function (model) {
+					if (model.get('solinekey') == e.target.id) {
+						model.set('dateneeded', today.getDate() + "/" + (today.getMonth() + 1) + "/" + today.getFullYear());
+						model.save();
+						console.log('model.save()');
+					}
+				});
+			}
+		}
 
 		, showContent: function () {
 			var self = this;
@@ -113,18 +132,20 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model'], function (ClientMo
 			var selectedClientItemId = e.target.getAttribute('swx-client-item-id');
 
 			console.log('swxFitProfileAddOrder>selectedClientItemId', selectedClientItemId);
-			console.log('saveForLaterItems',saveForLaterItems);
+			console.log('saveForLaterItems', saveForLaterItems);
 
 			//Filter the saveForLaterItems
-			var itemToAdd = _.findWhere(saveForLaterItems,{ displayname:selectedClientItemId });
-			console.log('itemToAdd',itemToAdd);
+			var itemToAdd = _.findWhere(saveForLaterItems, { displayname: selectedClientItemId });
+			console.log('itemToAdd', itemToAdd);
 
-			this.application.getCart().addItem(itemToAdd.itemObject).done(function(){
+			this.application.getCart().addItem(itemToAdd.itemObject).done(function () {
 				console.log('added to cart');
 			});
 
 		}
 		, swxClientProfileSelect: function (e) {
+			
+
 			//var orderHistoryCollection = this.model.orderhistory_collection;
 			//console.log('orderHistoryCollection: ' + '\n' + JSON.stringify(orderHistoryCollection, 'key', '\t'))
 
@@ -160,16 +181,46 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model'], function (ClientMo
 			objRef['customerid'] = currentUser;
 			objRef['clientprofileid'] = selectedClientIdValue;
 
-			_.suiteRest('getClientProfileOrderHistory', objRef).always(function (data) {
+			var optionsearch = {
+				page: 1,
+				search: this.model.get('swx_order_client_name')
+			};
 
-				if (data) {
-					var stClientHistory = JSON.stringify(data);
-					//console.log('suiteRest - swxClientProfileSelect' + '\n' + JSON.stringify(data, 'key', '\t'));
-					$("#order-history").html(SC.macros.swxMyAccountClientProfileOrderHistory(data));
-					_.toggleMobileNavButt();
-				}
-
+			var filteredClientOrderHistory = [];
+			this.clientOrderHistory = new Collection(optionsearch.search);
+			var self = this;
+			var clientFullName = $('#fitProfileClientName').html();
+			this.clientOrderHistory.fetch().done(function () {
+				self.clientOrderHistory.each(function (model) {
+					if (model.get('client_name') == clientFullName) {
+						filteredClientOrderHistory.push({
+							orderDate: model.get('date'),
+							orderNum: model.get('order_number'),
+							item: model.get('item'),
+							fabricStatus: model.get('fabricstatus'),
+							cmtStatus: model.get('cmtstatus'),
+							dateNeeded: model.get('dateneeded'),
+							status: model.get('tranline_status'),
+							solinekey: model.get('solinekey'),
+							internalid:model.get('internalid')
+						});
+					}
+				});
+				$("#order-history").html(SC.macros.fitProfileClientorderHistoryMacro(filteredClientOrderHistory));
 			});
+
+
+			// _.suiteRest('getClientProfileOrderHistory', objRef).always(function (data) {
+
+			// 	if (data) {
+			// 		console.log('getClientProfileOrderHistory',data);
+			// 		var stClientHistory = JSON.stringify(data);
+			// 		//console.log('suiteRest - swxClientProfileSelect' + '\n' + JSON.stringify(data, 'key', '\t'));
+			// 		$("#order-history").html(SC.macros.swxMyAccountClientProfileOrderHistory(data));
+			// 		_.toggleMobileNavButt();
+			// 	}
+
+			// });
 
 			this.application.getSavedForLaterProductList(objRef).done(function (response) {
 				//console.log(response);
