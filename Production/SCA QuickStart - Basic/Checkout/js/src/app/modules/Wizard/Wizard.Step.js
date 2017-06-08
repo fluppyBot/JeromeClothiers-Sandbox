@@ -394,7 +394,29 @@ define('Wizard.Step', function ()
 		// and asks the wizard to go to the next step
 	,	submit: function (e)
 		{
-			
+			var self = this;
+
+			var clientids =[];
+			if(this.wizard.currentStep == 'opc'){
+				var cart = SC.Application('Checkout').getCart();
+				cart.get('lines').each(function (line){
+					var itemoptions = line.get('item').get('options');
+					for(var i=0;i<itemoptions.length;i++){
+						if(itemoptions[i].id == "CUSTCOL_TAILOR_CLIENT"){
+							if(clientids.indexOf(itemoptions[i].value) == -1){
+									clientids.push(itemoptions[i].value);
+								}
+
+						}
+					}
+				});
+				if(clientids.length > 1){
+					self.submitErrorHandler('Cannot Process Items with Multiple Clients');
+				return ;
+			}
+			}
+
+
 			// Disables the navigation Buttons
 			e && this.disableNavButtons();
 
@@ -409,7 +431,7 @@ define('Wizard.Step', function ()
 				module_instance.disableInterface();
 			});
 
-			var self = this;
+
 			jQuery.when.apply(jQuery, promises).then(
 				// Success Callback
 				function ()

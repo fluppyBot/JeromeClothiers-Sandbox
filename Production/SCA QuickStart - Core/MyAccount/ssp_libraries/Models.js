@@ -503,7 +503,7 @@ Application.defineModel('PlacedOrder', {
 		columns.push(new nlobjSearchColumn('custcol_avt_solinestatus'))
     columns.push(new nlobjSearchColumn('custcol_avt_saleorder_line_key'))
 		columns.push(new nlobjSearchColumn('custcol_avt_cmt_tracking'))
-
+    columns.push(new nlobjSearchColumn('custcol_fabric_delivery_days'))
 		if (isMultiCurrency)
 		{
 			columns.push(new nlobjSearchColumn('currency'));
@@ -593,6 +593,7 @@ Application.defineModel('PlacedOrder', {
 					//check the dates of the fabric should be sent vs today
 					if(custcol_expected_production_date){
 					  expFabDateNeeded = nlapiStringToDate(custcol_expected_production_date);
+            expFabDateNeeded.setDate(expFabDateNeeded.getDate()-parseFloat(record.getValue('custcol_fabric_delivery_days')))
 						if(expFabDateNeeded < today)
 							fabstatuscheck = true;
 						else
