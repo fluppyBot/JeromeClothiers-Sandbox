@@ -16,6 +16,8 @@ define('FitProFile.Router',  ['FitProFile.Views', 'FitProfile.Model', 'FormRende
 		{
 			this.application = application;
 			this.clients = clients;
+
+		
 		}
 		
 		// load the home page
@@ -27,7 +29,8 @@ define('FitProFile.Router',  ['FitProFile.Views', 'FitProfile.Model', 'FormRende
 			var	view = new Views.Home({
 				application: application
 			,	model: new Model(application.getUser().get("internalid"))
-			});
+		});
+		
 			view.model.on("afterInitialize", function(){
 				view.showContent();
 			})

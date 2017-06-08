@@ -19,7 +19,7 @@
 					</div>
 				</div>
 
-				<div id="fitProfileOrderHistoryListBody" class="collapse" >
+				<div id="fitProfileOrderHistoryListBody" class="collapse">
 
 					<div style="margin-bottom: 20px;">Showing 1 -
 						<%=arrObjOrderTotal%> of
@@ -68,8 +68,16 @@
 				var splitOrderDateNeeded = orderDateNeeded.split('/');
 				console.log('splitOrderDateNeeded',splitOrderDateNeeded);
 				if(splitOrderDateNeeded.length>0){
-					odNeededDay = splitOrderDateNeeded[0];
-					odNeededMonth = splitOrderDateNeeded[1];
+					if(splitOrderDateNeeded[0].length<2){
+						odNeededDay = "0"+splitOrderDateNeeded[0];
+					}else{
+						odNeededDay = splitOrderDateNeeded[0];	
+					}
+					if(splitOrderDateNeeded[1].length<2){
+						odNeededMonth = "0"+splitOrderDateNeeded[1];
+					}else{
+						odNeededMonth = splitOrderDateNeeded[1];	
+					}
 					odNeededYear = splitOrderDateNeeded[2];
 					odNeededFormat = odNeededYear+"-"+ odNeededMonth+"-"+odNeededDay;
 					console.log('odNeededFormat',odNeededFormat);
@@ -125,14 +133,19 @@
 										<div class="span2">
 											<div id="mobile-only" style="float: left; font-size: 12px; font-weight: 600; padding-right: 8px; white-space: nowrap;">Date Needed:</div>
 											<div style="float: left; font-size: 12px;">
-												<input name="oh_dateneeded" placeholder=""  type="date" value="<%=odNeededFormat%>" style="width:100px;font-size:10px;">
+												<input name="oh_dateneeded" placeholder="" type="date" value="<%=odNeededFormat%>" style="width:100px;font-size:10px;">
 											</div>
 											<div style="clear: both;"></div>
 										</div>
 										<div class="span1">
 											<div id="mobile-only" style="float: left; font-size: 12px; font-weight: 600; padding-right: 8px; white-space: nowrap;">Status:</div>
-											<div style="float: left; font-size: 12px;">
-												<%= orderTranLineStatus %>
+											<div style="font-size: 12px;text-align:center;">
+												<!--<%= orderTranLineStatus %>-->
+												<% if(arrObjOrder[dx]['tranline_status'].length>0){ %>
+													<img src="https://checkout.netsuite.com/c.3857857/myaccount/img/red.png">
+													<%}else{%>
+														<img src="https://checkout.netsuite.com/c.3857857/myaccount/img/green.png">
+														<%}%>
 											</div>
 											<div style="clear: both;"></div>
 										</div>

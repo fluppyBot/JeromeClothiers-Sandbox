@@ -298,6 +298,8 @@ SC.Translations={
 	"Receipts": "Receipts",
 	"Save": "Save",
 	"Saved to <i>$(0)</i>": "Saved to <i>$(0)</i>",
+	"Saved Orders": "Saved Items",
+	"Saved Order": "Saved Items",
 	"Searching...": "Searching...",
 	"Security Number is invalid": "Security Number is invalid",
 	"Security Number is required": "Security Number is required",

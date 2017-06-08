@@ -66,7 +66,7 @@
 	%>
 
 	<div class="row-fluid">
-		<div class="span12" style="margin-bottom: 15px;"><%=clientName%></div>
+		<div class="span12" style="margin-bottom: 15px;" id="fitProfileClientName"><%=clientName%></div>
 	</div>
 
 	<div class="row-fluid">

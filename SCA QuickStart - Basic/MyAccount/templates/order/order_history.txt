@@ -75,7 +75,10 @@
 					<td><%= order.get('fabricstatus') %></td>
 					<td ><%= order.get('cmtstatus') %></td>
 					<!--td><%= order.get('summary').total_formatted %></td-->
-					<td><input name="oh_dateneeded" placeholder="" id="<%= order.get('solinekey') %>" type="date" value="<%= order.get('dateneeded') %>" style="width:100px;font-size:10px;"></td>
+					<td>
+						<input name="oh_dateneeded" placeholder="" id="<%= order.get('solinekey') %>" type="date" value="<%= order.get('dateneeded') %>" style="width:100px;font-size:10px;">
+						<% console.log(order.get('dateneeded')) %>
+					</td>
 					<!--td><%= order.get('status') %></td-->
 					<td style="text-align:center;"><% if(order.get('tranline_status')){ %>
 						<img src="https://checkout.netsuite.com/c.3857857/myaccount/img/red.png">

@@ -71,7 +71,8 @@
 			
 			<a  data-toggle="collapse" data-target="#saveForLaterItemsCart" aria-expanded="true" aria-controls="collapseOne" class="accordion-toggle"
 			 style="text-decoration:none;color:grey;">
-				<%= (type === 'predefined' || type === 'later') ? _(view.model.get('name')).translate() : view.model.get('name') %>
+				<!--<%= (type === 'predefined' || type === 'later') ? _(view.model.get('name')).translate() : view.model.get('name') %>-->
+				Saved Items
 			</a>
 
 			<% if (!hasStFilterSaveForLaterRef) { %>
