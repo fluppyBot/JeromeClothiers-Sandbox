@@ -1,7 +1,7 @@
 // Cart.Views.js
 // -------------
 // Cart and Cart Confirmation views
-define('Cart.Views', ['ErrorManagement', 'FitProfile.Model', 'ItemDetails.Model'], function (ErrorManagement, FitProfileModel, ItemDetailsModel)
+define('Cart.Views', ['ErrorManagement', 'FitProfile.Model', 'ItemDetails.Model','Session'], function (ErrorManagement, FitProfileModel, ItemDetailsModel,Session)
 {
 	'use strict';
 
@@ -46,10 +46,35 @@ define('Cart.Views', ['ErrorManagement', 'FitProfile.Model', 'ItemDetails.Model'
 		,	'click [id="swx-butt-save-for-later-filter"]': 'swxFilterSaveForLaterClick'
 		,	'click [id="swx-butt-save-for-later-filter-clear"]': 'swxFilterSaveForLaterClearClick'
 		,	'click [data-action="copy-to-cart"]' : 'copyItemToCartHandler'
-
+		, 'click [id="btn-proceed-checkout"]': 'validateItems'
 
 		}
 
+	, validateItems: function(e){
+			e.preventDefault();
+			var self = this;
+			var hasError = false;
+			var cart = SC.Application('Shopping').getCart();
+			cart.get('lines').each(function (line){
+				var itemoptions = line.get('item').get('options');
+				var itemid = line.get('item').id;
+				for(var i=0;i<itemoptions.length;i++){
+					if(itemoptions[i].id == "CUSTCOL_AVT_DATE_NEEDED"){
+						if(itemoptions[i].value == '1/1/1900'){
+								hasError = true;
+								jQuery("[data-id='"+itemid+"']").find('[data-type="alert-placeholder"]').append(
+									SC.macros.message('Date Needed is Required', 'error', true));							
+							}
+					}
+				}
+			});
+			if(hasError){
+				return ;
+			}
+			else{
+				window.location.href = Session.get('touchpoints.checkout');
+			}
+		}
 	,	initialize: function (options)
 		{
 			this.application = options.application;
