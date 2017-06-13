@@ -1,13 +1,13 @@
 <%
 	var model = view.model;
 	//console.log('item_details xyla');
-	
+
 	var application = view.application;
 	var cart = application.getCart();
 	var cartLines = cart.get('lines');
-	
+
 	console.log('cart: ' + '\n' + JSON.stringify(cart, 'key', '\t'))
-	
+
 %>
 <div class="view-header container" itemscope itemtype="http://schema.org/WebPage">
 	<%= breadcrumb(model.get('_breadcrumb')) %>
@@ -51,22 +51,22 @@
 							/*
 							Render a single option placeholder:
 							===================================
-							Any HTML element that matches [data-type=option], if it's rendered by ItemDetails.View 
+							Any HTML element that matches [data-type=option], if it's rendered by ItemDetails.View
 							will be populated by the render of a single macro for a single option, especified by the attributes:
 								data-cart-option-id: the id of the cart opion
 								data-macro: the macro you want this option to be rendered with, if omited the default for the option will be used
-							
-							<div 
-								class="options-container" 
-								data-type="option" 
-								data-cart-option-id="cart_option_id" 
+
+							<div
+								class="options-container"
+								data-type="option"
+								data-cart-option-id="cart_option_id"
 								data-macro="macroName">
 							</div>
-							
+
 							Render all options placeholder:
 							===============================
-							Any HTML element that matches [data-type=all-options], if it's rendered by ItemDetails.View 
-							will be populated with the result of the execution of all the options with the macros, 
+							Any HTML element that matches [data-type=all-options], if it's rendered by ItemDetails.View
+							will be populated with the result of the execution of all the options with the macros,
 							either the default one or the one configured in the itemOptions array.
 							Use the data-exclude-options to select the options you dont want to be rendered here,
 							this is a coma separated list, for instace: cart_option_id1, cart_option_id2
@@ -79,11 +79,11 @@
                                        class="options-container default-options-container"
                                        data-type="all-options"
                                        data-exclude-options="
-                                       		custcol_designoptions_jacket, 
+                                       		custcol_designoptions_jacket,
                                        		custcol_designoptions_overcoat,
                                        		custcol_designoptions_shirt,
                                        		custcol_designoptions_trouser,
-                                       		custcol_designoptions_waistcoat	
+                                       		custcol_designoptions_waistcoat
                                        	">
                                     </div>
                                 </div>
@@ -97,19 +97,19 @@
 
                                         <div id="fitprofile-details">
                                             <i class="fa-li fa fa-spinner fa-spin" style="position: static;"></i>
-                                        </div>                                        
+                                        </div>
 										<!-- previous location of quantity -->
 										<% if(model.get('custitem_clothing_type') !== "&nbsp;") { %>
 											<h2><%= _('Fabric Quantity').translate() %></h2>
 											<hr />
-										<% } else { 
+										<% } else {
 											if(model.get('itemtype') === 'NonInvtPart'){
 										%>
 												<h2><%= _('Quantity').translate() %></h2>
 												<hr />
 										<% 	}
 										} %>
-										
+
 										<div id="quantity">
 
 											<% if (model.get('_itemType') !== 'GiftCert'){
@@ -121,11 +121,11 @@
 													<% } else {%>
 												   		<label style="width:100px" for="quantity"> <%=_('Quantity').translate(minimum_quantity)%></label>
 												<% } }%>
-												
+
 												<div class="control-group" style="display:inline-block;">
 												<% if(model.get('custitem_clothing_type') !== "&nbsp;") { %>
-													<input type="number" step="0.05" name="custcol_fabric_quantity" id="quantity" class="input-mini quantity" value="1" min="1">
-												<% } else { 
+													<input type="number" step="0.05" name="custcol_fabric_quantity" id="quantity" class="input-mini quantity" value ="0" min="0">
+												<% } else {
 													if(model.get('itemtype') === 'NonInvtPart') {
 												%>
 													<input type="number" name="custcol_fabric_quantity" id="quantity" class="input-mini quantity" value="1" min="1">
@@ -141,7 +141,7 @@
 												<% } %>
 												<%= itemDetailsStock(model.getStockInfo()) %>
 											</div>
-											
+
 											<input type="hidden" name="custcol_avt_date_needed" id="quantity" value="">
 											<input type="hidden" name="custcol_avt_hold_fabric" id="quantity" value="F">
 											<input type="hidden" name="custcol_avt_hold_production" id="quantity" value="F">
@@ -150,7 +150,7 @@
                                         <button data-type="add-to-cart" class="btn btn-primary btn-large add-to-cart-btn"<% if (!model.isReadyForCart()) {%> disabled<%}%>>
                                             <%= _('Add to Cart').translate() %>
                                         </button>
-                                        
+
                                     </form>
                                 </div>
                             </div>
@@ -210,7 +210,7 @@
 				<% } %>
 					<%= itemDetailsStock(model.getStockInfo()) %>
 				</div>
-								
+
 				<button data-type="add-to-cart" class="btn btn-primary add-to-cart-btn"<% if (!model.isReadyForCart()) {%> disabled<%}%>>
 					<%= _('Add to Cart').translate() %>
 				</button>

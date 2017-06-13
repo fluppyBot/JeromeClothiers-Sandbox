@@ -593,7 +593,7 @@ Application.defineModel('PlacedOrder', {
 					//check the dates of the fabric should be sent vs today
 					if(custcol_expected_production_date){
 					  expFabDateNeeded = nlapiStringToDate(custcol_expected_production_date);
-            expFabDateNeeded.setDate(expFabDateNeeded.getDate()-parseFloat(record.getValue('custcol_fabric_delivery_days')))
+            expFabDateNeeded.setDate(expFabDateNeeded.getDate()+1-parseFloat(record.getValue('custcol_fabric_delivery_days')))
 						if(expFabDateNeeded < today)
 							fabstatuscheck = true;
 						else

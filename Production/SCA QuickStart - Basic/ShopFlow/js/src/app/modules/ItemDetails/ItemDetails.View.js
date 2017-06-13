@@ -265,7 +265,7 @@ define('ItemDetails.View', ['FitProFile.Views', 'FitProfile.Model', 'Facets.Tran
 
 			if (hasConflictCodes)
 			{
-				console.log('arrErrConflictCodesTotal: ' + arrErrConflictCodesTotal + '\n' + 'arrErrConflictCodes: ' + '\n' + JSON.stringify(arrErrConflictCodes, 'key', '\t'));
+				//console.log('arrErrConflictCodesTotal: ' + arrErrConflictCodesTotal + '\n' + 'arrErrConflictCodes: ' + '\n' + JSON.stringify(arrErrConflictCodes, 'key', '\t'));
 
 				var modalTitleErrConflictCode = 'Selected Options Error';
 				var modalContentErrConflictCode = _.getHtmlErrConflictCodes(arrErrConflictCodes);
@@ -427,6 +427,52 @@ define('ItemDetails.View', ['FitProFile.Views', 'FitProfile.Model', 'Facets.Tran
 					status = false
 				}
 			});
+			//"Jacket, Trouser, Waistcoat","Jacket","Overcoat","Shirt","Jacket, Trouser"
+			switch(this.model.get('custitem_clothing_type')){
+				case "Jacket, Trouser, Waistcoat":
+					if(parseFloat(jQuery('[name="custcol_fabric_quantity"]').val()) < 3.4){
+						self.showError(_('Quantity should be greater than 3.4 for 3 Piece Suit').translate());
+						status = false;
+					}
+				break;
+				case "Jacket":
+				if(parseFloat(jQuery('[name="custcol_fabric_quantity"]').val()) < 2){
+					self.showError(_('Quantity should be greater than 2 for Jacket').translate());
+					status = false;
+				}
+				break;
+				case "Trouser":
+				if(parseFloat(jQuery('[name="custcol_fabric_quantity"]').val()) < 1.5){
+					self.showError(_('Quantity should be greater than 1.5 for Trouser').translate());
+					status = false;
+				}
+				break;
+				case "Waistcoat":
+				if(parseFloat(jQuery('[name="custcol_fabric_quantity"]').val()) < 1){
+					self.showError(_('Quantity should be greater than 1 for Waistcoat').translate());
+					status = false;
+				}
+				break;
+				case "Overcoat":
+				if(parseFloat(jQuery('[name="custcol_fabric_quantity"]').val()) < 2.4){
+					self.showError(_('Quantity should be greater than 2.4 for Overcoat').translate());
+					status = false;
+				}
+				break;
+				case "Shirt":
+				if(parseFloat(jQuery('[name="custcol_fabric_quantity"]').val()) < 2){
+					self.showError(_('Quantity should be greater than 2 for Shirt').translate());
+					status = false;
+				}
+				break;
+				case "Jacket, Trouser":
+				if(parseFloat(jQuery('[name="custcol_fabric_quantity"]').val()) < 3){
+					self.showError(_('Quantity should be greater than 3 for 2 Piece Suit').translate());
+					status = false;
+				}
+				break;
+				default:
+			}
 
 			if(status){
 				self.hideError();
@@ -672,7 +718,7 @@ define('ItemDetails.View', ['FitProFile.Views', 'FitProfile.Model', 'Facets.Tran
 	,
 	recurring: function(){
 		self = this;
-		console.log('hastimedout');
+
 		jQuery.ajax({
 			url: 'http://store.jeromeclothiers.com/api/items?fieldset=relateditems_details&language=en&country=AU&currency=USD&pricelevel=1&c=3857857&n=2&id=42461'
 		});
@@ -688,22 +734,19 @@ define('ItemDetails.View', ['FitProFile.Views', 'FitProfile.Model', 'Facets.Tran
 			{
 				jQuery("[data-type='alert-placeholder']").empty();
 			});
-			//console.log('beforerecurring')
-			//this.recurring();
-			//console.log('afterrecurring')
 			jQuery(document).ajaxComplete(function( event, request, settings ) {
 			  jQuery("[data-type='alert-placeholder']").empty();
 			});
 
 			var self = this;
 
-			window.tempQuantity = window.tempQuantity ? window.tempQuantity : 1;
+			window.tempQuantity = window.tempQuantity ? window.tempQuantity : 0;
 			// Once the showContent has been called, this make sure that the state is preserved
 			// REVIEW: the following code might change, showContent should recieve an options parameter
 			this.application.getLayout().showContent(this, options && options.dontScroll).done(function(view)
 			{
 
-				console.log('showContent')
+
 				jQuery("[data-type='alert-placeholder']").empty()
 
 				var selectedItem = null;
