@@ -1,9 +1,14 @@
 <h3 class="pull-left"><%= view.page_header %></h3>
+<style>
+	.pagination.pagination-small.pull-right{
+		margin-top:25px;
+	}
+</style>
 <div class="myaccount-search-container pull-right">
 	<div id="site-search-container" class="site-search-container">
 		<form class="form-search site-search">
 		<div class="input-append">
-			<input class="input-medium search-query" placeholder="Name Search" type="search" name="keywords" autocomplete="off" maxlength="40" rel='search' value="<%= view.options.search %>">
+			<input class="input-medium search-query" placeholder="Search" type="search" name="keywords" autocomplete="off" maxlength="40" rel='search' value="<%= view.options.search %>">
 			<button type="submit" class="btn" rel='search'>
 				<i class="fa fa-search"></i>
 			</button>
