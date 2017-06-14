@@ -1,7 +1,7 @@
 // Profile.Views.js
 // -----------------------
 // Views for profile's operations
-define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'PlacedOrder.Collection'], function (ClientModel, ProfileModel, Collection) {
+define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory.Collection'], function (ClientModel, ProfileModel, Collection) {
 	'use strict';
 
 	var Views = {};
@@ -55,6 +55,11 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'PlacedOrder.Collec
 		}
 
 		, updateDateNeeded: function (e) {
+			var $ = jQuery;
+			var optionsearch = {
+				page: 1,
+				search: this.model.get('swx_order_client_name')
+			};
 			console.log('updateDateNeeded trigger from FitProfile.Views.js');
 
 			e.preventDefault();
@@ -65,9 +70,20 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'PlacedOrder.Collec
 					if (model.get('solinekey') == e.target.id) {
 						model.set('dateneeded', today.getDate() + "/" + (today.getMonth() + 1) + "/" + today.getFullYear());
 						model.save();
+						//model.cachedSync();
+						console.log('model', model);
 						console.log('model.save()');
+
 					}
 				});
+
+				//this.clientOrderHistory.reset(this.clientOrderHistory);
+
+				//console.log('{ reset: true, killerId: this.application.killerId, data: optionsearch }', { reset: true, killerId: this.application.killerId, data: optionsearch });
+				//this.swxClientProfileOrderHistory();
+				// this.clientOrderHistory
+				// 	.on('reset', this.swxClientProfileOrderHistory())
+				// 	.fetch({ reset: true, killerId: this.application.killerId, data: optionsearch });
 			}
 		}
 
@@ -143,8 +159,46 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'PlacedOrder.Collec
 			});
 
 		}
+
+		, swxClientProfileOrderHistory: function (e) {
+			var $ = jQuery;
+
+			console.log('swxClientProfileOrderHistory');
+			var optionsearch = {
+				page: 1,
+				search: this.model.get('swx_order_client_name')
+			};
+
+			//Backbone.Relational.store.reset();
+
+			var filteredClientOrderHistory = [];
+			this.clientOrderHistory = new Collection(optionsearch.search);
+			this.clientOrderHistory.reset();
+			var self = this;
+			var clientFullName = $('#fitProfileClientName').html();
+			this.clientOrderHistory.fetch().done(function () {
+				console.log('self.clientOrderHistory',self.clientOrderHistory);
+				self.clientOrderHistory.each(function (model) {
+					if (model.get('client_name') == clientFullName) {
+						filteredClientOrderHistory.push({
+							orderDate: model.get('date'),
+							orderNum: model.get('order_number'),
+							item: model.get('item'),
+							fabricStatus: model.get('fabricstatus'),
+							cmtStatus: model.get('cmtstatus'),
+							dateNeeded: model.get('dateneeded'),
+							status: model.get('tranline_status'),
+							solinekey: model.get('solinekey'),
+							internalid: model.get('internalid')
+						});
+					}
+				});
+				$("#order-history").html(SC.macros.fitProfileClientorderHistoryMacro(filteredClientOrderHistory));
+			});
+
+		}
 		, swxClientProfileSelect: function (e) {
-			
+
 
 			//var orderHistoryCollection = this.model.orderhistory_collection;
 			//console.log('orderHistoryCollection: ' + '\n' + JSON.stringify(orderHistoryCollection, 'key', '\t'))
@@ -186,28 +240,10 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'PlacedOrder.Collec
 				search: this.model.get('swx_order_client_name')
 			};
 
-			var filteredClientOrderHistory = [];
-			this.clientOrderHistory = new Collection(optionsearch.search);
-			var self = this;
-			var clientFullName = $('#fitProfileClientName').html();
-			this.clientOrderHistory.fetch().done(function () {
-				self.clientOrderHistory.each(function (model) {
-					if (model.get('client_name') == clientFullName) {
-						filteredClientOrderHistory.push({
-							orderDate: model.get('date'),
-							orderNum: model.get('order_number'),
-							item: model.get('item'),
-							fabricStatus: model.get('fabricstatus'),
-							cmtStatus: model.get('cmtstatus'),
-							dateNeeded: model.get('dateneeded'),
-							status: model.get('tranline_status'),
-							solinekey: model.get('solinekey'),
-							internalid:model.get('internalid')
-						});
-					}
-				});
-				$("#order-history").html(SC.macros.fitProfileClientorderHistoryMacro(filteredClientOrderHistory));
-			});
+			this.swxClientProfileOrderHistory();
+
+
+
 
 
 			// _.suiteRest('getClientProfileOrderHistory', objRef).always(function (data) {

@@ -462,9 +462,14 @@ Application.defineModel('Profile', {
 // Handles fetching orders
 Application.defineModel('PlacedOrder', {
   setDateNeeded:function(options){
-      var recid = options.solinekey.split('_')[0];
-      nlapiRequestURL('https://forms.netsuite.com/app/site/hosting/scriptlet.nl?script=181&deploy=1&compid=3857857&h=bf9b68501c2e0a0da79f&recid='+recid+'&solinekey='+options.solinekey+'&dateneeded='+options.dateneeded);
 
+      var recid = options.solinekey.split('_')[0];
+	 
+	  //nlapiRequestURL('https://forms.netsuite.com/app/site/hosting/scriptlet.nl?script=181&deploy=1&compid=3857857&h=bf9b68501c2e0a0da79f&recid='+recid+'&solinekey='+options.solinekey+'&dateneeded='+options.dateneeded);
+	  //var response = https.post({ url:'/app/site/hosting/scriptlet.nl?script=187&deploy=1&recid='+recid+'&solinekey='+options.solinekey+'&dateneeded='+options.dateneeded });
+      
+	  nlapiRequestURL('https://forms.sandbox.netsuite.com/app/site/hosting/scriptlet.nl?script=189&deploy=1&compid=3857857&h=8ae0b4c46639c406c38a&recid='+recid+'&solinekey='+options.solinekey+'&dateneeded='+options.dateneeded);
+	  
     }
 
 	, list: function (page, clientName)

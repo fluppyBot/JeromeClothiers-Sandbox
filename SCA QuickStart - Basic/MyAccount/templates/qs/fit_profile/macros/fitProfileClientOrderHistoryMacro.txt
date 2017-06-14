@@ -28,8 +28,8 @@
                 <a data-target="#fitProfileClientorderHistoryMacroContent" data-toggle="collapse" aria-expanded="true" aria-controls="collapseOne"
                     class="accordion-toggle" style="text-decoration:none;color:grey;">
 								Order History
-							</a></h3>
-            <div id="fitProfileClientorderHistoryMacroContent" class="collapse">
+							</a></h3> 
+            <div id="fitProfileClientorderHistoryMacroContent" class="collapse" data-permissions="transactions.tranFind.1,transactions.tranSalesOrd.1">
                 <table class="table">
                     <thead style="font-size: 12px;">
                         <tr>
