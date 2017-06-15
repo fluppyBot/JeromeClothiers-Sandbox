@@ -17,8 +17,10 @@ function service (request)
 			//  custom parameter used for searching.
 			,	clientName = request.getParameter('clientName')
 			//  Order model is defined on ssp library Models.js
-			,	PlacedOrder = Application.getModel('PlacedOrder');
-			
+			,	PlacedOrder = Application.getModel('PlacedOrder'),
+			data = JSON.parse(request.getBody() || '{}');
+
+
 			switch (method)
 			{
 				case 'GET':
@@ -28,10 +30,16 @@ function service (request)
 					} else {
 						Application.sendContent(id ? PlacedOrder.get(id) : (PlacedOrder.list(page) || []));
 					}
-					
-				break;
 
-				default: 
+				break;
+				case 'PUT':
+					//if(data.dateneeded){
+						//PlacedOrder.setDateNeeded(data);
+					//}
+					PlacedOrder.setDateNeeded(data);
+					Application.sendContent(PlacedOrder.get(data.solinekey.split('_')[0]));
+					break;
+				default:
 					// methodNotAllowedError is defined in ssp library commons.js
 					Application.sendError(methodNotAllowedError);
 			}

@@ -61,6 +61,7 @@
 		<div id="fit-profile"></div>
 		<div id="profile-section"></div>
 		<div id="order-history"></div>
+		<div id="saveForLaterItems"></div>
 
 	</div>
 

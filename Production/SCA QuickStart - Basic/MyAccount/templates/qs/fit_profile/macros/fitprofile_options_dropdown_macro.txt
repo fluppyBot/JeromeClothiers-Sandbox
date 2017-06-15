@@ -1,10 +1,10 @@
 <% registerMacro('fitProfileOptionDropdown', function (profiles, parent) { %>
 	<div style="display: none;">
-	<label for="clients-options"><%= _('Fit Profiles: ').translate() %></label>
-	<% if(profiles){ %>
-		<div class="row-fluid">
-			<div class="span3">
-				<select class="profiles-options" id="profiles-options">
+		<label for="clients-options"><%= _('Fit Profiles: ').translate() %></label>
+		<% if(profiles){ %>
+			<div class="row-fluid">
+				<div class="span3">
+					<select class="profiles-options" id="profiles-options">
 					<option value=""><%= _('Select a profile').translate() %></option>
 					<% 
 						var selected = false;
@@ -17,139 +17,186 @@
 								selectedID = profile.get("internalid");
 							}
 						%>
-
 						<option value="<%= profile.get("internalid") %>" <%= profile.get("internalid") == SC._applications.MyAccount.getLayout().currentView.model.get("current_profile") ? 'selected' : ''%>><%= profile.get("name") %></option>
 					<% }) %>
 				</select>
+				</div>
+				<div class="span3" id="profile-actions">
+					<!--a id="swx-fitprofile-dropdown-add" data-action='add-profile' data-toggle='show-in-modal' data-type='profile'>Add</a-->
+					<a href="/fitprofile" id="swx-fitprofile-dropdown-add" data-action='add-profile' data-toggle='show-in-modal' data-type='profile'>Add</a>
+					<% if(selected){ %>
+						| <a id="swx-fitprofile-dropdown-remove" data-toggle="show-in-modal" data-action="remove-rec" data-type="profile" data-id="<%= selectedID %>">Remove</a>						| <a id="swx-fitprofile-dropdown-copy" data-action="copy-profile" data-type="profile" data-id="<%= selectedID %>">Copy</a>
+						<% } %>
+				</div>
 			</div>
-
-			<div class="span3" id="profile-actions">
-				<!--a id="swx-fitprofile-dropdown-add" data-action='add-profile' data-toggle='show-in-modal' data-type='profile'>Add</a-->
-				<a href="/fitprofile" id="swx-fitprofile-dropdown-add" data-action='add-profile' data-toggle='show-in-modal' data-type='profile'>Add</a>
-
-				<% if(selected){ %>
-					| <a id="swx-fitprofile-dropdown-remove" data-toggle="show-in-modal" data-action="remove-rec" data-type="profile" data-id="<%= selectedID %>">Remove</a>
-					| <a id="swx-fitprofile-dropdown-copy" data-action="copy-profile" data-type="profile" data-id="<%= selectedID %>">Copy</a>
-				<% } %>
-			</div>
-		</div>
-	<% } %>
+			<% } %>
 	</div>
-	
 	<!-- start enhancements -->
-		
 	<% if (profiles) { %>
-
 		<%
 			var stProfiles = JSON.stringify(profiles, 'key', '\t');
-			
 			console.log('stProfiles: ' + '\n' + stProfiles)
 		%>
-		
-		<div id="swx-fiprofile-list" style="margin-bottom: 40px;">
-			
-			<div class="row-fluid" style="border-bottom: solid 1px #e5e5e5; margin-bottom: 18px; padding-bottom: 10px; padding-top: 20px">
-				<div class="span10">
-					<span style="font-size: 20px; font-weight: 400; color: #a6a6a6;">Fit&nbsp;Profiles</span>
-				</div>
-				<div class="span2">&nbsp;</div>
-			</div>
-				
-			<div class="row-fluid">
-				<div class="span10">&nbsp;</div>
-				
-				<div class="span2">
-					<div><a id="swx-fitprofile-butt-add" class="btn" style="width: 100%; padding-top: 4px; padding-bottom: 4px; padding-left: 0px; padding-right: 0px;">Add Fit Profile</a></div>
-					<div id="mobile-only" style="height: 20px;"></div>
 
+			<style>
+				#swx-fiprofile-list .accordion-toggle:after {
+					font-family: FontAwesome;
+					font-style: normal;
+					font-weight: normal;
+					content: "\f054"; /*Font awesome icon chevron right*/
+					float: right;
+					color: grey;
+				}
+
+				#swx-fiprofile-list .accordion-toggle:hover{
+					text-decoration: none;
+					color: grey;
+				}
+
+				#swx-fiprofile-list .accordion-toggle.collapsed:after {
+					content: "\f078";/* Font awesome chevron down*/
+				}
+
+				#fitProfileOrderHistoryList .accordion-toggle:after {
+					font-family: FontAwesome;
+					font-style: normal;
+					font-weight: normal;
+					content: "\f054"; /*Font awesome icon chevron right*/
+					float: right;
+					color: grey;
+				}
+
+				#fitProfileOrderHistoryList .accordion-toggle:hover{
+					text-decoration: none;
+					color: grey;
+				}
+
+				#fitProfileOrderHistoryList .accordion-toggle.collapsed:after {
+					content: "\f078";/* Font awesome chevron down*/
+				}
+
+
+			</style>
+			<div id="swx-fiprofile-list" style="margin-bottom: 10px;">
+				<div class="row-fluid" style="border-bottom: solid 1px #e5e5e5; margin-bottom: 18px; padding-bottom: 10px; padding-top: 20px">
+					<div class="span12">
+						<span style="font-size: 20px; font-weight: 400; color: #a6a6a6;">
+							<a data-target="#fitProfilesHistory" data-toggle="collapse"   aria-expanded="true" aria-controls="collapseOne" class="accordion-toggle" style="text-decoration:none;color:grey;">
+								Fit Profiles
+							</a>
+						</span>
+					</div>
 				</div>
-			</div>
-				
-				
-				<!-- start fitprofile header -->
-	
+
+
+
+
+
+				<!--Collapses body-->
+				<div id="fitProfilesHistory" class="collapse">
+					<div class="row-fluid">
+						<div class="span10">&nbsp;</div>
+						<div class="span2">
+							<div><a id="swx-fitprofile-butt-add" class="btn" style="width: 80%; padding-top: 4px; padding-bottom: 4px; padding-left: 0px; padding-right: 0px;">Add Fit Profile</a></div>
+							<div id="mobile-only" style="height: 20px;"></div>
+						</div>
+					</div>
+
+
+					<!-- start fitprofile header -->
 					<div id="desktop-only" class="row-fluid back-btn" style="border-bottom: solid 1px #e5e5e5; margin-bottom: 8px;">
-						
 						<div class="span10">
 							<div class="row-fluid">
-								<div class="span4" style="padding-bottom: 8px;"><div style="font-weight: 600;">Product Type</div></div>
-								<div class="span4"><div style="font-weight: 600;">Fit Profile Name</div></div>
-								<div class="span4"><div style="font-weight: 600;">Date Last Edited</div></div>
+								<div class="span4" style="padding-bottom: 8px;">
+									<div style="font-weight: 600;">Product Type</div>
+								</div>
+								<div class="span4">
+									<div style="font-weight: 600;">Fit Profile Name</div>
+								</div>
+								<div class="span4">
+									<div style="font-weight: 600;">Date Last Edited</div>
+								</div>
 							</div>
 						</div>
 						<div class="span2">
 							<div class="row-fluid">
-								<div class="span12"><div>&nbsp;</div></div>
+								<div class="span12">
+									<div>&nbsp;</div>
+								</div>
 							</div>
 						</div>
 					</div>
-	
-				
-				<!-- end fitprofile header -->
-	
-				<% profiles.each(function(profile) { %>
-				
-					<%
+					<!-- end fitprofile header -->
+
+					<% profiles.each(function(profile) { %>
+
+						<%
 						var fitProfileInternalId = profile.get('internalid');
 						var fitProfileName = profile.get('name');
 						var fitProfileProdType = profile.get('custrecord_fp_product_type');
 						var fitProfileLastModifiedDate = profile.get('lastmodified');
-						
-						
-						
-						
-					%>
-					<!-- start fitprofile row -->
-				
-						<div class="row-fluid" style="border-bottom: solid 1px #e5e5e5; margin-bottom: 8px;">
-							<div class="span10" style="padding-top: 8px;">
-							
-								<div class="row-fluid">
-	
-									<div class="span4">
-										<div id="mobile-only" style="float: left; font-size: 12px; font-weight: 600; padding-right: 8px; white-space: nowrap;">Product Type:</div>	
-										<div style="float: left; font-size: 12px;"><%= fitProfileProdType %></div>
-										<div style="clear: both;"></div>
-									</div>
-	
-	
-									<div class="span4">
-										<div id="mobile-only" style="float: left; font-size: 12px; font-weight: 600; padding-right: 8px; white-space: nowrap;">Fit Profile Name:</div>	
-										<div style="float: left; font-size: 12px;"><%= fitProfileName %></div>
-										<div style="clear: both;"></div>
-									</div>
-	
-	
-									<div class="span4">
-										<div id="mobile-only" style="float: left; font-size: 12px; font-weight: 600; padding-right: 8px; white-space: nowrap;">Date Last Edited:</div>	
-										<div style="float: left; font-size: 12px;"><%=fitProfileLastModifiedDate%></div>
-										<div style="clear: both;"></div>
-									</div>
-								
-								</div>
-							
-							</div>
-							
-							<div class="span2" style="padding-bottom: 8px;">
-								<div class="row-fluid">
-									<div class="span12">
-										<div><a id="swx-fitprofile-viewedit" class="btn" swx-fitprofile-id="<%=fitProfileInternalId%>" style="width: 100%; padding-top: 4px; padding-bottom: 4px; padding-left: 0px; padding-right: 0px;">View & Edit</a></div>	
-										<div id="mobile-only" style="height: 10px;"></div>
-									</div>
-								</div>
-							</div>
-						</div>
-					<!-- end fitprofile row -->
-	
-				<% }) %>
-			
-			
-		</div>
+						%>
+							<!-- start fitprofile row -->
 
-	<% } %>
-		
-	<% _.toggleMobileNavButt() %>
-	
-	<!-- end enhancements -->
-	
-<% }) %>
+							<div class="row-fluid" style="border-bottom: solid 1px #e5e5e5; margin-bottom: 8px;">
+								<div class="span10" style="padding-top: 8px;">
+
+									<div class="row-fluid">
+
+										<div class="span4">
+											<div id="mobile-only" style="float: left; font-size: 12px; font-weight: 600; padding-right: 8px; white-space: nowrap;">Product Type:</div>
+											<div style="float: left; font-size: 12px;">
+												<%= fitProfileProdType %>
+											</div>
+											<div style="clear: both;"></div>
+										</div>
+
+
+										<div class="span4">
+											<div id="mobile-only" style="float: left; font-size: 12px; font-weight: 600; padding-right: 8px; white-space: nowrap;">Fit Profile Name:</div>
+											<div style="float: left; font-size: 12px;">
+												<%= fitProfileName %>
+											</div>
+											<div style="clear: both;"></div>
+										</div>
+
+
+										<div class="span4">
+											<div id="mobile-only" style="float: left; font-size: 12px; font-weight: 600; padding-right: 8px; white-space: nowrap;">Date Last Edited:</div>
+											<div style="float: left; font-size: 12px;">
+												<%=fitProfileLastModifiedDate%>
+											</div>
+											<div style="clear: both;"></div>
+										</div>
+
+									</div>
+
+								</div>
+
+								<div class="span2" style="padding-bottom: 8px;">
+									<div class="row-fluid">
+										<div class="span10">
+											<div><a id="swx-fitprofile-viewedit" class="btn" swx-fitprofile-id="<%=fitProfileInternalId%>" style="width: 100%; padding-top: 4px; padding-bottom: 4px; padding-left: 0px; padding-right: 0px;">View & Edit</a></div>
+											<div id="mobile-only" style="height: 10px;"></div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- end fitprofile row -->
+
+							<% }) %>
+				</div>
+				<!--end of Fit Profile Collapse body-->
+
+
+
+
+			</div>
+
+			<% } %>
+
+				<% _.toggleMobileNavButt() %>
+
+					<!-- end enhancements -->
+
+					<% }) %>

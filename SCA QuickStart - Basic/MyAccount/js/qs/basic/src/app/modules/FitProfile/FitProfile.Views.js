@@ -1,7 +1,7 @@
 // Profile.Views.js
 // -----------------------
 // Views for profile's operations
-define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'PlacedOrder.Collection'], function (ClientModel, ProfileModel, Collection) {
+define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory.Collection'], function (ClientModel, ProfileModel, Collection) {
 	'use strict';
 
 	var Views = {};
@@ -55,6 +55,11 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'PlacedOrder.Collec
 		}
 
 		, updateDateNeeded: function (e) {
+			var $ = jQuery;
+			var optionsearch = {
+				page: 1,
+				search: this.model.get('swx_order_client_name')
+			};
 			console.log('updateDateNeeded trigger from FitProfile.Views.js');
 
 			e.preventDefault();
@@ -65,9 +70,20 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'PlacedOrder.Collec
 					if (model.get('solinekey') == e.target.id) {
 						model.set('dateneeded', today.getDate() + "/" + (today.getMonth() + 1) + "/" + today.getFullYear());
 						model.save();
+						//model.cachedSync();
+						console.log('model', model);
 						console.log('model.save()');
+
 					}
 				});
+
+				//this.clientOrderHistory.reset(this.clientOrderHistory);
+
+				//console.log('{ reset: true, killerId: this.application.killerId, data: optionsearch }', { reset: true, killerId: this.application.killerId, data: optionsearch });
+				//this.swxClientProfileOrderHistory();
+				// this.clientOrderHistory
+				// 	.on('reset', this.swxClientProfileOrderHistory())
+				// 	.fetch({ reset: true, killerId: this.application.killerId, data: optionsearch });
 			}
 		}
 
@@ -143,8 +159,46 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'PlacedOrder.Collec
 			});
 
 		}
+
+		, swxClientProfileOrderHistory: function (e) {
+			var $ = jQuery;
+
+			console.log('swxClientProfileOrderHistory');
+			var optionsearch = {
+				page: 1,
+				search: this.model.get('swx_order_client_name')
+			};
+
+			//Backbone.Relational.store.reset();
+
+			var filteredClientOrderHistory = [];
+			this.clientOrderHistory = new Collection(optionsearch.search);
+			this.clientOrderHistory.reset();
+			var self = this;
+			var clientFullName = $('#fitProfileClientName').html();
+			this.clientOrderHistory.fetch().done(function () {
+				console.log('self.clientOrderHistory', self.clientOrderHistory);
+				self.clientOrderHistory.each(function (model) {
+					if (model.get('client_name') == clientFullName) {
+						filteredClientOrderHistory.push({
+							orderDate: model.get('date'),
+							orderNum: model.get('order_number'),
+							item: model.get('item'),
+							fabricStatus: model.get('fabricstatus'),
+							cmtStatus: model.get('cmtstatus'),
+							dateNeeded: model.get('dateneeded'),
+							status: model.get('tranline_status'),
+							solinekey: model.get('solinekey'),
+							internalid: model.get('internalid')
+						});
+					}
+				});
+				$("#order-history").html(SC.macros.fitProfileClientorderHistoryMacro(filteredClientOrderHistory));
+			});
+
+		}
 		, swxClientProfileSelect: function (e) {
-			
+
 
 			//var orderHistoryCollection = this.model.orderhistory_collection;
 			//console.log('orderHistoryCollection: ' + '\n' + JSON.stringify(orderHistoryCollection, 'key', '\t'))
@@ -186,28 +240,10 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'PlacedOrder.Collec
 				search: this.model.get('swx_order_client_name')
 			};
 
-			var filteredClientOrderHistory = [];
-			this.clientOrderHistory = new Collection(optionsearch.search);
-			var self = this;
-			var clientFullName = $('#fitProfileClientName').html();
-			this.clientOrderHistory.fetch().done(function () {
-				self.clientOrderHistory.each(function (model) {
-					if (model.get('client_name') == clientFullName) {
-						filteredClientOrderHistory.push({
-							orderDate: model.get('date'),
-							orderNum: model.get('order_number'),
-							item: model.get('item'),
-							fabricStatus: model.get('fabricstatus'),
-							cmtStatus: model.get('cmtstatus'),
-							dateNeeded: model.get('dateneeded'),
-							status: model.get('tranline_status'),
-							solinekey: model.get('solinekey'),
-							internalid:model.get('internalid')
-						});
-					}
-				});
-				$("#order-history").html(SC.macros.fitProfileClientorderHistoryMacro(filteredClientOrderHistory));
-			});
+			this.swxClientProfileOrderHistory();
+
+
+
 
 
 			// _.suiteRest('getClientProfileOrderHistory', objRef).always(function (data) {
@@ -320,7 +356,10 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'PlacedOrder.Collec
 
 		, swxFitProfileModalButtRemove: function (e) {
 			var $ = jQuery;
-			jQuery("[id='swx-fitprofile-remove']").click();
+			var message = _("Are you sure that you want to delete this client and their fit profiles?").translate();
+			if (window.confirm(message)) {
+				jQuery("[id='swx-fitprofile-remove']").click();
+			}
 		}
 
 		, swxFitProfileModalButtCopy: function (e) {
@@ -778,19 +817,31 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'PlacedOrder.Collec
 		, submitProfile: function (e) {
 			e.preventDefault();
 			var range = {
-				"Neck": { min: 35, max: 55 },
-				"Shoulder": { min: 42, max: 62 },
-				"Chest": { min: 90, max: 176 },
-				"Waist": { min: 80, max: 174 },
-				"Hips": { min: 90, max: 176 },
-				"Upperarm": { min: 33, max: 56 },
-				"Sleeve-Left": { min: 59, max: 75 },
-				"Sleeve-Right": { min: 59, max: 75 },
-				"Cuff-Left": { min: 22, max: 30 },
-				"Cuff-Right": { min: 22, max: 30 },
-				"Back-Length": { min: 70, max: 90 }
+				"Neck": { min: 31, max: 59 },
+
+				"Shoulder": { min: 37, max: 67 },
+
+				"Chest": { min: 86, max: 184 },
+
+				"Waist": { min: 76, max: 182 },
+
+				"Hips": { min: 82, max: 184 },
+
+				"Upperarm": { min: 32, max: 60 },
+
+				"Sleeve-Left": { min: 52, max: 79 },
+
+				"Sleeve-Right": { min: 52, max: 79 },
+
+				"Cuff-Left": { min: 21, max: 33 },
+
+				"Cuff-Right": { min: 21, max: 33 },
+
+				"Back-Length": { min: 67, max: 95 }
 			};
 			var finishMeasurements = jQuery('#profile-form span[id*="finish_"]');
+			var measureTypeValue = jQuery("#in-modal-custrecord_fp_measure_type").val() ?
+				jQuery("#in-modal-custrecord_fp_measure_type").val() : jQuery("#custrecord_fp_measure_type").val();
 			var hasErrors = false;
 			for (var i = 0; i < finishMeasurements.length; i++) {
 				if (finishMeasurements[i].attributes['min-value'] && finishMeasurements[i].attributes['max-value']) {
@@ -808,6 +859,25 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'PlacedOrder.Collec
 			if (hasErrors) {
 				alert('Body measurements finished value is not within the range.');
 				return false;
+			}
+			if (measureTypeValue == 'Block') {
+
+				if (jQuery('#body-fit').val() == 'Select' || !jQuery('#body-fit').val()) {
+
+					alert(_('Please enter Fit Value').translate());
+
+					return false;
+
+				}
+
+				if (jQuery('#body-block').val() == 'Select' || !jQuery('#body-block').val()) {
+
+					alert(_('Please enter Block Value').translate());
+
+					return false;
+
+				}
+
 			}
 			var formValues = jQuery(e.target).serialize().split("&")
 				, self = this
