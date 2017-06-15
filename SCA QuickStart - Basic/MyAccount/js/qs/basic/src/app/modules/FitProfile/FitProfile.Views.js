@@ -11,27 +11,27 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 	Views.Home = Backbone.View.extend({
 
 		template: 'fit_profile'
-		,	title: _('Fit Profile').translate()
-		,	attributes: {'class': 'FitProfileHomeView'}
-		,	events: {
-				'change select#clients-options' : 'getFitProfile'
-			,	'change select#profiles-options' : 'getProfileDetails'
-			,	'click [data-action=remove-rec]' : 'removeRec'
-			,	'click [data-action=copy-profile]' : 'copyProfile'
-			,	'click [data-action=add-profile]' : 'addProfile'
-			,	'click [id=swx-order-client-search]' : 'swxOrderClientSearch'
-			,	'click [id=swx-client-profile-select]' : 'swxClientProfileSelect'
-			,	'click [id=swx-back-to-client-profile-search]' : 'swxBackToClientSearch'
-			,	'click [id=swx-fitprofile-butt-add]' : 'swxFitProfileAdd'
-			,	'click [id=swx-fitprofile-viewedit]' : 'swxFitProfileViewEdit'
-			,	'click [id=swx-fitprofile-copy]' : 'swxFitProfileCopy'
-			,	'click [id=swx-fitprofile-remove]' : 'swxFitProfileRemove'
+		, title: _('Fit Profile').translate()
+		, attributes: { 'class': 'FitProfileHomeView' }
+		, events: {
+			'change select#clients-options': 'getFitProfile'
+			, 'change select#profiles-options': 'getProfileDetails'
+			, 'click [data-action=remove-rec]': 'removeRec'
+			, 'click [data-action=copy-profile]': 'copyProfile'
+			, 'click [data-action=add-profile]': 'addProfile'
+			, 'click [id=swx-order-client-search]': 'swxOrderClientSearch'
+			, 'click [id=swx-client-profile-select]': 'swxClientProfileSelect'
+			, 'click [id=swx-back-to-client-profile-search]': 'swxBackToClientSearch'
+			, 'click [id=swx-fitprofile-butt-add]': 'swxFitProfileAdd'
+			, 'click [id=swx-fitprofile-viewedit]': 'swxFitProfileViewEdit'
+			, 'click [id=swx-fitprofile-copy]': 'swxFitProfileCopy'
+			, 'click [id=swx-fitprofile-remove]': 'swxFitProfileRemove'
 
-			,	'click [id=butt-modal-submit]' : 'swxFitProfileModalButtSubmit'
-			,	'click [id=butt-modal-copy]' : 'swxFitProfileModalButtCopy'
-			,	'click [id=butt-modal-remove]' : 'swxFitProfileModalButtRemove'
-			,	'click [id=swx-later-add-order]' : 'swxFitProfileAddOrder'
-			,	'blur [name="oh_dateneeded"]': 'updateDateNeeded'
+			, 'click [id=butt-modal-submit]': 'swxFitProfileModalButtSubmit'
+			, 'click [id=butt-modal-copy]': 'swxFitProfileModalButtCopy'
+			, 'click [id=butt-modal-remove]': 'swxFitProfileModalButtRemove'
+			, 'click [id=swx-later-add-order]': 'swxFitProfileAddOrder'
+			, 'blur [name="oh_dateneeded"]': 'updateDateNeeded'
 
 		}
 		, initialize: function (options) {
@@ -110,7 +110,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 			_.toggleMobileNavButt();
 		}
 
-		,	swxOrderClientSearch: function (e) {
+		, swxOrderClientSearch: function (e) {
 			var $ = jQuery;
 			this.model.set('swx_client_profile_order_history', '');
 
@@ -177,7 +177,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 			var self = this;
 			var clientFullName = $('#fitProfileClientName').html();
 			this.clientOrderHistory.fetch().done(function () {
-				console.log('self.clientOrderHistory',self.clientOrderHistory);
+				console.log('self.clientOrderHistory', self.clientOrderHistory);
 				self.clientOrderHistory.each(function (model) {
 					if (model.get('client_name') == clientFullName) {
 						filteredClientOrderHistory.push({
@@ -356,10 +356,10 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 
 		, swxFitProfileModalButtRemove: function (e) {
 			var $ = jQuery;
-						var message = _("Are you sure that you want to delete this client and their fit profiles?").translate();
-				if (window.confirm(message)) {
-					jQuery("[id='swx-fitprofile-remove']").click();
-				}
+			var message = _("Are you sure that you want to delete this client and their fit profiles?").translate();
+			if (window.confirm(message)) {
+				jQuery("[id='swx-fitprofile-remove']").click();
+			}
 		}
 
 		, swxFitProfileModalButtCopy: function (e) {
@@ -817,19 +817,31 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 		, submitProfile: function (e) {
 			e.preventDefault();
 			var range = {
-				"Neck": { min: 35, max: 55 },
-				"Shoulder": { min: 42, max: 62 },
-				"Chest": { min: 90, max: 176 },
-				"Waist": { min: 80, max: 174 },
-				"Hips": { min: 90, max: 176 },
-				"Upperarm": { min: 33, max: 56 },
-				"Sleeve-Left": { min: 59, max: 75 },
-				"Sleeve-Right": { min: 59, max: 75 },
-				"Cuff-Left": { min: 22, max: 30 },
-				"Cuff-Right": { min: 22, max: 30 },
-				"Back-Length": { min: 70, max: 90 }
+				"Neck": { min: 31, max: 59 },
+
+				"Shoulder": { min: 37, max: 67 },
+
+				"Chest": { min: 86, max: 184 },
+
+				"Waist": { min: 76, max: 182 },
+
+				"Hips": { min: 82, max: 184 },
+
+				"Upperarm": { min: 32, max: 60 },
+
+				"Sleeve-Left": { min: 52, max: 79 },
+
+				"Sleeve-Right": { min: 52, max: 79 },
+
+				"Cuff-Left": { min: 21, max: 33 },
+
+				"Cuff-Right": { min: 21, max: 33 },
+
+				"Back-Length": { min: 67, max: 95 }
 			};
 			var finishMeasurements = jQuery('#profile-form span[id*="finish_"]');
+			var measureTypeValue = jQuery("#in-modal-custrecord_fp_measure_type").val() ?
+				jQuery("#in-modal-custrecord_fp_measure_type").val() : jQuery("#custrecord_fp_measure_type").val();
 			var hasErrors = false;
 			for (var i = 0; i < finishMeasurements.length; i++) {
 				if (finishMeasurements[i].attributes['min-value'] && finishMeasurements[i].attributes['max-value']) {
@@ -847,6 +859,25 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 			if (hasErrors) {
 				alert('Body measurements finished value is not within the range.');
 				return false;
+			}
+			if (measureTypeValue == 'Block') {
+
+				if (jQuery('#body-fit').val() == 'Select' || !jQuery('#body-fit').val()) {
+
+					alert(_('Please enter Fit Value').translate());
+
+					return false;
+
+				}
+
+				if (jQuery('#body-block').val() == 'Select' || !jQuery('#body-block').val()) {
+
+					alert(_('Please enter Block Value').translate());
+
+					return false;
+
+				}
+
 			}
 			var formValues = jQuery(e.target).serialize().split("&")
 				, self = this
