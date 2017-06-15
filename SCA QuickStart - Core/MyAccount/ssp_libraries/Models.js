@@ -4,34 +4,31 @@
 // Global variables to be used accross models
 // This is the head of combined file Model.js
 
-function isNullOrEmpty(valueStr)
-{
-   return(valueStr == null || valueStr == "" || valueStr == undefined);
+function isNullOrEmpty(valueStr) {
+	return (valueStr == null || valueStr == "" || valueStr == undefined);
 }
 
-function isNullOrEmptyObject(obj)
-{
-   var hasOwnProperty = Object.prototype.hasOwnProperty;
+function isNullOrEmptyObject(obj) {
+	var hasOwnProperty = Object.prototype.hasOwnProperty;
 
-   if (obj.length && obj.length > 0) { return false; }
-   for (var key in obj) { if (hasOwnProperty.call(obj, key)) return false; }
-   return true;
+	if (obj.length && obj.length > 0) { return false; }
+	for (var key in obj) { if (hasOwnProperty.call(obj, key)) return false; }
+	return true;
 }
 
-function isObjectExist(objFld)
-{
-   var isObjExist = (typeof objFld != "undefined") ? true : false;
-   return isObjExist;
+function isObjectExist(objFld) {
+	var isObjExist = (typeof objFld != "undefined") ? true : false;
+	return isObjExist;
 }
 
 
 /* exported container, session, settings, customer, context, order */
 var container = nlapiGetWebContainer()
-,	session = container.getShoppingSession()
-//,	settings = session.getSiteSettings()
-,	customer = session.getCustomer()
-,	context = nlapiGetContext()
-,	order = session.getOrder();
+	, session = container.getShoppingSession()
+	//,	settings = session.getSiteSettings()
+	, customer = session.getCustomer()
+	, context = nlapiGetContext()
+	, order = session.getOrder();
 
 //Model.js
 // SiteSettings.js
@@ -42,10 +39,9 @@ Application.defineModel('SiteSettings', {
 	cache: nlapiGetCache('Application')
 
 	// cache duration time in seconds - by default 2 hours - this value can be between 5 mins and 2 hours
-,	cacheTtl: SC.Configuration.cache.siteSettings
+	, cacheTtl: SC.Configuration.cache.siteSettings
 
-,	get: function ()
-	{
+	, get: function () {
 		'use strict';
 
 		var basic_settings = session.getSiteSettings(['siteid', 'touchpoints']);
@@ -56,20 +52,17 @@ Application.defineModel('SiteSettings', {
 		if (!settings || !this.cacheTtl) {
 
 			var i
-			,	countries
-			,	shipToCountries;
+				, countries
+				, shipToCountries;
 
 			settings = session.getSiteSettings();
 
 			// 'settings' is a global variable and contains session.getSiteSettings()
-			if (settings.shipallcountries === 'F')
-			{
-				if (settings.shiptocountries)
-				{
+			if (settings.shipallcountries === 'F') {
+				if (settings.shiptocountries) {
 					shipToCountries = {};
 
-					for (i = 0; i < settings.shiptocountries.length; i++)
-					{
+					for (i = 0; i < settings.shiptocountries.length; i++) {
 						shipToCountries[settings.shiptocountries[i]] = true;
 					}
 				}
@@ -78,25 +71,20 @@ Application.defineModel('SiteSettings', {
 			// Get all available countries.
 			var allCountries = session.getCountries();
 
-			if (shipToCountries)
-			{
+			if (shipToCountries) {
 				// Remove countries that are not in the shipping contuntires
 				countries = {};
 
-				for (i = 0; i < allCountries.length; i++)
-				{
-					if (shipToCountries[allCountries[i].code])
-					{
+				for (i = 0; i < allCountries.length; i++) {
+					if (shipToCountries[allCountries[i].code]) {
 						countries[allCountries[i].code] = allCountries[i];
 					}
 				}
 			}
-			else
-			{
+			else {
 				countries = {};
 
-				for (i = 0; i < allCountries.length; i++)
-				{
+				for (i = 0; i < allCountries.length; i++) {
 					countries[allCountries[i].code] = allCountries[i];
 				}
 			}
@@ -104,12 +92,9 @@ Application.defineModel('SiteSettings', {
 			// Get all the states for countries.
 			var allStates = session.getStates();
 
-			if (allStates)
-			{
-				for (i = 0; i < allStates.length; i++)
-				{
-					if (countries[allStates[i].countrycode])
-					{
+			if (allStates) {
+				for (i = 0; i < allStates.length; i++) {
+					if (countries[allStates[i].countrycode]) {
 						countries[allStates[i].countrycode].states = allStates[i].states;
 					}
 				}
@@ -133,8 +118,7 @@ Application.defineModel('SiteSettings', {
 
 			this.cache.put('siteSettings-' + settings.siteid, JSON.stringify(settings), this.cacheTtl);
 		}
-		else
-		{
+		else {
 			settings = JSON.parse(settings);
 		}
 
@@ -158,38 +142,33 @@ Application.defineModel('Address', {
 
 	// model validation
 	validation: {
-		addressee: {required: true, msg: 'Full Name is required'}
-	,	addr1: {required: true, msg: 'Address is required'}
-	,	country: {required: true, msg: 'Country is required'}
-	,	state: function (value, attr, computedState)
-		{
+		addressee: { required: true, msg: 'Full Name is required' }
+		, addr1: { required: true, msg: 'Address is required' }
+		, country: { required: true, msg: 'Country is required' }
+		, state: function (value, attr, computedState) {
 			'use strict';
 
 			var country = computedState.country;
 
-			if (country && session.getStates([country]) && value === '')
-			{
+			if (country && session.getStates([country]) && value === '') {
 				return 'State is required';
 			}
 		}
-	,	city: {required: true, msg: 'City is required'}
-	,	zip: {required: true, msg: 'Zip Code is required'}
-	,	phone: {required: true, msg: 'Phone Number is required'}
+		, city: { required: true, msg: 'City is required' }
+		, zip: { required: true, msg: 'Zip Code is required' }
+		, phone: { required: true, msg: 'Phone Number is required' }
 	}
 
-// our model has "fullname" and "company" insted of  the fields "addresse" and "attention" used on netsuite.
-// this function prepare the address object for sending it to the frontend
-,	wrapAddressee: function (address)
-	{
+	// our model has "fullname" and "company" insted of  the fields "addresse" and "attention" used on netsuite.
+	// this function prepare the address object for sending it to the frontend
+	, wrapAddressee: function (address) {
 		'use strict';
 
-		if (address.attention && address.addressee)
-		{
+		if (address.attention && address.addressee) {
 			address.fullname = address.attention;
 			address.company = address.addressee;
 		}
-		else
-		{
+		else {
 			address.fullname = address.addressee;
 			address.company = null;
 		}
@@ -200,18 +179,15 @@ Application.defineModel('Address', {
 		return address;
 	}
 
-// this function prepare the address object for sending it to the frontend
-,	unwrapAddressee: function (address)
-	{
+	// this function prepare the address object for sending it to the frontend
+	, unwrapAddressee: function (address) {
 		'use strict';
 
-		if (address.company)
-		{
+		if (address.company) {
 			address.attention = address.fullname;
 			address.addressee = address.company;
 		}
-		else
-		{
+		else {
 			address.addressee = address.fullname;
 			address.attention = null;
 		}
@@ -223,52 +199,44 @@ Application.defineModel('Address', {
 		return address;
 	}
 
-// return an address by id
-,	get: function (id)
-	{
+	// return an address by id
+	, get: function (id) {
 		'use strict';
 
 		return this.wrapAddressee(customer.getAddress(id));
 	}
 
-// return default billing address
-,	getDefaultBilling: function ()
-	{
+	// return default billing address
+	, getDefaultBilling: function () {
 		'use strict';
 
-		return _.find(customer.getAddressBook(), function (address)
-		{
+		return _.find(customer.getAddressBook(), function (address) {
 			return (address.defaultbilling === 'T');
 		});
 	}
 
-// return default shipping address
-,	getDefaultShipping: function ()
-	{
+	// return default shipping address
+	, getDefaultShipping: function () {
 		'use strict';
 
-		return _.find(customer.getAddressBook(), function (address)
-		{
+		return _.find(customer.getAddressBook(), function (address) {
 			return address.defaultshipping === 'T';
 		});
 	}
 
-// returns all user's addresses
-,	list: function ()
-	{
+	// returns all user's addresses
+	, list: function () {
 		'use strict';
 
 		var self = this;
 
-		return  _.map(customer.getAddressBook(), function (address)
-		{
+		return _.map(customer.getAddressBook(), function (address) {
 			return self.wrapAddressee(address);
 		});
 	}
 
-// update an address
-,	update: function (id, data)
-	{
+	// update an address
+	, update: function (id, data) {
 		'use strict';
 
 		data = this.unwrapAddressee(data);
@@ -280,9 +248,8 @@ Application.defineModel('Address', {
 		return customer.updateAddress(data);
 	}
 
-// add a new address to a customer
-,	create: function (data)
-	{
+	// add a new address to a customer
+	, create: function (data) {
 		'use strict';
 
 		data = this.unwrapAddressee(data);
@@ -292,9 +259,8 @@ Application.defineModel('Address', {
 		return customer.addAddress(data);
 	}
 
-// remove an address
-,	remove: function (id)
-	{
+	// remove an address
+	, remove: function (id) {
 		'use strict';
 
 		return customer.removeAddress(id);
@@ -308,17 +274,16 @@ Application.defineModel('Address', {
 Application.defineModel('Profile', {
 
 	validation: {
-		firstname: {required: true, msg: 'First Name is required'}
+		firstname: { required: true, msg: 'First Name is required' }
 
-	// This code is commented temporally, because of the inconsistences between Checkout and My Account regarding the require data from profile information (Checkout can miss last name)
-	,	lastname: {required: true, msg: 'Last Name is required'}
+		// This code is commented temporally, because of the inconsistences between Checkout and My Account regarding the require data from profile information (Checkout can miss last name)
+		, lastname: { required: true, msg: 'Last Name is required' }
 
-	,	email: {required: true, pattern: 'email', msg: 'Email is required'}
-	,	confirm_email: {equalTo: 'email', msg: 'Emails must match'}
+		, email: { required: true, pattern: 'email', msg: 'Email is required' }
+		, confirm_email: { equalTo: 'email', msg: 'Emails must match' }
 	}
 
-,	get: function ()
-	{
+	, get: function () {
 		'use strict';
 
 		var profile = {};
@@ -350,7 +315,7 @@ Application.defineModel('Profile', {
 
 			var customerFieldValues = customer.getCustomFieldValues();
 
-			profile.LogoUrl = _.find(customerFieldValues, function(field){
+			profile.LogoUrl = _.find(customerFieldValues, function (field) {
 				return field.name === 'custentity_avt_tailor_logo_url';
 			}).value || '/c.3857857/assets/images/avt/default-logo.jpg';
 
@@ -360,14 +325,12 @@ Application.defineModel('Profile', {
 		return profile;
 	}
 
-,	update: function (data)
-	{
+	, update: function (data) {
 		'use strict';
 
 		var login = nlapiGetLogin();
 
-		if (data.current_password && data.password && data.password === data.confirm_password)
-		{
+		if (data.current_password && data.password && data.password === data.confirm_password) {
 			//Updating password
 			return login.changePassword(data.current_password, data.password);
 		}
@@ -384,13 +347,11 @@ Application.defineModel('Profile', {
 
 		customerUpdate.firstname = data.firstname;
 
-		if(data.lastname !== '')
-		{
+		if (data.lastname !== '') {
 			customerUpdate.lastname = data.lastname;
 		}
 
-		if(this.currentSettings.lastname === data.lastname)
-		{
+		if (this.currentSettings.lastname === data.lastname) {
 			delete this.validation.lastname;
 		}
 
@@ -398,43 +359,36 @@ Application.defineModel('Profile', {
 
 
 		customerUpdate.phoneinfo = {
-				altphone: data.altphone
-			,	phone: data.phone
-			,	fax: data.fax
+			altphone: data.altphone
+			, phone: data.phone
+			, fax: data.fax
 		};
 
-		if(data.phone !== '')
-		{
+		if (data.phone !== '') {
 			customerUpdate.phone = data.phone;
 		}
 
-		if(this.currentSettings.phone === data.phone)
-		{
+		if (this.currentSettings.phone === data.phone) {
 			delete this.validation.phone;
 		}
 
 		customerUpdate.emailsubscribe = (data.emailsubscribe && data.emailsubscribe !== 'F') ? 'T' : 'F';
 
-		if (!(this.currentSettings.companyname === '' || this.currentSettings.isperson || session.getSiteSettings(['registration']).registration.companyfieldmandatory !== 'T'))
-		{
-			this.validation.companyname = {required: true, msg: 'Company Name is required'};
+		if (!(this.currentSettings.companyname === '' || this.currentSettings.isperson || session.getSiteSettings(['registration']).registration.companyfieldmandatory !== 'T')) {
+			this.validation.companyname = { required: true, msg: 'Company Name is required' };
 		}
 
-		if (!this.currentSettings.isperson)
-		{
+		if (!this.currentSettings.isperson) {
 			delete this.validation.firstname;
 			delete this.validation.lastname;
 		}
 
 		//Updating customer data
-		if (data.email && data.email !== this.currentSettings.email && data.email === data.confirm_email)
-		{
-			if(data.isGuest === 'T')
-			{
+		if (data.email && data.email !== this.currentSettings.email && data.email === data.confirm_email) {
+			if (data.isGuest === 'T') {
 				customerUpdate.email = data.email;
 			}
-			else
-			{
+			else {
 				login.changeEmail(data.current_password, data.email, true);
 			}
 		}
@@ -446,8 +400,7 @@ Application.defineModel('Profile', {
 		// check if this throws error
 		customer.updateProfile(customerUpdate);
 
-		if (data.campaignsubscriptions)
-		{
+		if (data.campaignsubscriptions) {
 			customer.updateCampaignSubscriptions(data.campaignsubscriptions);
 		}
 
@@ -461,192 +414,209 @@ Application.defineModel('Profile', {
 // ----------
 // Handles fetching orders
 Application.defineModel('PlacedOrder', {
-  setDateNeeded:function(options){
+	setDateNeeded: function (options) {
+		var recid = options.solinekey.split('_')[0];
+		//NOTE: This is for sandbox
+		nlapiRequestURL('https://forms.sandbox.netsuite.com/app/site/hosting/scriptlet.nl?script=189&deploy=1&compid=3857857&h=8ae0b4c46639c406c38a&recid=' + recid + '&solinekey=' + options.solinekey + '&dateneeded=' + options.dateneeded);
+		//NOTE: This is for production
+		//nlapiRequestURL('https://forms.netsuite.com/app/site/hosting/scriptlet.nl?script=181&deploy=1&compid=3857857&h=bf9b68501c2e0a0da79f&recid=' + recid + '&solinekey=' + options.solinekey + '&dateneeded=' + options.dateneeded);
+	}
 
-      var recid = options.solinekey.split('_')[0];
-	 
-	  //nlapiRequestURL('https://forms.netsuite.com/app/site/hosting/scriptlet.nl?script=181&deploy=1&compid=3857857&h=bf9b68501c2e0a0da79f&recid='+recid+'&solinekey='+options.solinekey+'&dateneeded='+options.dateneeded);
-	  //var response = https.post({ url:'/app/site/hosting/scriptlet.nl?script=187&deploy=1&recid='+recid+'&solinekey='+options.solinekey+'&dateneeded='+options.dateneeded });
-      
-	  nlapiRequestURL('https://forms.sandbox.netsuite.com/app/site/hosting/scriptlet.nl?script=189&deploy=1&compid=3857857&h=8ae0b4c46639c406c38a&recid='+recid+'&solinekey='+options.solinekey+'&dateneeded='+options.dateneeded);
-	  
-    }
-
-	, list: function (page, clientName)
-	{
+	, list: function (page, clientName) {
 		'use strict';
 		// if the store has multiple currencies we add the currency column to the query
-		var	isMultiCurrency = context.getFeature('MULTICURRENCY')
-		,	total_field = 'custbody_total_tailor_price'
-		,	filters = [
+		var isMultiCurrency = context.getFeature('MULTICURRENCY')
+			, total_field = 'custbody_total_tailor_price'
+			, filters = [
 				new nlobjSearchFilter('entity', null, 'is', nlapiGetUser())
-			  , new nlobjSearchFilter('custcol_itm_category_url', null, 'isnotempty')
+				, new nlobjSearchFilter('custcol_itm_category_url', null, 'isnotempty')
 			]
-		,	columns = [
+			, columns = [
 				new nlobjSearchColumn('internalid').setSort(true)
-			,	new nlobjSearchColumn('trackingnumbers')
-			,	new nlobjSearchColumn('trandate')
-			,	new nlobjSearchColumn('tranid')
-			,	new nlobjSearchColumn('status')
-			,	new nlobjSearchColumn(total_field)
-			,	new nlobjSearchColumn('custbody_customer_name')
+				, new nlobjSearchColumn('trackingnumbers')
+				, new nlobjSearchColumn('trandate')
+				, new nlobjSearchColumn('tranid')
+				, new nlobjSearchColumn('status')
+				, new nlobjSearchColumn(total_field)
+				, new nlobjSearchColumn('custbody_customer_name')
 			];
 
 
-    // columns.push(new nlobjSearchColumn('custcol_expected_delivery_date'))//This
-     columns.push(new nlobjSearchColumn('custcol_expected_production_date'))
-    // columns.push(new nlobjSearchColumn('custcol_tailor_delivery_days'))
+		// columns.push(new nlobjSearchColumn('custcol_expected_delivery_date'))//This
+		columns.push(new nlobjSearchColumn('custcol_expected_production_date'))
+		// columns.push(new nlobjSearchColumn('custcol_tailor_delivery_days'))
 		columns.push(new nlobjSearchColumn('custcol_so_id'))
 		columns.push(new nlobjSearchColumn('item'))
 		columns.push(new nlobjSearchColumn('custcol_avt_date_needed'))//This
 		columns.push(new nlobjSearchColumn('custcol_avt_fabric_status'))//This
-    columns.push(new nlobjSearchColumn('custcol_avt_date_sent'))
+		columns.push(new nlobjSearchColumn('custcol_avt_date_sent'))
 		columns.push(new nlobjSearchColumn('custcol_avt_cmt_status'))//This
-    columns.push(new nlobjSearchColumn('custcol_avt_cmt_date_sent'))//This
+		columns.push(new nlobjSearchColumn('custcol_avt_cmt_date_sent'))//This
 		columns.push(new nlobjSearchColumn('custcol_avt_fabric_text'))
 		columns.push(new nlobjSearchColumn('custcol_avt_cmt_status_text'))
-    columns.push(new nlobjSearchColumn('custcol_avt_tracking'))
+		columns.push(new nlobjSearchColumn('custcol_avt_tracking'))
 		columns.push(new nlobjSearchColumn('custcol_avt_solinestatus'))
-    columns.push(new nlobjSearchColumn('custcol_avt_saleorder_line_key'))
+		columns.push(new nlobjSearchColumn('custcol_avt_saleorder_line_key'))
 		columns.push(new nlobjSearchColumn('custcol_avt_cmt_tracking'))
-
-		// used for filtering via clientName
-		if (clientName){
-			filters.push(new nlobjSearchFilter('custcol_tailor_client_name', null, 'contains', clientName));
-			filters.push(new nlobjSearchFilter('mainline', null, 'is', 'F'));
-		} else {
-			//filters.push(new nlobjSearchFilter('mainline', null, 'is', 'T'));
-			filters.push(new nlobjSearchFilter('mainline', null, 'is', 'F'));
-
-		}
-
-		if (isMultiCurrency)
-		{
+		columns.push(new nlobjSearchColumn('custcol_fabric_delivery_days'))
+		if (isMultiCurrency) {
 			columns.push(new nlobjSearchColumn('currency'));
 		}
 
-		// if the site is multisite we add the siteid to the search filter
-		if (context.getFeature('MULTISITE') && session.getSiteSettings(['siteid']).siteid)
-		{
-			filters.push(new nlobjSearchFilter('website', null, 'anyof', [session.getSiteSettings(['siteid']).siteid,'@NONE@']));
+		// used for filtering via clientName
+		if (clientName) {
+			nlapiLogExecution('debug', 'ClientName', clientName);
+			var fil_client = new nlobjSearchFilter('custcol_tailor_client_name', null, 'contains', clientName);
+			fil_client.isor = true;
+			fil_client.leftparens = 1;
+			filters.push(fil_client);
+			//filters.push(new nlobjSearchFilter('mainline', null, 'is', 'T'));
+			filters.push(new nlobjSearchFilter('mainline', null, 'is', 'F'));
+
+		} else {
+			filters.push(new nlobjSearchFilter('mainline', null, 'is', 'F'));
 		}
-
+		//if the site is multisite we add the siteid to the search filter
+		if (context.getFeature('MULTISITE') && session.getSiteSettings(['siteid']).siteid) {
+			filters.push(new nlobjSearchFilter('website', null, 'anyof', [session.getSiteSettings(['siteid']).siteid, '@NONE@']));
+		}
 		var result = Application.getSalesOrderPaginatedSearchResults({
-				record_type: 'salesorder'
-			,	filters: filters
-			,	columns: columns
-			,	page: page
-			});
-
-		result.records = _.map(result.records || [], function (record)
-		{
-      var dateneeded=record.getValue('custcol_avt_date_needed');//this
-      var expdeliverydate = record.getValue('custcol_expected_delivery_date');
-      var fabricstatus = record.getValue('custcol_avt_fabric_status');
-      var cmtstatus = record.getValue('custcol_avt_cmt_status');
-      var datesent = record.getValue('custcol_avt_cmt_date_sent');
-      var custcol_expected_production_date = record.getValue('custcol_expected_production_date');//this
-      var cmtstatuscheck = false, fabstatuscheck = false,expFabDateNeeded, dateNeeded, confirmedDate;
-      var custcol_tailor_delivery_days = record.getValue('custcol_tailor_delivery_days');
-      var today = new Date();
-      var cmtstatustext = "";
-
-      if(cmtstatus){
-
-        cmtstatustext += record.getText('custcol_avt_cmt_status');
-      }
-      if(datesent){
-        if(cmtstatustext!="") cmtstatustext +='-';
-        cmtstatustext += datesent;
-      }
-      else if(custcol_expected_production_date){
-        if(cmtstatustext!="") cmtstatustext +='-';
-        cmtstatustext += custcol_expected_production_date;
-      }
-      if(record.getValue('custcol_avt_cmt_tracking')){
-        if(cmtstatustext!="") cmtstatustext +='-';
-        cmtstatustext += record.getValue('custcol_avt_cmt_tracking');
-      }
-
-      if((cmtstatus == '1') && fabricstatus != '1'){
-					//check the dates of the fabric should be sent vs today
-					if(custcol_expected_production_date){
-					  expFabDateNeeded = nlapiStringToDate(custcol_expected_production_date);
-						if(expFabDateNeeded < today)
-							fabstatuscheck = true;
-						else
-							fabstatuscheck = false;
-					}
-					else{
-						fabstatuscheck = false;
-					}
-				}
-				else if(fabricstatus == '1'){
-					fabricstatuscheck = true;
-				}
-				else{
-					fabricstatuscheck = false;
-				}
-        if(cmtstatus == 4){
-  					cmtstatuscheck = true;
-  				}else if (dateneeded){
-  					dateNeeded = nlapiStringToDate(dateneeded)
-  					if(datesent){
-  						confirmedDate = nlapiStringToDate(datesent);
-  						confirmedDate.setDate(confirmedDate.getDate()+ parseFloat(custcol_tailor_delivery_days?custcol_tailor_delivery_days:0));
-  					}
-  					else if(custcol_expected_production_date){
-  						confirmedDate = nlapiStringToDate(expdeliverydate);
-  					}
-
-  					if(confirmedDate){
-  						if(confirmedDate > dateNeeded)
-  							cmtstatuscheck = true;
-  						else
-  							cmtstatuscheck = false;
-  					}else{
-  						cmtstatuscheck = false
-  					}
-
-  				}else{
-  					cmtstatuscheck = false;
-          }
-
-      if(record.getValue('custcol_avt_date_needed')){
-        dateneeded = nlapiStringToDate(record.getValue('custcol_avt_date_needed'));
-        dateneeded = dateneeded.getFullYear()+ '-' + ('0' + (dateneeded.getMonth()+1)).slice(-2)+ '-'+
-        ('0' + dateneeded.getDate()).slice(-2);
-      }
-      var status = true;
-
-			return {
-				internalid: new Date().getTime() + Math.floor(Math.random()*999999999999999999) + '_' +  record.getValue('internalid')
-			,	date: record.getValue('trandate')
-			,	order_number: record.getValue('tranid')
-			,	status: record.getText('status')
-			,	summary: {
-					total: toCurrency(record.getValue(total_field))
-				,	total_formatted: formatCurrency(record.getValue(total_field))
-				}
-				// we might need to change that to the default currency
-			,	currency: isMultiCurrency ? {internalid: record.getValue('currency'), name: record.getText('currency')} : null
-				// Normalizes tracking number's values
-			,	trackingnumbers: record.getValue('trackingnumbers') ? record.getValue('trackingnumbers').split('<BR>') : null
-			,	type: record.getRecordType()
-			,	client_name: record.getValue('custbody_customer_name')
-			,	so_id: record.getValue('custcol_so_id')
-			,	item: record.getText('item')
-			//,	fabricstatus: record.getText('custcol_avt_fabric_status')
-			//,	cmtstatus: record.getText('custcol_avt_cmt_status')
-      ,	dateneeded: dateneeded
-      ,	tranline_status: cmtstatuscheck || fabricstatuscheck//record.getText('custcol_avt_solinestatus')
-			,	fabricstatus: record.getValue('custcol_avt_fabric_text')
-			,	cmtstatus: cmtstatustext//record.getValue('custcol_avt_cmt_status_text')
-      , solinekey: record.getValue('custcol_avt_saleorder_line_key')
-			};
+			record_type: 'salesorder'
+			, filters: filters
+			, columns: columns
+			, page: page
 		});
 
-		nlapiLogExecution("DEBUG", "clientName", JSON.stringify(result.records));
+		if (clientName) {
+			filters = [
+				new nlobjSearchFilter('entity', null, 'is', nlapiGetUser())
+				, new nlobjSearchFilter('custcol_itm_category_url', null, 'isnotempty')
+			]
+			var fil_soid = new nlobjSearchFilter('custcol_so_id', null, 'startswith', clientName);
+			filters.push(fil_soid);
+			filters.push(new nlobjSearchFilter('mainline', null, 'is', 'F'));
+			if (context.getFeature('MULTISITE') && session.getSiteSettings(['siteid']).siteid) {
+				filters.push(new nlobjSearchFilter('website', null, 'anyof', [session.getSiteSettings(['siteid']).siteid, '@NONE@']));
+			}
+			var newresult = Application.getSalesOrderPaginatedSearchResults({
+				record_type: 'salesorder'
+				, filters: filters
+				, columns: columns
+				, page: page
+			});
+
+			if (newresult.records.length > 0) {
+				result.records = result.records.concat(newresult.records);
+			}
+		}
+
+		result.records = _.map(result.records || [], function (record) {
+			var dateneeded = record.getValue('custcol_avt_date_needed');//this
+			var expdeliverydate = record.getValue('custcol_expected_delivery_date');
+			var fabricstatus = record.getValue('custcol_avt_fabric_status');
+			var cmtstatus = record.getValue('custcol_avt_cmt_status');
+			var datesent = record.getValue('custcol_avt_cmt_date_sent');
+			var custcol_expected_production_date = record.getValue('custcol_expected_production_date');//this
+			var cmtstatuscheck = false, fabstatuscheck = false, expFabDateNeeded, dateNeeded, confirmedDate;
+			var custcol_tailor_delivery_days = record.getValue('custcol_tailor_delivery_days');
+			var today = new Date();
+			var cmtstatustext = "";
+
+			if (cmtstatus) {
+
+				cmtstatustext += record.getText('custcol_avt_cmt_status');
+			}
+			if (datesent) {
+				if (cmtstatustext != "") cmtstatustext += '-';
+				cmtstatustext += datesent;
+			}
+			else if (custcol_expected_production_date) {
+				if (cmtstatustext != "") cmtstatustext += '-';
+				cmtstatustext += custcol_expected_production_date;
+			}
+			if (record.getValue('custcol_avt_cmt_tracking')) {
+				if (cmtstatustext != "") cmtstatustext += '-';
+				cmtstatustext += record.getValue('custcol_avt_cmt_tracking');
+			}
+
+			if ((cmtstatus == '1') && fabricstatus != '1') {
+				//check the dates of the fabric should be sent vs today
+				if (custcol_expected_production_date) {
+					expFabDateNeeded = nlapiStringToDate(custcol_expected_production_date);
+					expFabDateNeeded.setDate(expFabDateNeeded.getDate() + 1 - parseFloat(record.getValue('custcol_fabric_delivery_days')))
+					if (expFabDateNeeded < today)
+						fabstatuscheck = true;
+					else
+						fabstatuscheck = false;
+				}
+				else {
+					fabstatuscheck = false;
+				}
+			}
+			else if (fabricstatus == '1') {
+				fabstatuscheck = true;
+			}
+			else {
+				fabstatuscheck = false;
+			}
+			if (cmtstatus == 4) {
+				cmtstatuscheck = true;
+			} else if (dateneeded) {
+				dateNeeded = nlapiStringToDate(dateneeded)
+				if (datesent) {
+					confirmedDate = nlapiStringToDate(datesent);
+					confirmedDate.setDate(confirmedDate.getDate() + parseFloat(custcol_tailor_delivery_days ? custcol_tailor_delivery_days : 0));
+				}
+				else if (custcol_expected_production_date) {
+					confirmedDate = nlapiStringToDate(expdeliverydate);
+				}
+
+				if (confirmedDate) {
+					if (confirmedDate > dateNeeded)
+						cmtstatuscheck = true;
+					else
+						cmtstatuscheck = false;
+				} else {
+					cmtstatuscheck = false
+				}
+
+			} else {
+				cmtstatuscheck = false;
+			}
+
+			if (record.getValue('custcol_avt_date_needed')) {
+				dateneeded = nlapiStringToDate(record.getValue('custcol_avt_date_needed'));
+				dateneeded = dateneeded.getFullYear() + '-' + ('0' + (dateneeded.getMonth() + 1)).slice(-2) + '-' +
+					('0' + dateneeded.getDate()).slice(-2);
+			}
+			var status = true;
+
+			return {
+				internalid: new Date().getTime() + Math.floor(Math.random() * 999999999999999999) + '_' + record.getValue('internalid')
+				, date: record.getValue('trandate')
+				, order_number: record.getValue('tranid')
+				, status: record.getText('status')
+				, summary: {
+					total: toCurrency(record.getValue(total_field))
+					, total_formatted: formatCurrency(record.getValue(total_field))
+				}
+				// we might need to change that to the default currency
+				, currency: isMultiCurrency ? { internalid: record.getValue('currency'), name: record.getText('currency') } : null
+				// Normalizes tracking number's values
+				, trackingnumbers: record.getValue('trackingnumbers') ? record.getValue('trackingnumbers').split('<BR>') : null
+				, type: record.getRecordType()
+				, client_name: record.getValue('custbody_customer_name')
+				, so_id: record.getValue('custcol_so_id')
+				, item: record.getText('item')
+				//,	fabricstatus: record.getText('custcol_avt_fabric_status')
+				//,	cmtstatus: record.getText('custcol_avt_cmt_status')
+				, dateneeded: dateneeded
+				, tranline_status: cmtstatuscheck || fabstatuscheck//record.getText('custcol_avt_solinestatus')
+				, fabricstatus: record.getValue('custcol_avt_fabric_text')
+				, cmtstatus: cmtstatustext//record.getValue('custcol_avt_cmt_status_text')
+				, solinekey: record.getValue('custcol_avt_saleorder_line_key')
+			};
+		});
 
 		/**
 		var arrObjRecords = [];
@@ -685,12 +655,11 @@ Application.defineModel('PlacedOrder', {
 		return result;
 	}
 
-,	get: function(id)
-	{
+	, get: function (id) {
 		'use strict';
 
 		var placed_order = nlapiLoadRecord('salesorder', id)
-		,	result = this.createResult(placed_order);
+			, result = this.createResult(placed_order);
 
 		this.setAddresses(placed_order, result);
 		this.setShippingMethods(placed_order, result);
@@ -702,8 +671,8 @@ Application.defineModel('PlacedOrder', {
 
 		result.promocode = (placed_order.getFieldValue('promocode')) ? {
 			internalid: placed_order.getFieldValue('promocode')
-		,	name: placed_order.getFieldText('promocode')
-		,	code: placed_order.getFieldText('couponcode')
+			, name: placed_order.getFieldText('promocode')
+			, code: placed_order.getFieldText('couponcode')
 		} : null;
 
 		// convert the obejcts to arrays
@@ -717,81 +686,78 @@ Application.defineModel('PlacedOrder', {
 	}
 
 
-,	setPaymentMethod: function (placed_order, result)
-	{
+	, setPaymentMethod: function (placed_order, result) {
 		'use strict';
 
 		return setPaymentMethodToResult(placed_order, result);
 	}
 
-,	createResult: function (placed_order)
-	{
+	, createResult: function (placed_order) {
 		'use strict';
 
 		return {
 			internalid: placed_order.getId()
-		,	type: placed_order.getRecordType()
-		,	trantype: placed_order.getFieldValue('type')
-		,	order_number: placed_order.getFieldValue('tranid')
-		,	purchasenumber: placed_order.getFieldValue('otherrefnum')
-		,	dueDate: placed_order.getFieldValue('duedate')
-		,	amountDue: toCurrency(placed_order.getFieldValue('amountremainingtotalbox'))
-		,	amountDue_formatted: formatCurrency(placed_order.getFieldValue('amountremainingtotalbox'))
-		,	memo: placed_order.getFieldValue('memo')
-		,   date: placed_order.getFieldValue('trandate')
-		,   status: placed_order.getFieldValue('status')
-		,	isReturnable: this.isReturnable(placed_order)
-		,	summary: {
+			, type: placed_order.getRecordType()
+			, trantype: placed_order.getFieldValue('type')
+			, order_number: placed_order.getFieldValue('tranid')
+			, purchasenumber: placed_order.getFieldValue('otherrefnum')
+			, dueDate: placed_order.getFieldValue('duedate')
+			, amountDue: toCurrency(placed_order.getFieldValue('amountremainingtotalbox'))
+			, amountDue_formatted: formatCurrency(placed_order.getFieldValue('amountremainingtotalbox'))
+			, memo: placed_order.getFieldValue('memo')
+			, date: placed_order.getFieldValue('trandate')
+			, status: placed_order.getFieldValue('status')
+			, isReturnable: this.isReturnable(placed_order)
+			, summary: {
 				subtotal: toCurrency(placed_order.getFieldValue('custbody_total_tailor_price'))
-			,	subtotal_formatted: formatCurrency(placed_order.getFieldValue('custbody_total_tailor_price'))
+				, subtotal_formatted: formatCurrency(placed_order.getFieldValue('custbody_total_tailor_price'))
 
-			,	taxtotal: toCurrency(placed_order.getFieldValue('taxtotal'))
-			,	taxtotal_formatted: formatCurrency(placed_order.getFieldValue('taxtotal'))
+				, taxtotal: toCurrency(placed_order.getFieldValue('taxtotal'))
+				, taxtotal_formatted: formatCurrency(placed_order.getFieldValue('taxtotal'))
 
-			,	tax2total: toCurrency(0)
-			,	tax2total_formatted: formatCurrency(0)
+				, tax2total: toCurrency(0)
+				, tax2total_formatted: formatCurrency(0)
 
-			,	shippingcost: toCurrency(placed_order.getFieldValue('shippingcost'))
-			,	shippingcost_formatted: formatCurrency(placed_order.getFieldValue('shippingcost'))
+				, shippingcost: toCurrency(placed_order.getFieldValue('shippingcost'))
+				, shippingcost_formatted: formatCurrency(placed_order.getFieldValue('shippingcost'))
 
-			,	handlingcost: toCurrency(placed_order.getFieldValue('althandlingcost'))
-			,	handlingcost_formatted: formatCurrency(placed_order.getFieldValue('althandlingcost'))
+				, handlingcost: toCurrency(placed_order.getFieldValue('althandlingcost'))
+				, handlingcost_formatted: formatCurrency(placed_order.getFieldValue('althandlingcost'))
 
-			,	estimatedshipping: 0
-			,	estimatedshipping_formatted: formatCurrency(0)
+				, estimatedshipping: 0
+				, estimatedshipping_formatted: formatCurrency(0)
 
-			,	taxonshipping: toCurrency(0)
-			,	taxonshipping_formatted: formatCurrency(0)
+				, taxonshipping: toCurrency(0)
+				, taxonshipping_formatted: formatCurrency(0)
 
-			,	discounttotal: toCurrency(placed_order.getFieldValue('discounttotal'))
-			,	discounttotal_formatted: formatCurrency(placed_order.getFieldValue('discounttotal'))
+				, discounttotal: toCurrency(placed_order.getFieldValue('discounttotal'))
+				, discounttotal_formatted: formatCurrency(placed_order.getFieldValue('discounttotal'))
 
-			,	taxondiscount: toCurrency(0)
-			,	taxondiscount_formatted: formatCurrency(0)
+				, taxondiscount: toCurrency(0)
+				, taxondiscount_formatted: formatCurrency(0)
 
-			,	discountrate: toCurrency(0)
-			,	discountrate_formatted: formatCurrency(0)
+				, discountrate: toCurrency(0)
+				, discountrate_formatted: formatCurrency(0)
 
-			,	discountedsubtotal: toCurrency(0)
-			,	discountedsubtotal_formatted: formatCurrency(0)
+				, discountedsubtotal: toCurrency(0)
+				, discountedsubtotal_formatted: formatCurrency(0)
 
-			,	giftcertapplied: toCurrency(placed_order.getFieldValue('giftcertapplied'))
-			,	giftcertapplied_formatted: formatCurrency(placed_order.getFieldValue('giftcertapplied'))
+				, giftcertapplied: toCurrency(placed_order.getFieldValue('giftcertapplied'))
+				, giftcertapplied_formatted: formatCurrency(placed_order.getFieldValue('giftcertapplied'))
 
-			,	total: toCurrency(parseFloat(placed_order.getFieldValue('custbody_total_tailor_price')) + parseFloat(placed_order.getFieldValue('shippingcost')))
-			,	total_formatted: formatCurrency(parseFloat(placed_order.getFieldValue('custbody_total_tailor_price')) + parseFloat(placed_order.getFieldValue('shippingcost')))
+				, total: toCurrency(parseFloat(placed_order.getFieldValue('custbody_total_tailor_price')) + parseFloat(placed_order.getFieldValue('shippingcost')))
+				, total_formatted: formatCurrency(parseFloat(placed_order.getFieldValue('custbody_total_tailor_price')) + parseFloat(placed_order.getFieldValue('shippingcost')))
 			}
 
-		,	currency: context.getFeature('MULTICURRENCY') ?
-			{
-				internalid: placed_order.getFieldValue('currency')
-			,	name: placed_order.getFieldValue('currencyname')
-			} : null
+			, currency: context.getFeature('MULTICURRENCY') ?
+				{
+					internalid: placed_order.getFieldValue('currency')
+					, name: placed_order.getFieldValue('currencyname')
+				} : null
 		};
 	}
 
-,	isReturnable: function (placed_order)
-	{
+	, isReturnable: function (placed_order) {
 		'use strict';
 
 		var status_id = placed_order.getFieldValue('statusRef');
@@ -799,80 +765,79 @@ Application.defineModel('PlacedOrder', {
 		return status_id !== 'pendingFulfillment' && status_id !== 'pendingApproval' && status_id !== 'closed';
 	}
 
-,	setFulfillments: function(result)
-	{
+	, setFulfillments: function (result) {
 		'use strict';
 
 		var self = this;
 
 		result.fulfillments = {};
 		var filters = [
-				new nlobjSearchFilter('createdfrom', null, 'is', result.internalid)
-			,	new nlobjSearchFilter('cogs', null, 'is', 'F')
-			,	new nlobjSearchFilter('shipping', null, 'is', 'F')
-			,	new nlobjSearchFilter('shiprecvstatusline', null, 'is', 'F')
-			]
+			new nlobjSearchFilter('createdfrom', null, 'is', result.internalid)
+			, new nlobjSearchFilter('cogs', null, 'is', 'F')
+			, new nlobjSearchFilter('shipping', null, 'is', 'F')
+			, new nlobjSearchFilter('shiprecvstatusline', null, 'is', 'F')
+		]
 
-		,	columns = [
+			, columns = [
 				new nlobjSearchColumn('quantity')
-			,	new nlobjSearchColumn('item')
-			,	new nlobjSearchColumn('shipaddress')
-			,	new nlobjSearchColumn('shipmethod')
-			,	new nlobjSearchColumn('shipto')
-			,	new nlobjSearchColumn('trackingnumbers')
-			,	new nlobjSearchColumn('trandate')
-			,	new nlobjSearchColumn('status')
+				, new nlobjSearchColumn('item')
+				, new nlobjSearchColumn('shipaddress')
+				, new nlobjSearchColumn('shipmethod')
+				, new nlobjSearchColumn('shipto')
+				, new nlobjSearchColumn('trackingnumbers')
+				, new nlobjSearchColumn('trandate')
+				, new nlobjSearchColumn('status')
 
 				// Ship Address
-			,	new nlobjSearchColumn('shipaddress')
-			,	new nlobjSearchColumn('shipaddress1')
-			,	new nlobjSearchColumn('shipaddress2')
-			,	new nlobjSearchColumn('shipaddressee')
-			,	new nlobjSearchColumn('shipattention')
-			,	new nlobjSearchColumn('shipcity')
-			,	new nlobjSearchColumn('shipcountry')
-			,	new nlobjSearchColumn('shipstate')
-			,	new nlobjSearchColumn('shipzip')
+				, new nlobjSearchColumn('shipaddress')
+				, new nlobjSearchColumn('shipaddress1')
+				, new nlobjSearchColumn('shipaddress2')
+				, new nlobjSearchColumn('shipaddressee')
+				, new nlobjSearchColumn('shipattention')
+				, new nlobjSearchColumn('shipcity')
+				, new nlobjSearchColumn('shipcountry')
+				, new nlobjSearchColumn('shipstate')
+				, new nlobjSearchColumn('shipzip')
 			]
 
-		,	fulfillments = Application.getAllSearchResults('itemfulfillment', filters, columns)
-		,	fulfillment_id = [];
+			, fulfillments = Application.getAllSearchResults('itemfulfillment', filters, columns)
+			, fulfillment_id = [];
 
 
-		fulfillments.forEach(function (ffline){
+		fulfillments.forEach(function (ffline) {
 
-			if(ffline.getValue('status') === 'shipped'){
+			if (ffline.getValue('status') === 'shipped') {
 
 				var shipaddress = self.addAddress({
 					internalid: ffline.getValue('shipaddress')
-				,	country: ffline.getValue('shipcountry')
-				,	state: ffline.getValue('shipstate')
-				,	city: ffline.getValue('shipcity')
-				,	zip: ffline.getValue('shipzip')
-				,	addr1: ffline.getValue('shipaddress1')
-				,	addr2: ffline.getValue('shipaddress2')
-				,	attention: ffline.getValue('shipattention')
-				,	addressee: ffline.getValue('shipaddressee')
+					, country: ffline.getValue('shipcountry')
+					, state: ffline.getValue('shipstate')
+					, city: ffline.getValue('shipcity')
+					, zip: ffline.getValue('shipzip')
+					, addr1: ffline.getValue('shipaddress1')
+					, addr2: ffline.getValue('shipaddress2')
+					, attention: ffline.getValue('shipattention')
+					, addressee: ffline.getValue('shipaddressee')
 				}, result);
 
 
 				result.fulfillments[ffline.getId()] = result.fulfillments[ffline.getId()] || {
 					internalid: ffline.getId()
-				,	shipaddress: shipaddress
-				,	shipmethod: {
-						internalid : ffline.getValue('shipmethod')
-					,	name : ffline.getText('shipmethod')
+					, shipaddress: shipaddress
+					, shipmethod: {
+						internalid: ffline.getValue('shipmethod')
+						, name: ffline.getText('shipmethod')
 					}
-				,	date: ffline.getValue('trandate')
-				,	trackingnumbers: ffline.getValue('trackingnumbers') ? ffline.getValue('trackingnumbers').split('<BR>') : null
-				,	lines:[]
+					, date: ffline.getValue('trandate')
+					, trackingnumbers: ffline.getValue('trackingnumbers') ? ffline.getValue('trackingnumbers').split('<BR>') : null
+					, lines: []
 				};
 
 				result.fulfillments[ffline.getId()].lines.push({
-						item_id: ffline.getValue('item')
-					,	quantity: ffline.getValue('quantity')
-					,	rate: 0
-					,	rate_formatted: formatCurrency(0)
+					item_id: ffline.getValue('item')
+					, quantity: ffline.getValue('quantity')
+					, rate: 0
+					, rate_formatted: formatCurrency(0)
 				});
 				fulfillment_id.push(ffline.getId());
 
@@ -881,29 +846,26 @@ Application.defineModel('PlacedOrder', {
 		});
 
 
-		if (fulfillment_id.length)
-		{
+		if (fulfillment_id.length) {
 			filters = [
-					new nlobjSearchFilter('internalid', null, 'anyof', result.internalid)
-				,	new nlobjSearchFilter('fulfillingtransaction', null, 'anyof', fulfillment_id)
-				];
+				new nlobjSearchFilter('internalid', null, 'anyof', result.internalid)
+				, new nlobjSearchFilter('fulfillingtransaction', null, 'anyof', fulfillment_id)
+			];
 
 
 			columns = [
-					new nlobjSearchColumn('line')
-				,	new nlobjSearchColumn('item')
-				,	new nlobjSearchColumn('rate')
-				,	new nlobjSearchColumn('fulfillingtransaction')
+				new nlobjSearchColumn('line')
+				, new nlobjSearchColumn('item')
+				, new nlobjSearchColumn('rate')
+				, new nlobjSearchColumn('fulfillingtransaction')
 
-				];
+			];
 
 
 			// TODO: open issue: we need visibility to the orderline/orderdoc attributes of the fulfillment
 			// and this sux :p
-			Application.getAllSearchResults('salesorder', filters, columns).forEach(function(line)
-			{
-				var foundline = _.find(result.fulfillments[line.getValue('fulfillingtransaction')].lines, function(ffline)
-				{
+			Application.getAllSearchResults('salesorder', filters, columns).forEach(function (line) {
+				var foundline = _.find(result.fulfillments[line.getValue('fulfillingtransaction')].lines, function (ffline) {
 					return ffline.item_id === line.getValue('item') && !ffline.line_id;
 				});
 
@@ -916,33 +878,32 @@ Application.defineModel('PlacedOrder', {
 
 	}
 
-,	setLines: function(placed_order, result)
-	{
+	, setLines: function (placed_order, result) {
 		'use strict';
 
 		result.lines = {};
 		var items_to_preload = []
-		,	amount;
+			, amount;
 
 		// load clients for this record since result doesn't include first name & last name
 		var customer_id = placed_order.getFieldValue('entity');
 		var profile_filters = [
-				new nlobjSearchFilter('custrecord_tc_tailor', null, 'is', customer_id)
-			]
+			new nlobjSearchFilter('custrecord_tc_tailor', null, 'is', customer_id)
+		]
 
-		,	profile_columns = [
+			, profile_columns = [
 				new nlobjSearchColumn('custrecord_tc_first_name')
-			,	new nlobjSearchColumn('custrecord_tc_last_name')
+				, new nlobjSearchColumn('custrecord_tc_last_name')
 			]
 
-		,	profiles = nlapiSearchRecord('customrecord_sc_tailor_client', null, profile_filters, profile_columns);
+			, profiles = nlapiSearchRecord('customrecord_sc_tailor_client', null, profile_filters, profile_columns);
 
 		// special function for retrieving client name
 
-		var getClientName = function(clientId){
+		var getClientName = function (clientId) {
 			var result = null;
-			for (index in profiles){
-				if (profiles[index].id == clientId){
+			for (index in profiles) {
+				if (profiles[index].id == clientId) {
 					result = profiles[index].getValue("custrecord_tc_first_name") + " " + profiles[index].getValue("custrecord_tc_last_name");
 					break;
 				}
@@ -952,8 +913,7 @@ Application.defineModel('PlacedOrder', {
 
 		for (var i = 1; i <= placed_order.getLineItemCount('item'); i++) {
 
-			if (placed_order.getLineItemValue('item', 'itemtype', i) === 'Discount' && placed_order.getLineItemValue('item', 'discline', i))
-			{
+			if (placed_order.getLineItemValue('item', 'itemtype', i) === 'Discount' && placed_order.getLineItemValue('item', 'discline', i)) {
 				var discline = placed_order.getLineItemValue('item', 'discline', i);
 
 				amount = Math.abs(parseFloat(placed_order.getLineItemValue('item', 'amount', i)));
@@ -961,134 +921,133 @@ Application.defineModel('PlacedOrder', {
 				result.lines[discline].discount = (result.lines[discline].discount) ? result.lines[discline].discount + amount : amount;
 				result.lines[discline].total = result.lines[discline].amount + result.lines[discline].tax_amount - result.lines[discline].discount;
 			}
-			else
-			{
+			else {
 				var rate = toCurrency(placed_order.getLineItemValue('item', 'rate', i))
-				,	item_id = placed_order.getLineItemValue('item', 'item', i)
-				,	item_type = placed_order.getLineItemValue('item', 'itemtype', i);
+					, item_id = placed_order.getLineItemValue('item', 'item', i)
+					, item_type = placed_order.getLineItemValue('item', 'itemtype', i);
 
 				amount = toCurrency(placed_order.getLineItemValue('item', 'amount', i));
 
-				var	tax_amount = toCurrency(placed_order.getLineItemValue('item', 'tax1amt', i)) || 0
-				,	total = amount + tax_amount;
+				var tax_amount = toCurrency(placed_order.getLineItemValue('item', 'tax1amt', i)) || 0
+					, total = amount + tax_amount;
 
 				var lineOption = [];
 
-				if(placed_order.getLineItemValue('item', 'custcol_designoption_message', i)){
+				if (placed_order.getLineItemValue('item', 'custcol_designoption_message', i)) {
 					lineOption.push({
 						id: 'custcol_designoption_message'
-					,	name: 'Design Options - Message'
-					,	value: placed_order.getLineItemValue('item', 'custcol_designoption_message', i)
+						, name: 'Design Options - Message'
+						, value: placed_order.getLineItemValue('item', 'custcol_designoption_message', i)
 					});
 				}
-				if(placed_order.getLineItemValue('item', 'custcol_designoptions_jacket', i)){
+				if (placed_order.getLineItemValue('item', 'custcol_designoptions_jacket', i)) {
 					lineOption.push({
 						id: 'custcol_designoptions_jacket'
-					,	name: 'Design Options - Jacket'
-					,	value: placed_order.getLineItemValue('item', 'custcol_designoptions_jacket', i)
+						, name: 'Design Options - Jacket'
+						, value: placed_order.getLineItemValue('item', 'custcol_designoptions_jacket', i)
 					});
 				}
-				if(placed_order.getLineItemValue('item', 'custcol_designoptions_overcoat', i)){
+				if (placed_order.getLineItemValue('item', 'custcol_designoptions_overcoat', i)) {
 					lineOption.push({
 						id: 'custcol_designoptions_overcoat'
-					,	name: 'Design Options - Overcoat'
-					,	value: placed_order.getLineItemValue('item', 'custcol_designoptions_overcoat', i)
+						, name: 'Design Options - Overcoat'
+						, value: placed_order.getLineItemValue('item', 'custcol_designoptions_overcoat', i)
 					});
 				}
-				if(placed_order.getLineItemValue('item', 'custcol_designoptions_shirt', i)){
+				if (placed_order.getLineItemValue('item', 'custcol_designoptions_shirt', i)) {
 					lineOption.push({
 						id: 'custcol_designoptions_shirt'
-					,	name: 'Design Options - Shirt'
-					,	value: placed_order.getLineItemValue('item', 'custcol_designoptions_shirt', i)
+						, name: 'Design Options - Shirt'
+						, value: placed_order.getLineItemValue('item', 'custcol_designoptions_shirt', i)
 					});
 				}
-				if(placed_order.getLineItemValue('item', 'custcol_designoptions_trouser', i)){
+				if (placed_order.getLineItemValue('item', 'custcol_designoptions_trouser', i)) {
 					lineOption.push({
 						id: 'custcol_designoptions_trouser'
-					,	name: 'Design Options - Trouser'
-					,	value: placed_order.getLineItemValue('item', 'custcol_designoptions_trouser', i)
+						, name: 'Design Options - Trouser'
+						, value: placed_order.getLineItemValue('item', 'custcol_designoptions_trouser', i)
 					});
 				}
-				if(placed_order.getLineItemValue('item', 'custcol_designoptions_waistcoat', i)){
+				if (placed_order.getLineItemValue('item', 'custcol_designoptions_waistcoat', i)) {
 					lineOption.push({
 						id: 'custcol_designoptions_waistcoat'
-					,	name: 'Design Options - Waistcoat'
-					,	value: placed_order.getLineItemValue('item', 'custcol_designoptions_waistcoat', i)
+						, name: 'Design Options - Waistcoat'
+						, value: placed_order.getLineItemValue('item', 'custcol_designoptions_waistcoat', i)
 					});
 				}
-				if(placed_order.getLineItemValue('item', 'custcol_fitprofile_summary', i)){
+				if (placed_order.getLineItemValue('item', 'custcol_fitprofile_summary', i)) {
 					lineOption.push({
 						id: 'custcol_fitprofile_summary'
-					,	name: 'Fit Profile Summary'
-					,	value: placed_order.getLineItemValue('item', 'custcol_fitprofile_summary', i)
+						, name: 'Fit Profile Summary'
+						, value: placed_order.getLineItemValue('item', 'custcol_fitprofile_summary', i)
 					});
 				}
-				if(placed_order.getLineItemValue('item', 'custcol_fitprofile_message', i)){
+				if (placed_order.getLineItemValue('item', 'custcol_fitprofile_message', i)) {
 					lineOption.push({
 						id: 'custcol_fitprofile_message'
-					,	name: 'Fit Profile - Message'
-					,	value: placed_order.getLineItemValue('item', 'custcol_fitprofile_message', i)
+						, name: 'Fit Profile - Message'
+						, value: placed_order.getLineItemValue('item', 'custcol_fitprofile_message', i)
 					});
 				}
 
-				if(placed_order.getLineItemValue('item', 'custcol_tailor_cust_pricing', i)){
+				if (placed_order.getLineItemValue('item', 'custcol_tailor_cust_pricing', i)) {
 					lineOption.push({
 						id: 'custcol_tailor_cust_pricing'
-					,	name: 'Tailor Pricing'
-					,	value: placed_order.getLineItemValue('item', 'custcol_tailor_cust_pricing', i)
+						, name: 'Tailor Pricing'
+						, value: placed_order.getLineItemValue('item', 'custcol_tailor_cust_pricing', i)
 					});
 				}
-				if(placed_order.getLineItemValue('item', 'custcol_tailor_client', i)){
+				if (placed_order.getLineItemValue('item', 'custcol_tailor_client', i)) {
 					var clientId = placed_order.getLineItemValue('item', 'custcol_tailor_client', i);
 					lineOption.push({
 						id: 'custcol_tailor_client'
-					,	name: 'Tailor Client'
-					,	value: clientId
+						, name: 'Tailor Client'
+						, value: clientId
 					});
 
 					lineOption.push({
 						id: 'custcol_tailor_client_name'
-					,	name: 'Client Name'
-					,	value: getClientName(clientId)
+						, name: 'Client Name'
+						, value: getClientName(clientId)
 					});
 				}
-				if(placed_order.getLineItemValue('item', 'custcol_itm_category_url', i)){
+				if (placed_order.getLineItemValue('item', 'custcol_itm_category_url', i)) {
 					lineOption.push({
 						id: 'custcol_itm_category_url'
-					,	name: 'Category URL'
-					,	value: placed_order.getLineItemValue('item', 'custcol_itm_category_url', i)
+						, name: 'Category URL'
+						, value: placed_order.getLineItemValue('item', 'custcol_itm_category_url', i)
 					});
 				}
-				if(placed_order.getLineItemValue('item', 'custcol_fabric_quantity', i)){
+				if (placed_order.getLineItemValue('item', 'custcol_fabric_quantity', i)) {
 					lineOption.push({
 						id: 'custcol_fabric_quantity'
-					,	name: 'Fabric Quantity'
-					,	value: placed_order.getLineItemValue('item', 'custcol_fabric_quantity', i)
+						, name: 'Fabric Quantity'
+						, value: placed_order.getLineItemValue('item', 'custcol_fabric_quantity', i)
 					});
 				}
 
 				/** start date needed, hold fabric, hold production **/
-				if(placed_order.getLineItemValue('item', 'custcol_avt_date_needed', i)){
+				if (placed_order.getLineItemValue('item', 'custcol_avt_date_needed', i)) {
 					lineOption.push({
 						id: 'custcol_avt_date_needed'
-					,	name: 'Date Needed'
-					,	value: placed_order.getLineItemValue('item', 'custcol_avt_date_needed', i) || '1/1/1900'
+						, name: 'Date Needed'
+						, value: placed_order.getLineItemValue('item', 'custcol_avt_date_needed', i) || '1/1/1900'
 					});
 				}
 
-				if(placed_order.getLineItemValue('item', 'custcol_avt_hold_fabric', i)){
+				if (placed_order.getLineItemValue('item', 'custcol_avt_hold_fabric', i)) {
 					lineOption.push({
 						id: 'custcol_avt_hold_fabric'
-					,	name: 'Hold Fabric'
-					,	value: placed_order.getLineItemValue('item', 'custcol_avt_hold_fabric', i) || 'F'
+						, name: 'Hold Fabric'
+						, value: placed_order.getLineItemValue('item', 'custcol_avt_hold_fabric', i) || 'F'
 					});
 				}
 
-				if(placed_order.getLineItemValue('item', 'custcol_avt_hold_production', i)){
+				if (placed_order.getLineItemValue('item', 'custcol_avt_hold_production', i)) {
 					lineOption.push({
 						id: 'custcol_avt_hold_production'
-					,	name: 'Hold Production'
-					,	value: placed_order.getLineItemValue('item', 'custcol_avt_hold_production', i) || 'F'
+						, name: 'Hold Production'
+						, value: placed_order.getLineItemValue('item', 'custcol_avt_hold_production', i) || 'F'
 					});
 				}
 
@@ -1097,30 +1056,30 @@ Application.defineModel('PlacedOrder', {
 
 				result.lines[placed_order.getLineItemValue('item', 'line', i)] = {
 					internalid: placed_order.getLineItemValue('item', 'id', i)
-				,   quantity: parseInt(placed_order.getLineItemValue('item', 'quantity', i), 10)
+					, quantity: parseInt(placed_order.getLineItemValue('item', 'quantity', i), 10)
 
-				,   rate: placed_order.getLineItemValue('item', 'custcol_tailor_cust_pricing', i)
+					, rate: placed_order.getLineItemValue('item', 'custcol_tailor_cust_pricing', i)
 
-				,   amount: placed_order.getLineItemValue('item', 'custcol_tailor_cust_pricing', i)
+					, amount: placed_order.getLineItemValue('item', 'custcol_tailor_cust_pricing', i)
 
-				,	tax_amount: 0
-				,	tax_rate: placed_order.getLineItemValue('item', 'taxrate1', i)
-				,	tax_code: placed_order.getLineItemValue('item', 'taxcode_display', i)
+					, tax_amount: 0
+					, tax_rate: placed_order.getLineItemValue('item', 'taxrate1', i)
+					, tax_code: placed_order.getLineItemValue('item', 'taxcode_display', i)
 
-				,	discount: 0
+					, discount: 0
 
-				,	total: placed_order.getLineItemValue('item', 'custcol_tailor_cust_pricing', i)
+					, total: placed_order.getLineItemValue('item', 'custcol_tailor_cust_pricing', i)
 
-				,	item: item_id
-				,	type: item_type
-				,   options: lineOption
-				,   shipaddress: placed_order.getLineItemValue('item', 'shipaddress', i) ? result.listAddresseByIdTmp[placed_order.getLineItemValue('item', 'shipaddress', i)] : null
-				,   shipmethod:  placed_order.getLineItemValue('item', 'shipmethod', i) || null
+					, item: item_id
+					, type: item_type
+					, options: lineOption
+					, shipaddress: placed_order.getLineItemValue('item', 'shipaddress', i) ? result.listAddresseByIdTmp[placed_order.getLineItemValue('item', 'shipaddress', i)] : null
+					, shipmethod: placed_order.getLineItemValue('item', 'shipmethod', i) || null
 				};
 
 				items_to_preload[item_id] = {
 					id: item_id
-				,	type: item_type
+					, type: item_type
 				};
 			}
 
@@ -1135,47 +1094,42 @@ Application.defineModel('PlacedOrder', {
 
 		// The api wont bring disabled items so we need to query them directly
 		var items_to_query = []
-		,	self = this;
+			, self = this;
 
-		_.each(result.lines, function(line)
-		{
-			if (line.item)
-			{
+		_.each(result.lines, function (line) {
+			if (line.item) {
 				var item = self.store_item.get(line.item, line.type);
-				if (!item || typeof item.itemid === 'undefined')
-				{
+				if (!item || typeof item.itemid === 'undefined') {
 					items_to_query.push(line.item);
 				}
 			}
 		});
 
-		if (items_to_query.length > 0)
-		{
+		if (items_to_query.length > 0) {
 			var filters = [
-					new nlobjSearchFilter('entity', null, 'is', nlapiGetUser())
-				,	new nlobjSearchFilter('internalid', null, 'is', result.internalid)
-				,	new nlobjSearchFilter('internalid', 'item', 'anyof', items_to_query)
-				]
+				new nlobjSearchFilter('entity', null, 'is', nlapiGetUser())
+				, new nlobjSearchFilter('internalid', null, 'is', result.internalid)
+				, new nlobjSearchFilter('internalid', 'item', 'anyof', items_to_query)
+			]
 
-			,	columns = [
+				, columns = [
 					new nlobjSearchColumn('internalid', 'item')
-				,	new nlobjSearchColumn('type', 'item')
-				,	new nlobjSearchColumn('parent', 'item')
-				,	new nlobjSearchColumn('displayname', 'item')
-				,	new nlobjSearchColumn('storedisplayname', 'item')
-				,	new nlobjSearchColumn('itemid', 'item')
+					, new nlobjSearchColumn('type', 'item')
+					, new nlobjSearchColumn('parent', 'item')
+					, new nlobjSearchColumn('displayname', 'item')
+					, new nlobjSearchColumn('storedisplayname', 'item')
+					, new nlobjSearchColumn('itemid', 'item')
 				]
 
-			,	inactive_items_search = Application.getAllSearchResults('transaction', filters, columns);
+				, inactive_items_search = Application.getAllSearchResults('transaction', filters, columns);
 
-			inactive_items_search.forEach(function(item)
-			{
+			inactive_items_search.forEach(function (item) {
 				var inactive_item = {
 					internalid: item.getValue('internalid', 'item')
-				,	type: item.getValue('type', 'item')
-				,	displayname: item.getValue('displayname', 'item')
-				,	storedisplayname: item.getValue('storedisplayname', 'item')
-				,	itemid: item.getValue('itemid', 'item')
+					, type: item.getValue('type', 'item')
+					, displayname: item.getValue('displayname', 'item')
+					, storedisplayname: item.getValue('storedisplayname', 'item')
+					, itemid: item.getValue('itemid', 'item')
 				};
 
 				self.store_item.set(inactive_item);
@@ -1186,8 +1140,7 @@ Application.defineModel('PlacedOrder', {
 
 		result.lines = _.values(result.lines);
 
-		result.lines.forEach(function(line)
-		{
+		result.lines.forEach(function (line) {
 			line.rate_formatted = formatCurrency(line.rate);
 			line.amount_formatted = formatCurrency(line.amount);
 			line.tax_amount_formatted = formatCurrency(line.tax_amount);
@@ -1200,30 +1153,27 @@ Application.defineModel('PlacedOrder', {
 		delete result.listAddresseByIdTmp;
 	}
 
-,	setShippingMethods: function(placed_order, result)
-	{
+	, setShippingMethods: function (placed_order, result) {
 		'use strict';
 		result.shipmethods = {};
 
-		if (placed_order.getLineItemCount('shipgroup') <= 0)
-		{
+		if (placed_order.getLineItemCount('shipgroup') <= 0) {
 			result.shipmethods[placed_order.getFieldValue('shipmethod')] = {
 				internalid: placed_order.getFieldValue('shipmethod')
-			,	name: placed_order.getFieldText('shipmethod')
-			,	rate: toCurrency(placed_order.getFieldValue('shipping_rate'))
-			,	rate_formatted: formatCurrency(placed_order.getFieldValue('shipping_rate'))
-			,	shipcarrier: placed_order.getFieldValue('carrier')
+				, name: placed_order.getFieldText('shipmethod')
+				, rate: toCurrency(placed_order.getFieldValue('shipping_rate'))
+				, rate_formatted: formatCurrency(placed_order.getFieldValue('shipping_rate'))
+				, shipcarrier: placed_order.getFieldValue('carrier')
 			};
 		}
 
-		for (var i = 1; i <= placed_order.getLineItemCount('shipgroup') ; i++)
-		{
+		for (var i = 1; i <= placed_order.getLineItemCount('shipgroup'); i++) {
 			result.shipmethods[placed_order.getLineItemValue('shipgroup', 'shippingmethodref', i)] = {
 				internalid: placed_order.getLineItemValue('shipgroup', 'shippingmethodref', i)
-			,    name: placed_order.getLineItemValue('shipgroup', 'shippingmethod', i)
-			,    rate: toCurrency(placed_order.getLineItemValue('shipgroup', 'shippingrate', i))
-			,    rate_formatted: formatCurrency(placed_order.getLineItemValue('shipgroup', 'shippingrate', i))
-			,    shipcarrier: placed_order.getLineItemValue('shipgroup', 'shippingcarrier', i)
+				, name: placed_order.getLineItemValue('shipgroup', 'shippingmethod', i)
+				, rate: toCurrency(placed_order.getLineItemValue('shipgroup', 'shippingrate', i))
+				, rate_formatted: formatCurrency(placed_order.getLineItemValue('shipgroup', 'shippingrate', i))
+				, shipcarrier: placed_order.getLineItemValue('shipgroup', 'shippingcarrier', i)
 			};
 
 		}
@@ -1231,8 +1181,7 @@ Application.defineModel('PlacedOrder', {
 		result.shipmethod = placed_order.getFieldValue('shipmethod');
 	}
 
-,	addAddress: function(address, result)
-	{
+	, addAddress: function (address, result) {
 		'use strict';
 		result.addresses = result.addresses || {};
 
@@ -1242,76 +1191,72 @@ Application.defineModel('PlacedOrder', {
 		delete address.attention;
 		delete address.addressee;
 
-		address.internalid =	(address.country || '')  + '-' +
-								(address.state || '') + '-' +
-								(address.city || '') + '-' +
-								(address.zip || '') + '-' +
-								(address.addr1 || '') + '-' +
-								(address.addr2 || '') + '-' +
-								(address.fullname || '') + '-' +
-								(address.company || '');
+		address.internalid = (address.country || '') + '-' +
+			(address.state || '') + '-' +
+			(address.city || '') + '-' +
+			(address.zip || '') + '-' +
+			(address.addr1 || '') + '-' +
+			(address.addr2 || '') + '-' +
+			(address.fullname || '') + '-' +
+			(address.company || '');
 
 		address.internalid = address.internalid.replace(/\s/g, '-');
 
-		if (!result.addresses[address.internalid])
-		{
+		if (!result.addresses[address.internalid]) {
 			result.addresses[address.internalid] = address;
 		}
 
 		return address.internalid;
 	}
 
-,	setAddresses: function(placed_order, result)
-	{
+	, setAddresses: function (placed_order, result) {
 		// TODO: normalize addresses, remove <br> and \r\n
 		'use strict';
 		result.addresses = {};
-		result.listAddresseByIdTmp ={};
-		for (var i = 1; i <= placed_order.getLineItemCount('iladdrbook') ; i++)
-		{
+		result.listAddresseByIdTmp = {};
+		for (var i = 1; i <= placed_order.getLineItemCount('iladdrbook'); i++) {
 			// Adds all the addresses in the address book
 			result.listAddresseByIdTmp[placed_order.getLineItemValue('iladdrbook', 'iladdrinternalid', i)] = this.addAddress({
 				internalid: placed_order.getLineItemValue('iladdrbook', 'iladdrshipaddr', i)
-			,	country: placed_order.getLineItemValue('iladdrbook', 'iladdrshipcountry', i)
-			,	state: placed_order.getLineItemValue('iladdrbook', 'iladdrshipstate', i)
-			,	city: placed_order.getLineItemValue('iladdrbook', 'iladdrshipcity', i)
-			,	zip: placed_order.getLineItemValue('iladdrbook', 'iladdrshipzip', i)
-			,	addr1: placed_order.getLineItemValue('iladdrbook', 'iladdrshipaddr1', i)
-			,	addr2: placed_order.getLineItemValue('iladdrbook', 'iladdrshipaddr2', i)
-			,	attention: placed_order.getLineItemValue('iladdrbook', 'iladdrshipattention', i)
-			,	addressee: placed_order.getLineItemValue('iladdrbook', 'iladdrshipaddressee', i)
+				, country: placed_order.getLineItemValue('iladdrbook', 'iladdrshipcountry', i)
+				, state: placed_order.getLineItemValue('iladdrbook', 'iladdrshipstate', i)
+				, city: placed_order.getLineItemValue('iladdrbook', 'iladdrshipcity', i)
+				, zip: placed_order.getLineItemValue('iladdrbook', 'iladdrshipzip', i)
+				, addr1: placed_order.getLineItemValue('iladdrbook', 'iladdrshipaddr1', i)
+				, addr2: placed_order.getLineItemValue('iladdrbook', 'iladdrshipaddr2', i)
+				, attention: placed_order.getLineItemValue('iladdrbook', 'iladdrshipattention', i)
+				, addressee: placed_order.getLineItemValue('iladdrbook', 'iladdrshipaddressee', i)
 			}, result);
 		}
 
 		// Adds Bill Address
 		result.billaddress = this.addAddress({
 			internalid: placed_order.getFieldValue('billaddress')
-		,	country: placed_order.getFieldValue('billcountry')
-		,	state: placed_order.getFieldValue('billstate')
-		,	city: placed_order.getFieldValue('billcity')
-		,	zip: placed_order.getFieldValue('billzip')
-		,	addr1: placed_order.getFieldValue('billaddr1')
-		,	addr2: placed_order.getFieldValue('billaddr2')
-		,	attention: placed_order.getFieldValue('billattention')
-		,	addressee: placed_order.getFieldValue('billaddressee')
+			, country: placed_order.getFieldValue('billcountry')
+			, state: placed_order.getFieldValue('billstate')
+			, city: placed_order.getFieldValue('billcity')
+			, zip: placed_order.getFieldValue('billzip')
+			, addr1: placed_order.getFieldValue('billaddr1')
+			, addr2: placed_order.getFieldValue('billaddr2')
+			, attention: placed_order.getFieldValue('billattention')
+			, addressee: placed_order.getFieldValue('billaddressee')
 		}, result);
 
 		// Adds Shipping Address
 		result.shipaddress = (placed_order.getFieldValue('shipaddress')) ? this.addAddress({
 			internalid: placed_order.getFieldValue('shipaddress')
-		,	country: placed_order.getFieldValue('shipcountry')
-		,	state: placed_order.getFieldValue('shipstate')
-		,	city: placed_order.getFieldValue('shipcity')
-		,	zip: placed_order.getFieldValue('shipzip')
-		,	addr1: placed_order.getFieldValue('shipaddr1')
-		,	addr2: placed_order.getFieldValue('shipaddr2')
-		,	attention: placed_order.getFieldValue('shipattention')
-		,	addressee: placed_order.getFieldValue('shipaddressee')
+			, country: placed_order.getFieldValue('shipcountry')
+			, state: placed_order.getFieldValue('shipstate')
+			, city: placed_order.getFieldValue('shipcity')
+			, zip: placed_order.getFieldValue('shipzip')
+			, addr1: placed_order.getFieldValue('shipaddr1')
+			, addr2: placed_order.getFieldValue('shipaddr2')
+			, attention: placed_order.getFieldValue('shipattention')
+			, addressee: placed_order.getFieldValue('shipaddressee')
 		}, result) : null;
 	}
 
-,	setReceipts: function (result)
-	{
+	, setReceipts: function (result) {
 		'use strict';
 
 		result.receipts = Application.getModel('Receipts').list({
@@ -1321,8 +1266,7 @@ Application.defineModel('PlacedOrder', {
 		return this;
 	}
 
-,	setReturnAuthorizations: function (result)
-	{
+	, setReturnAuthorizations: function (result) {
 		'use strict';
 
 		result.returnauthorizations = Application.getModel('ReturnAuthorization').list({
@@ -1339,175 +1283,162 @@ Application.defineModel('ReturnAuthorization', {
 
 	validation: {}
 
-,	get: function (id)
-	{
+	, get: function (id) {
 		'use strict';
 
 		var amount_field = context.getFeature('MULTICURRENCY') ? 'fxamount' : 'amount'
 
-		,	filters = [
+			, filters = [
 				new nlobjSearchFilter('internalid', null, 'is', id)
 			]
 
-		,	columns = [
+			, columns = [
 				// Basic info
 				new nlobjSearchColumn('mainline')
-			,	new nlobjSearchColumn('trandate')
-			,	new nlobjSearchColumn('status')
-			,	new nlobjSearchColumn('tranid')
-			,	new nlobjSearchColumn('memo')
+				, new nlobjSearchColumn('trandate')
+				, new nlobjSearchColumn('status')
+				, new nlobjSearchColumn('tranid')
+				, new nlobjSearchColumn('memo')
 
 				// Summary
-			,	new nlobjSearchColumn('total')
-			,	new nlobjSearchColumn('taxtotal')
-			,	new nlobjSearchColumn('currency')
-			,	new nlobjSearchColumn('shippingamount')
+				, new nlobjSearchColumn('total')
+				, new nlobjSearchColumn('taxtotal')
+				, new nlobjSearchColumn('currency')
+				, new nlobjSearchColumn('shippingamount')
 
 				// Created from
-			,	new nlobjSearchColumn('internalid', 'createdfrom')
-			,	new nlobjSearchColumn('tranid', 'createdfrom')
-			,	new nlobjSearchColumn('type', 'createdfrom')
+				, new nlobjSearchColumn('internalid', 'createdfrom')
+				, new nlobjSearchColumn('tranid', 'createdfrom')
+				, new nlobjSearchColumn('type', 'createdfrom')
 
 				// Items
-			,	new nlobjSearchColumn('internalid', 'item')
-			,	new nlobjSearchColumn('type', 'item')
-			,	new nlobjSearchColumn('quantity')
-			,	new nlobjSearchColumn('options')
-			,	new nlobjSearchColumn(amount_field)
-			,	new nlobjSearchColumn('rate')
+				, new nlobjSearchColumn('internalid', 'item')
+				, new nlobjSearchColumn('type', 'item')
+				, new nlobjSearchColumn('quantity')
+				, new nlobjSearchColumn('options')
+				, new nlobjSearchColumn(amount_field)
+				, new nlobjSearchColumn('rate')
 			]
 
-		,	return_authorizations = Application.getAllSearchResults('returnauthorization', filters, columns)
+			, return_authorizations = Application.getAllSearchResults('returnauthorization', filters, columns)
 
-		,	main_return_authorization = _.find(return_authorizations, function (return_authorization)
-			{
+			, main_return_authorization = _.find(return_authorizations, function (return_authorization) {
 				return return_authorization.getValue('mainline') === '*';
 			});
 
 		return {
 			internalid: main_return_authorization.getId()
-		,	type: main_return_authorization.getRecordType()
+			, type: main_return_authorization.getRecordType()
 
-		,	date: main_return_authorization.getValue('trandate')
-		,	tranid: main_return_authorization.getValue('tranid')
-		,	comment: main_return_authorization.getValue('memo')
+			, date: main_return_authorization.getValue('trandate')
+			, tranid: main_return_authorization.getValue('tranid')
+			, comment: main_return_authorization.getValue('memo')
 
-		,	status: {
+			, status: {
 				id: main_return_authorization.getValue('status')
-			,	label: main_return_authorization.getText('status')
+				, label: main_return_authorization.getText('status')
 			}
 
-		,	isCancelable: this.isCancelable(main_return_authorization)
-		,	createdfrom: this.getCreatedFrom(return_authorizations)
-		,	summary: this.getSummary(main_return_authorization)
-		,	lines: this.getLines(return_authorizations)
+			, isCancelable: this.isCancelable(main_return_authorization)
+			, createdfrom: this.getCreatedFrom(return_authorizations)
+			, summary: this.getSummary(main_return_authorization)
+			, lines: this.getLines(return_authorizations)
 		};
 	}
 
-,	isCancelable: function (record)
-	{
+	, isCancelable: function (record) {
 		'use strict';
 
 		return record.getValue('status') === 'pendingApproval';
 	}
 
-,	getCreatedFrom: function (records)
-	{
+	, getCreatedFrom: function (records) {
 		'use strict';
 
-		var created_from = _.find(records, function (return_authorization)
-		{
+		var created_from = _.find(records, function (return_authorization) {
 			return return_authorization.getValue('internalid', 'createdfrom');
 		});
 
-		if (created_from)
-		{
+		if (created_from) {
 			return {
 				internalid: created_from.getValue('internalid', 'createdfrom')
-			,	tranid: created_from.getValue('tranid', 'createdfrom')
-			,	type: created_from.getValue('type', 'createdfrom')
+				, tranid: created_from.getValue('tranid', 'createdfrom')
+				, type: created_from.getValue('type', 'createdfrom')
 			};
 		}
 	}
 
-,	getLines: function (records)
-	{
+	, getLines: function (records) {
 		'use strict';
 
 		var amount_field = context.getFeature('MULTICURRENCY') ? 'fxamount' : 'amount'
 
-		,	lines = _.filter(records, function (line)
-			{
+			, lines = _.filter(records, function (line) {
 				// Sales Tax Group have negative internal ids
 				return parseInt(line.getValue('internalid', 'item'), 10) > 0;
 			})
 
-		,	store_item = Application.getModel('StoreItem');
+			, store_item = Application.getModel('StoreItem');
 
-		return _.map(lines, function (record)
-		{
+		return _.map(lines, function (record) {
 			var amount = record.getValue(amount_field)
-			,	rate = record.getValue('rate');
+				, rate = record.getValue('rate');
 
 			return {
 				// As we are returning the item, the quantity is negative
 				// don't want to show that to the customer.
 				quantity: Math.abs(record.getValue('quantity'))
-			,	options: getItemOptionsObject(record.getValue('options'))
+				, options: getItemOptionsObject(record.getValue('options'))
 
-			,	reason: record.getValue('memo')
+				, reason: record.getValue('memo')
 
-			,	item: store_item.get(
+				, item: store_item.get(
 					record.getValue('internalid', 'item')
-				,	record.getValue('type', 'item')
+					, record.getValue('type', 'item')
 				)
 
-			,	amount: toCurrency(amount)
-			,	amount_formatted: formatCurrency(amount)
+				, amount: toCurrency(amount)
+				, amount_formatted: formatCurrency(amount)
 
-			,	rate: toCurrency(rate)
-			,	rate_formatted: formatCurrency(rate)
+				, rate: toCurrency(rate)
+				, rate_formatted: formatCurrency(rate)
 			};
 		});
 	}
 
-,	getSummary: function (record)
-	{
+	, getSummary: function (record) {
 		'use strict';
 
 		var total = record.getValue('total')
-		,	taxtotal = record.getValue('taxtotal')
-		,	shipping = record.getValue('shippingamount');
+			, taxtotal = record.getValue('taxtotal')
+			, shipping = record.getValue('shippingamount');
 
 		return {
 			total: toCurrency(total)
-		,	total_formatted: formatCurrency(total)
+			, total_formatted: formatCurrency(total)
 
-		,	taxtotal: toCurrency(taxtotal)
-		,	taxtotal_formatted: formatCurrency(taxtotal)
+			, taxtotal: toCurrency(taxtotal)
+			, taxtotal_formatted: formatCurrency(taxtotal)
 
-		,	shippingamount: toCurrency(shipping)
-		,	shippingamount_formatted: formatCurrency(shipping)
+			, shippingamount: toCurrency(shipping)
+			, shippingamount_formatted: formatCurrency(shipping)
 
-		,	currency: context.getFeature('MULTICURRENCY') ? {
+			, currency: context.getFeature('MULTICURRENCY') ? {
 				internalid: record.getValue('currency')
-			,	name: record.getText('currency')
+				, name: record.getText('currency')
 			} : null
 		};
 	}
 
-,	update: function (id, data, headers)
-	{
+	, update: function (id, data, headers) {
 		'use strict';
 
-		if (data.status === 'cancelled')
-		{
+		if (data.status === 'cancelled') {
 			nlapiRequestURL(SC.Configuration.returnAuthorizations.cancelUrlRoot + '/app/accounting/transactions/returnauthmanager.nl?type=cancel&id=' + id, null, headers);
 		}
 	}
 
-,	create: function (data)
-	{
+	, create: function (data) {
 		'use strict';
 
 		var return_authorization = nlapiTransformRecord(data.type, data.id, 'returnauthorization');
@@ -1519,8 +1450,7 @@ Application.defineModel('ReturnAuthorization', {
 		return nlapiSubmitRecord(return_authorization);
 	}
 
-,	findLine: function (line_id, lines)
-	{
+	, findLine: function (line_id, lines) {
 		'use strict';
 
 		return _.findWhere(lines, {
@@ -1528,25 +1458,21 @@ Application.defineModel('ReturnAuthorization', {
 		});
 	}
 
-,	setLines: function (return_authorization, lines)
-	{
+	, setLines: function (return_authorization, lines) {
 		'use strict';
 
 		var line_count = return_authorization.getLineItemCount('item')
-		,	add_line = true
-		,	i = 1;
+			, add_line = true
+			, i = 1;
 
-		while (add_line && i <= line_count)
-		{
+		while (add_line && i <= line_count) {
 			add_line = this.findLine(return_authorization.getLineItemValue('item', 'id', i), lines);
 
-			if (add_line)
-			{
+			if (add_line) {
 				return_authorization.setLineItemValue('item', 'quantity', i, add_line.quantity);
 				return_authorization.setLineItemValue('item', 'description', i, add_line.reason);
 			}
-			else
-			{
+			else {
 				return_authorization.removeLineItem('item', i);
 			}
 
@@ -1556,120 +1482,109 @@ Application.defineModel('ReturnAuthorization', {
 		return !add_line ? this.setLines(return_authorization, lines) : this;
 	}
 
-,	list: function (data)
-	{
+	, list: function (data) {
 		'use strict';
 
 		var is_multicurrency = context.getFeature('MULTICURRENCY')
 
-		,	amount_field = is_multicurrency ? 'fxamount' : 'amount'
+			, amount_field = is_multicurrency ? 'fxamount' : 'amount'
 
-		,	filters = [
+			, filters = [
 				new nlobjSearchFilter('entity', null, 'is', nlapiGetUser())
 			]
 
-		,	columns = [
+			, columns = [
 				new nlobjSearchColumn('internalid', 'item')
-			,	new nlobjSearchColumn('type', 'item')
-			,	new nlobjSearchColumn('parent', 'item')
-			,	new nlobjSearchColumn('displayname', 'item')
-			,	new nlobjSearchColumn('storedisplayname', 'item')
-			,	new nlobjSearchColumn('internalid')
-			,	new nlobjSearchColumn('taxtotal')
-			,	new nlobjSearchColumn('rate')
-			,	new nlobjSearchColumn('total')
-			,	new nlobjSearchColumn('mainline')
-			,	new nlobjSearchColumn('trandate')
-			,	new nlobjSearchColumn('internalid')
-			,	new nlobjSearchColumn('tranid')
-			,	new nlobjSearchColumn('status')
-			,	new nlobjSearchColumn('options')
-			,	new nlobjSearchColumn('linesequencenumber').setSort()
-			,	new nlobjSearchColumn(amount_field)
-			,	new nlobjSearchColumn('quantity')
+				, new nlobjSearchColumn('type', 'item')
+				, new nlobjSearchColumn('parent', 'item')
+				, new nlobjSearchColumn('displayname', 'item')
+				, new nlobjSearchColumn('storedisplayname', 'item')
+				, new nlobjSearchColumn('internalid')
+				, new nlobjSearchColumn('taxtotal')
+				, new nlobjSearchColumn('rate')
+				, new nlobjSearchColumn('total')
+				, new nlobjSearchColumn('mainline')
+				, new nlobjSearchColumn('trandate')
+				, new nlobjSearchColumn('internalid')
+				, new nlobjSearchColumn('tranid')
+				, new nlobjSearchColumn('status')
+				, new nlobjSearchColumn('options')
+				, new nlobjSearchColumn('linesequencenumber').setSort()
+				, new nlobjSearchColumn(amount_field)
+				, new nlobjSearchColumn('quantity')
 			]
 
-		,	return_authorizations = null;
+			, return_authorizations = null;
 
-		if (data.createdfrom)
-		{
+		if (data.createdfrom) {
 			filters.push(new nlobjSearchFilter('createdfrom', null, 'anyof', data.createdfrom));
 		}
 
 		this.setDateFromTo(data.from, data.to, filters);
 
-		switch (data.sort)
-		{
+		switch (data.sort) {
 			case 'number':
 				columns[12].setSort(data.order > 0);
-			break;
+				break;
 
 			default:
 				columns[10].setSort(data.order > 0);
 				columns[11].setSort(data.order > 0);
 		}
 
-		if (is_multicurrency)
-		{
+		if (is_multicurrency) {
 			columns.push(new nlobjSearchColumn('currency'));
 		}
 
-		if (data.page)
-		{
+		if (data.page) {
 			filters.push(new nlobjSearchFilter('mainline', null, 'is', 'T'));
 
 			return_authorizations = Application.getPaginatedSearchResults({
 				record_type: 'returnauthorization'
-			,	filters: filters
-			,	columns: columns
-			,	page: data.page
+				, filters: filters
+				, columns: columns
+				, page: data.page
 			});
 
-			return_authorizations.records = _.map(return_authorizations.records, function (record)
-			{
+			return_authorizations.records = _.map(return_authorizations.records, function (record) {
 				return {
 					internalid: record.getId()
-				,	status: record.getText('status')
-				,	tranid: record.getValue('tranid')
-				,	date: record.getValue('trandate')
+					, status: record.getText('status')
+					, tranid: record.getValue('tranid')
+					, date: record.getValue('trandate')
 
-				,	summary: {
+					, summary: {
 						total: toCurrency(record.getValue('total'))
-					,	total_formatted: formatCurrency(record.getValue('total'))
+						, total_formatted: formatCurrency(record.getValue('total'))
 					}
 
-				,	currency: is_multicurrency ? {
+					, currency: is_multicurrency ? {
 						internalid: record.getValue('currency')
-					,	name: record.getText('currency')
+						, name: record.getText('currency')
 					} : null
 				};
 			});
 		}
-		else
-		{
+		else {
 			return_authorizations = this.parseResults(Application.getAllSearchResults('returnauthorization', filters, columns));
 		}
 
 		return return_authorizations;
 	}
 
-,	setDateFromTo: function (from, to, filters)
-	{
+	, setDateFromTo: function (from, to, filters) {
 		'use strict';
 
-		if (from)
-		{
+		if (from) {
 			filters.push(new nlobjSearchFilter('trandate', null, 'onorafter', this.setDateInt(from), null));
 		}
 
-		if (to)
-		{
+		if (to) {
 			filters.push(new nlobjSearchFilter('trandate', null, 'onorbefore', this.setDateInt(to), null));
 		}
 	}
 
-,	setDateInt: function (date)
-	{
+	, setDateInt: function (date) {
 		'use strict';
 
 		var offset = new Date().getTimezoneOffset() * 60 * 1000;
@@ -1677,75 +1592,69 @@ Application.defineModel('ReturnAuthorization', {
 		return new Date(parseInt(date, 10) + offset);
 	}
 
-,	parseResults: function (return_authorizations)
-	{
+	, parseResults: function (return_authorizations) {
 		'use strict';
 
 		var return_address = context.getPreference('returnaddresstext')
-		,	is_multicurrency = context.getFeature('MULTICURRENCY')
-		,	amount_field = is_multicurrency ? 'fxamount' : 'amount'
-		,	store_item = Application.getModel('StoreItem')
-		,	return_authorization_id = 0
-		,	current_return = null
-		,	grouped_result = {};
+			, is_multicurrency = context.getFeature('MULTICURRENCY')
+			, amount_field = is_multicurrency ? 'fxamount' : 'amount'
+			, store_item = Application.getModel('StoreItem')
+			, return_authorization_id = 0
+			, current_return = null
+			, grouped_result = {};
 
 		// the query returns the transaction headers mixed with the lines so we have to group the returns authorization
-		_.each(return_authorizations, function (returnauthorization)
-		{
+		_.each(return_authorizations, function (returnauthorization) {
 			return_authorization_id = returnauthorization.getId();
 			// create the return authorization
-			if (!grouped_result[return_authorization_id])
-			{
-				grouped_result[return_authorization_id] = {lines: []};
+			if (!grouped_result[return_authorization_id]) {
+				grouped_result[return_authorization_id] = { lines: [] };
 			}
 
 			current_return = grouped_result[return_authorization_id];
 
 			// asterisk means true
-			if (returnauthorization.getValue('mainline') === '*' || !current_return.internalid)
-			{
+			if (returnauthorization.getValue('mainline') === '*' || !current_return.internalid) {
 				// if it's the mainline we add some fields
 				_.extend(current_return, {
 					internalid: returnauthorization.getValue('internalid')
-				,	status: returnauthorization.getText('status')
-				,	date: returnauthorization.getValue('trandate')
-				,	summary: {
+					, status: returnauthorization.getText('status')
+					, date: returnauthorization.getValue('trandate')
+					, summary: {
 						total: toCurrency(returnauthorization.getValue('total'))
-					,	total_formatted: formatCurrency(returnauthorization.getValue('total'))
+						, total_formatted: formatCurrency(returnauthorization.getValue('total'))
 					}
-				,	type: 'returnauthorization'
-				,	tranid: returnauthorization.getValue('tranid')
-				,	currency: is_multicurrency ? {
+					, type: 'returnauthorization'
+					, tranid: returnauthorization.getValue('tranid')
+					, currency: is_multicurrency ? {
 						internalid: returnauthorization.getValue('currency')
-					,	name: returnauthorization.getText('currency')
+						, name: returnauthorization.getText('currency')
 					} : null
 				});
 
 				// it the autorizhation is approved, add the return's information
-				if (returnauthorization.getValue('status') !== 'pendingApproval')
-				{
+				if (returnauthorization.getValue('status') !== 'pendingApproval') {
 					current_return.order_number = returnauthorization.getValue('tranid');
 					current_return.return_address = return_address;
 				}
 			}
 
-			if (returnauthorization.getValue('mainline') !== '*')
-			{
+			if (returnauthorization.getValue('mainline') !== '*') {
 				// if it's a line, we add it to the lines collection of the return authorization
 				// TODO: find the proper field for the internalid instead of building it
 				current_return.lines.push({
 					internalid: returnauthorization.getValue('internalid') + '_' + returnauthorization.getValue('linesequencenumber')
-				,	quantity: returnauthorization.getValue('quantity')
-				,	rate: toCurrency(returnauthorization.getValue('rate'))
-				,	amount: toCurrency(returnauthorization.getValue(amount_field))
-				,	tax_amount: toCurrency(returnauthorization.getValue('taxtotal'))
-				,	total: toCurrency(returnauthorization.getValue('total'))
+					, quantity: returnauthorization.getValue('quantity')
+					, rate: toCurrency(returnauthorization.getValue('rate'))
+					, amount: toCurrency(returnauthorization.getValue(amount_field))
+					, tax_amount: toCurrency(returnauthorization.getValue('taxtotal'))
+					, total: toCurrency(returnauthorization.getValue('total'))
 
-				,	options: getItemOptionsObject(returnauthorization.getValue('options'))
+					, options: getItemOptionsObject(returnauthorization.getValue('options'))
 					// add item information to order's line, the storeitem collection was preloaded in the getOrderLines function
-				,	item: store_item.get(
+					, item: store_item.get(
 						returnauthorization.getValue('internalid', 'item')
-					,	returnauthorization.getValue('type', 'item')
+						, returnauthorization.getValue('type', 'item')
 					)
 				});
 			}
@@ -1766,25 +1675,20 @@ Application.defineModel('ReturnAuthorization', {
 // Available methods allow fetching and updating Shopping Cart's data
 Application.defineModel('LiveOrder', {
 
-	get: function ()
-	{
+	get: function () {
 		'use strict';
 
 		var order_fields = this.getFieldValues()
-		,	result = {};
+			, result = {};
 
-		try
-		{
+		try {
 			result.lines = this.getLines(order_fields);
 		}
-		catch (e)
-		{
-			if (e.code === 'ERR_CHK_ITEM_NOT_FOUND' || e.code === 'ERR_CHK_DISABLED_MST')
-			{
+		catch (e) {
+			if (e.code === 'ERR_CHK_ITEM_NOT_FOUND' || e.code === 'ERR_CHK_DISABLED_MST') {
 				return this.get();
 			}
-			else
-			{
+			else {
 				throw e;
 			}
 		}
@@ -1798,16 +1702,14 @@ Application.defineModel('LiveOrder', {
 
 		result.ismultishipto = this.getIsMultiShipTo(order_fields);
 		// Ship Methods
-		if (result.ismultishipto)
-		{
+		if (result.ismultishipto) {
 			result.multishipmethods = this.getMultiShipMethods(result.lines);
 
 			// These are set so it is compatible with non multiple shipping.
 			result.shipmethods = [];
 			result.shipmethod = null;
 		}
-		else
-		{
+		else {
 			result.shipmethods = this.getShipMethods(order_fields);
 			result.shipmethod = order_fields.shipmethod ? order_fields.shipmethod.shipmethod : null;
 		}
@@ -1838,37 +1740,32 @@ Application.defineModel('LiveOrder', {
 		return result;
 	}
 
-,	update: function (data)
-	{
+	, update: function (data) {
 		'use strict';
 
 		var current_order = this.get();
 
 		// Only do this if it's capable of shipping multiple items.
-		if (this.isMultiShippingEnabled)
-		{
-			if (this.isSecure && this.isLoggedIn)
-			{
+		if (this.isMultiShippingEnabled) {
+			if (this.isSecure && this.isLoggedIn) {
 				order.setEnableItemLineShipping(!!data.ismultishipto);
 			}
 
 			// Do the following only if multishipto is active (is the data recevie determine that MST is enabled and pass the MST Validation)
-			if (data.ismultishipto)
-			{
+			if (data.ismultishipto) {
 				order.removeShippingAddress();
 
 				order.removeShippingMethod();
 
 				this.removePromoCode(current_order);
 
-				this.splitLines(data,current_order);
+				this.splitLines(data, current_order);
 
 				this.setShippingAddressAndMethod(data, current_order);
 			}
 		}
 
-		if (!this.isMultiShippingEnabled || !data.ismultishipto)
-		{
+		if (!this.isMultiShippingEnabled || !data.ismultishipto) {
 
 			this.setShippingAddress(data, current_order);
 
@@ -1887,144 +1784,129 @@ Application.defineModel('LiveOrder', {
 
 	}
 
-,	submit: function ()
-	{
+	, submit: function () {
 		'use strict';
 
-		var paypal_address = _.find(customer.getAddressBook(), function (address){ return !address.phone && address.isvalid === 'T'; })
-		,	confirmation = order.submit();
+		var paypal_address = _.find(customer.getAddressBook(), function (address) { return !address.phone && address.isvalid === 'T'; })
+			, confirmation = order.submit();
 		// We need remove the paypal's address because after order submit the address is invalid for the next time.
 		this.removePaypalAddress(paypal_address);
 
 		context.setSessionObject('paypal_complete', 'F');
 
-		if (this.isMultiShippingEnabled)
-		{
+		if (this.isMultiShippingEnabled) {
 			order.setEnableItemLineShipping(false); // By default non order should be MST
 		}
 
 		return confirmation;
 	}
 
-,	isSecure: request.getURL().indexOf('https') === 0
+	, isSecure: request.getURL().indexOf('https') === 0
 
-,	isLoggedIn: session.isLoggedIn()
+	, isLoggedIn: session.isLoggedIn()
 
-,	isMultiShippingEnabled: context.getSetting('FEATURE', 'MULTISHIPTO') === 'T' && SC.Configuration.isMultiShippingEnabled
+	, isMultiShippingEnabled: context.getSetting('FEATURE', 'MULTISHIPTO') === 'T' && SC.Configuration.isMultiShippingEnabled
 
-,	addAddress: function (address, addresses)
-	{
+	, addAddress: function (address, addresses) {
 		'use strict';
 
-		if (!address)
-		{
+		if (!address) {
 			return null;
 		}
 
 		addresses = addresses || {};
 
-		if (!address.fullname)
-		{
+		if (!address.fullname) {
 			address.fullname = address.attention ? address.attention : address.addressee;
 		}
 
-		if (!address.company)
-		{
+		if (!address.company) {
 			address.company = address.attention ? address.addressee : null;
 		}
 
 		delete address.attention;
 		delete address.addressee;
 
-		if (!address.internalid)
-		{
-			address.internalid =	(address.country || '') + '-' +
-									(address.state || '') + '-' +
-									(address.city || '') + '-' +
-									(address.zip || '') + '-' +
-									(address.addr1 || '') + '-' +
-									(address.addr2 || '') + '-' +
-									(address.fullname || '') + '-' +
-									address.company;
+		if (!address.internalid) {
+			address.internalid = (address.country || '') + '-' +
+				(address.state || '') + '-' +
+				(address.city || '') + '-' +
+				(address.zip || '') + '-' +
+				(address.addr1 || '') + '-' +
+				(address.addr2 || '') + '-' +
+				(address.fullname || '') + '-' +
+				address.company;
 
 			address.internalid = address.internalid.replace(/\s/g, '-');
 		}
 
-		if (address.internalid !== '-------null')
-		{
+		if (address.internalid !== '-------null') {
 			addresses[address.internalid] = address;
 		}
 
 		return address.internalid;
 	}
 
-,	hidePaymentPageWhenNoBalance: function (order_fields)
-	{
+	, hidePaymentPageWhenNoBalance: function (order_fields) {
 		'use strict';
 
-		if (this.isSecure && this.isLoggedIn && order_fields.payment && session.getSiteSettings(['checkout']).checkout.hidepaymentpagewhennobalance === 'T' && order_fields.summary.total === 0)
-		{
+		if (this.isSecure && this.isLoggedIn && order_fields.payment && session.getSiteSettings(['checkout']).checkout.hidepaymentpagewhennobalance === 'T' && order_fields.summary.total === 0) {
 			order.removePayment();
 			order_fields = this.getFieldValues();
 		}
 		return order_fields;
 	}
 
-,	redirectToPayPal: function ()
-	{
+	, redirectToPayPal: function () {
 		'use strict';
 
-		var touchpoints = session.getSiteSettings( ['touchpoints'] ).touchpoints
-		,	continue_url = 'https://' + request.getHeader('Host') + touchpoints.checkout
-		,	joint = ~continue_url.indexOf('?') ? '&' : '?';
+		var touchpoints = session.getSiteSettings(['touchpoints']).touchpoints
+			, continue_url = 'https://' + request.getHeader('Host') + touchpoints.checkout
+			, joint = ~continue_url.indexOf('?') ? '&' : '?';
 
 		continue_url = continue_url + joint + 'paypal=DONE&fragment=' + request.getParameter('next_step');
 
 		session.proceedToCheckout({
 			cancelurl: touchpoints.viewcart
-		,	continueurl: continue_url
-		,	createorder: 'F'
-		,	type: 'paypalexpress'
-		,	shippingaddrfirst: 'T'
-		,	showpurchaseorder: 'T'
+			, continueurl: continue_url
+			, createorder: 'F'
+			, type: 'paypalexpress'
+			, shippingaddrfirst: 'T'
+			, showpurchaseorder: 'T'
 		});
 	}
 
-,	redirectToPayPalExpress: function ()
-	{
+	, redirectToPayPalExpress: function () {
 		'use strict';
 
-		var touchpoints = session.getSiteSettings( ['touchpoints'] ).touchpoints
-		,	continue_url = 'https://' + request.getHeader('Host') + touchpoints.checkout
-		,	joint = ~continue_url.indexOf('?') ? '&' : '?';
+		var touchpoints = session.getSiteSettings(['touchpoints']).touchpoints
+			, continue_url = 'https://' + request.getHeader('Host') + touchpoints.checkout
+			, joint = ~continue_url.indexOf('?') ? '&' : '?';
 
 		continue_url = continue_url + joint + 'paypal=DONE';
 
 		session.proceedToCheckout({
 			cancelurl: touchpoints.viewcart
-		,	continueurl: continue_url
-		,	createorder: 'F'
-		,	type: 'paypalexpress'
+			, continueurl: continue_url
+			, createorder: 'F'
+			, type: 'paypalexpress'
 		});
 	}
 
-,	backFromPayPal: function ()
-	{
+	, backFromPayPal: function () {
 		'use strict';
 
 		var Profile = Application.getModel('Profile')
-		,	customer_values = Profile.get()
-		,	bill_address = order.getBillingAddress()
-		,	ship_address = order.getShippingAddress();
+			, customer_values = Profile.get()
+			, bill_address = order.getBillingAddress()
+			, ship_address = order.getShippingAddress();
 
-		if (customer_values.isGuest === 'T' && session.getSiteSettings(['registration']).registration.companyfieldmandatory === 'T')
-		{
+		if (customer_values.isGuest === 'T' && session.getSiteSettings(['registration']).registration.companyfieldmandatory === 'T') {
 			customer_values.companyname = 'Guest Shopper';
 			customer.updateProfile(customer_values);
 		}
 
-		if (ship_address.internalid && ship_address.isvalid === 'T' && !bill_address.internalid)
-		{
+		if (ship_address.internalid && ship_address.isvalid === 'T' && !bill_address.internalid) {
 			order.setBillingAddress(ship_address.internalid);
 		}
 
@@ -2033,19 +1915,15 @@ Application.defineModel('LiveOrder', {
 
 	// remove the shipping address or billing address if phone number is null (address not valid created by Paypal.)
 
-,	removePaypalAddress: function (paypal_address)
-	{
+	, removePaypalAddress: function (paypal_address) {
 		'use strict';
 
-		try
-		{
-			if (paypal_address && paypal_address.internalid)
-			{
+		try {
+			if (paypal_address && paypal_address.internalid) {
 				customer.removeAddress(paypal_address.internalid);
 			}
 		}
-		catch (e)
-		{
+		catch (e) {
 			// ignore this exception, it is only for the cases that we can't remove paypal's address.
 			// This exception will not send to the front-end
 			var error = Application.processError(e);
@@ -2053,20 +1931,18 @@ Application.defineModel('LiveOrder', {
 		}
 	}
 
-,	addLine: function (line_data)
-	{
+	, addLine: function (line_data) {
 		'use strict';
 
 		// Adds the line to the order
 		var line_id = order.addItem({
 			internalid: line_data.item.internalid.toString()
-		,	quantity: _.isNumber(line_data.quantity) ? parseInt(line_data.quantity, 10) : 1
-		,	options: line_data.options || {}
+			, quantity: _.isNumber(line_data.quantity) ? parseInt(line_data.quantity, 10) : 1
+			, options: line_data.options || {}
 		});
 
 
-		if (this.isMultiShippingEnabled)
-		{
+		if (this.isMultiShippingEnabled) {
 			// Sets it ship address (if present)
 			line_data.shipaddress && order.setItemShippingAddress(line_id, line_data.shipaddress);
 
@@ -2085,27 +1961,25 @@ Application.defineModel('LiveOrder', {
 		return line_id;
 	}
 
-,	addLines: function (lines_data)
-	{
+	, addLines: function (lines_data) {
 		'use strict';
 
 		var items = [];
 
-		_.each(lines_data, function (line_data)
-		{
+		_.each(lines_data, function (line_data) {
 			var item = {
-					internalid: line_data.item.internalid.toString()
-				,	quantity:  _.isNumber(line_data.quantity) ? parseInt(line_data.quantity, 10) : 1
-				,	options: line_data.options || {}
+				internalid: line_data.item.internalid.toString()
+				, quantity: _.isNumber(line_data.quantity) ? parseInt(line_data.quantity, 10) : 1
+				, options: line_data.options || {}
 			};
 
 			items.push(item);
 		});
 
 		var lines_ids = order.addItems(items)
-		,	latest_addition = _.last(lines_ids).orderitemid
-		// Stores the current order
-		,	lines_sort = this.getLinesSort();
+			, latest_addition = _.last(lines_ids).orderitemid
+			// Stores the current order
+			, lines_sort = this.getLinesSort();
 
 		lines_sort.unshift(latest_addition);
 		this.setLinesSort(lines_sort);
@@ -2115,8 +1989,7 @@ Application.defineModel('LiveOrder', {
 		return lines_ids;
 	}
 
-,	removeLine: function (line_id)
-	{
+	, removeLine: function (line_id) {
 		'use strict';
 
 		// Removes the line
@@ -2128,36 +2001,30 @@ Application.defineModel('LiveOrder', {
 		this.setLinesSort(lines_sort);
 	}
 
-,	updateLine: function (line_id, line_data)
-	{
+	, updateLine: function (line_id, line_data) {
 		'use strict';
 
 		var lines_sort = this.getLinesSort()
-		,	current_position = _.indexOf(lines_sort, line_id)
-		,	original_line_object = order.getItem(line_id);
+			, current_position = _.indexOf(lines_sort, line_id)
+			, original_line_object = order.getItem(line_id);
 
 		this.removeLine(line_id);
 
-		if (!_.isNumber(line_data.quantity) || line_data.quantity > 0)
-		{
+		if (!_.isNumber(line_data.quantity) || line_data.quantity > 0) {
 			var new_line_id;
-			try
-			{
+			try {
 				new_line_id = this.addLine(line_data);
 			}
-			catch (e)
-			{
+			catch (e) {
 				// we try to roll back the item to the original state
 				var roll_back_item = {
 					item: { internalid: parseInt(original_line_object.internalid, 10) }
-				,	quantity: parseInt(original_line_object.quantity, 10)
+					, quantity: parseInt(original_line_object.quantity, 10)
 				};
 
-				if (original_line_object.options && original_line_object.options.length)
-				{
+				if (original_line_object.options && original_line_object.options.length) {
 					roll_back_item.options = {};
-					_.each(original_line_object.options, function (option)
-					{
+					_.each(original_line_object.options, function (option) {
 						roll_back_item.options[option.id.toLowerCase()] = option.value;
 					});
 				}
@@ -2166,8 +2033,8 @@ Application.defineModel('LiveOrder', {
 
 				e.errorDetails = {
 					status: 'LINE_ROLLBACK'
-				,	oldLineId: line_id
-				,	newLineId: new_line_id
+					, oldLineId: line_id
+					, newLineId: new_line_id
 				};
 
 				throw e;
@@ -2179,27 +2046,22 @@ Application.defineModel('LiveOrder', {
 		}
 	}
 
-,	splitLines: function (data, current_order)
-	{
+	, splitLines: function (data, current_order) {
 		'use strict';
-		_.each(data.lines, function (line)
-		{
-			if (line.splitquantity)
-			{
-				var splitquantity = typeof line.splitquantity === 'string' ? parseInt(line.splitquantity,10) : line.splitquantity
-				,	original_line = _.find(current_order.lines, function (order_line)
-					{
+		_.each(data.lines, function (line) {
+			if (line.splitquantity) {
+				var splitquantity = typeof line.splitquantity === 'string' ? parseInt(line.splitquantity, 10) : line.splitquantity
+					, original_line = _.find(current_order.lines, function (order_line) {
 						return order_line.internalid === line.internalid;
 					})
-				,	remaining = original_line ? (original_line.quantity - splitquantity) : -1;
+					, remaining = original_line ? (original_line.quantity - splitquantity) : -1;
 
-				if (remaining > 0 && splitquantity > 0)
-				{
+				if (remaining > 0 && splitquantity > 0) {
 					order.splitItem({
-						'orderitemid' : original_line.internalid
-					,	'quantities': [
+						'orderitemid': original_line.internalid
+						, 'quantities': [
 							splitquantity
-						,	remaining
+							, remaining
 						]
 					});
 				}
@@ -2207,29 +2069,23 @@ Application.defineModel('LiveOrder', {
 		});
 	}
 
-,	removePromoCode: function(current_order)
-	{
+	, removePromoCode: function (current_order) {
 		'use strict';
-		if(current_order.promocode && current_order.promocode.code)
-		{
+		if (current_order.promocode && current_order.promocode.code) {
 			order.removePromotionCode(current_order.promocode.code);
 		}
 	}
 
-,	getFieldValues: function ()
-	{
+	, getFieldValues: function () {
 		'use strict';
 
 		var order_field_keys = this.isSecure ? SC.Configuration.order_checkout_field_keys : SC.Configuration.order_shopping_field_keys;
 
-		if (this.isMultiShippingEnabled)
-		{
-			if (!_.contains(order_field_keys.items, 'shipaddress'))
-			{
+		if (this.isMultiShippingEnabled) {
+			if (!_.contains(order_field_keys.items, 'shipaddress')) {
 				order_field_keys.items.push('shipaddress');
 			}
-			if (!_.contains(order_field_keys.items, 'shipmethod'))
-			{
+			if (!_.contains(order_field_keys.items, 'shipmethod')) {
 				order_field_keys.items.push('shipmethod');
 			}
 			order_field_keys.ismultishipto = null;
@@ -2238,46 +2094,38 @@ Application.defineModel('LiveOrder', {
 		return order.getFieldValues(order_field_keys, false);
 	}
 
-,	getPromoCode: function (order_fields)
-	{
+	, getPromoCode: function (order_fields) {
 		'use strict';
 
-		if (order_fields.promocodes && order_fields.promocodes.length)
-		{
+		if (order_fields.promocodes && order_fields.promocodes.length) {
 			return {
-					internalid: order_fields.promocodes[0].internalid
-				,	code: order_fields.promocodes[0].promocode
-				,	isvalid: true
+				internalid: order_fields.promocodes[0].internalid
+				, code: order_fields.promocodes[0].promocode
+				, isvalid: true
 			};
 		}
-		else
-		{
+		else {
 			return null;
 		}
 	}
 
-,	getMultiShipMethods: function (lines)
-	{
+	, getMultiShipMethods: function (lines) {
 		'use strict';
 		// Get multi ship methods
 		var multishipmethods = {};
 
-		_.each(lines, function (line)
-		{
-			if (line.shipaddress)
-			{
+		_.each(lines, function (line) {
+			if (line.shipaddress) {
 				multishipmethods[line.shipaddress] = multishipmethods[line.shipaddress] || [];
 
 				multishipmethods[line.shipaddress].push(line.internalid);
 			}
 		});
 
-		_.each(_.keys(multishipmethods), function (address)
-		{
+		_.each(_.keys(multishipmethods), function (address) {
 			var methods = order.getAvailableShippingMethods(multishipmethods[address], address);
 
-			_.each(methods, function (method)
-			{
+			_.each(methods, function (method) {
 				method.internalid = method.shipmethod;
 				method.rate_formatted = formatCurrency(method.rate);
 				delete method.shipmethod;
@@ -2289,110 +2137,101 @@ Application.defineModel('LiveOrder', {
 		return multishipmethods;
 	}
 
-,	getShipMethods: function (order_fields)
-	{
+	, getShipMethods: function (order_fields) {
 		'use strict';
 
-		var shipmethods = _.map(order_fields.shipmethods, function (shipmethod)
-		{
-			var rate = toCurrency(shipmethod.rate.replace( /^\D+/g, '')) || 0;
+		var shipmethods = _.map(order_fields.shipmethods, function (shipmethod) {
+			var rate = toCurrency(shipmethod.rate.replace(/^\D+/g, '')) || 0;
 
 			return {
 				internalid: shipmethod.shipmethod
-			,	name: shipmethod.name
-			,	shipcarrier: shipmethod.shipcarrier
-			,	rate: rate
-			,	rate_formatted: shipmethod.rate
+				, name: shipmethod.name
+				, shipcarrier: shipmethod.shipcarrier
+				, rate: rate
+				, rate_formatted: shipmethod.rate
 			};
 		});
 
 		return shipmethods;
 	}
 
-,	getLinesSort: function ()
-	{
+	, getLinesSort: function () {
 		'use strict';
 		return context.getSessionObject('lines_sort') ? context.getSessionObject('lines_sort').split(',') : [];
 	}
 
-,	getPaymentMethods: function (order_fields)
-	{
+	, getPaymentMethods: function (order_fields) {
 		'use strict';
 		var paymentmethods = []
-		,	giftcertificates = order.getAppliedGiftCertificates()
-		,	paypal = _.findWhere(session.getPaymentMethods(), {ispaypal: 'T'});
+			, giftcertificates = order.getAppliedGiftCertificates()
+			, paypal = _.findWhere(session.getPaymentMethods(), { ispaypal: 'T' });
 
-		if (order_fields.payment && order_fields.payment.creditcard && order_fields.payment.creditcard.paymentmethod && order_fields.payment.creditcard.paymentmethod.creditcard === 'T' && order_fields.payment.creditcard.paymentmethod.ispaypal !== 'T')
-		{
+		if (order_fields.payment && order_fields.payment.creditcard && order_fields.payment.creditcard.paymentmethod && order_fields.payment.creditcard.paymentmethod.creditcard === 'T' && order_fields.payment.creditcard.paymentmethod.ispaypal !== 'T') {
 			// Main
 			var cc = order_fields.payment.creditcard;
 			paymentmethods.push({
 				type: 'creditcard'
-			,	primary: true
-			,	creditcard: {
+				, primary: true
+				, creditcard: {
 					internalid: cc.internalid
-				,	ccnumber: cc.ccnumber
-				,	ccname: cc.ccname
-				,	ccexpiredate: cc.expmonth + '/' + cc.expyear
-				,	ccsecuritycode: cc.ccsecuritycode
-				,	expmonth: cc.expmonth
-				,	expyear: cc.expyear
-				,	paymentmethod: {
+					, ccnumber: cc.ccnumber
+					, ccname: cc.ccname
+					, ccexpiredate: cc.expmonth + '/' + cc.expyear
+					, ccsecuritycode: cc.ccsecuritycode
+					, expmonth: cc.expmonth
+					, expyear: cc.expyear
+					, paymentmethod: {
 						internalid: cc.paymentmethod.internalid
-					,	name: cc.paymentmethod.name
-					,	creditcard: cc.paymentmethod.creditcard === 'T'
-					,	ispaypal: cc.paymentmethod.ispaypal === 'T'
+						, name: cc.paymentmethod.name
+						, creditcard: cc.paymentmethod.creditcard === 'T'
+						, ispaypal: cc.paymentmethod.ispaypal === 'T'
 					}
 				}
 			});
 		}
-		else if (order_fields.payment && paypal && paypal.internalid === order_fields.payment.paymentmethod)
-		{
+		else if (order_fields.payment && paypal && paypal.internalid === order_fields.payment.paymentmethod) {
 			paymentmethods.push({
 				type: 'paypal'
-			,	primary: true
-			,	complete: context.getSessionObject('paypal_complete') === 'T'
+				, primary: true
+				, complete: context.getSessionObject('paypal_complete') === 'T'
 			});
 		}
-		else if (order_fields.payment && order_fields.payment.paymentterms === 'Invoice')
-		{
+		else if (order_fields.payment && order_fields.payment.paymentterms === 'Invoice') {
 			var customer_invoice = customer.getFieldValues([
 				'paymentterms'
-			,	'creditlimit'
-			,	'balance'
-			,	'creditholdoverride'
+				, 'creditlimit'
+				, 'balance'
+				, 'creditholdoverride'
 			]);
 
 			paymentmethods.push({
 				type: 'invoice'
-			,	primary: true
-			,	paymentterms: customer_invoice.paymentterms
-			,	creditlimit: parseFloat(customer_invoice.creditlimit || 0)
-			,	creditlimit_formatted: formatCurrency(customer_invoice.creditlimit)
-			,	balance: parseFloat(customer_invoice.balance || 0)
-			,	balance_formatted: formatCurrency(customer_invoice.balance)
-			,	creditholdoverride: customer_invoice.creditholdoverride
-			,	purchasenumber: order_fields.purchasenumber
+				, primary: true
+				, paymentterms: customer_invoice.paymentterms
+				, creditlimit: parseFloat(customer_invoice.creditlimit || 0)
+				, creditlimit_formatted: formatCurrency(customer_invoice.creditlimit)
+				, balance: parseFloat(customer_invoice.balance || 0)
+				, balance_formatted: formatCurrency(customer_invoice.balance)
+				, creditholdoverride: customer_invoice.creditholdoverride
+				, purchasenumber: order_fields.purchasenumber
 			});
 		}
 
-		if (giftcertificates && giftcertificates.length)
-		{
-			_.forEach(giftcertificates, function (giftcertificate)
-			{
+		if (giftcertificates && giftcertificates.length) {
+			_.forEach(giftcertificates, function (giftcertificate) {
 				paymentmethods.push({
 					type: 'giftcertificate'
-				,	giftcertificate: {
+					, giftcertificate: {
 						code: giftcertificate.giftcertcode
 
-					,	amountapplied: toCurrency(giftcertificate.amountapplied || 0)
-					,	amountapplied_formatted: formatCurrency(giftcertificate.amountapplied || 0)
+						, amountapplied: toCurrency(giftcertificate.amountapplied || 0)
+						, amountapplied_formatted: formatCurrency(giftcertificate.amountapplied || 0)
 
-					,	amountremaining: toCurrency(giftcertificate.amountremaining || 0)
-					,	amountremaining_formatted: formatCurrency(giftcertificate.amountremaining || 0)
+						, amountremaining: toCurrency(giftcertificate.amountremaining || 0)
+						, amountremaining_formatted: formatCurrency(giftcertificate.amountremaining || 0)
 
-					,	originalamount: toCurrency(giftcertificate.originalamount || 0)
-					,	originalamount_formatted: formatCurrency(giftcertificate.originalamount || 0)
+						, originalamount: toCurrency(giftcertificate.originalamount || 0)
+						, originalamount_formatted: formatCurrency(giftcertificate.originalamount || 0)
 					}
 				});
 			});
@@ -2401,16 +2240,13 @@ Application.defineModel('LiveOrder', {
 		return paymentmethods;
 	}
 
-,	getTransactionBodyField: function ()
-	{
+	, getTransactionBodyField: function () {
 		'use strict';
 
 		var options = {};
 
-		if (this.isSecure)
-		{
-			_.each(order.getCustomFieldValues(), function (option)
-			{
+		if (this.isSecure) {
+			_.each(order.getCustomFieldValues(), function (option) {
 				options[option.name] = option.value;
 			});
 
@@ -2418,28 +2254,23 @@ Application.defineModel('LiveOrder', {
 		return options;
 	}
 
-,	getAddresses: function (order_fields)
-	{
+	, getAddresses: function (order_fields) {
 		'use strict';
 
 		var self = this
-		,	addresses = {}
-		,	address_book = this.isLoggedIn && this.isSecure ? customer.getAddressBook() : [];
+			, addresses = {}
+			, address_book = this.isLoggedIn && this.isSecure ? customer.getAddressBook() : [];
 
 		address_book = _.object(_.pluck(address_book, 'internalid'), address_book);
 		// General Addresses
-		if (order_fields.ismultishipto === 'T')
-		{
-			_.each(order_fields.items || [], function (line)
-			{
-				if (line.shipaddress && !addresses[line.shipaddress])
-				{
+		if (order_fields.ismultishipto === 'T') {
+			_.each(order_fields.items || [], function (line) {
+				if (line.shipaddress && !addresses[line.shipaddress]) {
 					self.addAddress(address_book[line.shipaddress], addresses);
 				}
 			});
 		}
-		else
-		{
+		else {
 			this.addAddress(order_fields.shipaddress, addresses);
 		}
 
@@ -2451,92 +2282,82 @@ Application.defineModel('LiveOrder', {
 	// Set Order Lines into the result
 	// Standarizes the result of the lines
 
-,	getLines: function (order_fields)
-	{
+	, getLines: function (order_fields) {
 		'use strict';
 
 		var lines = [];
-		if (order_fields.items && order_fields.items.length)
-		{
+		if (order_fields.items && order_fields.items.length) {
 			var self = this
-			,	items_to_preload = []
-			,	address_book = this.isLoggedIn && this.isSecure ? customer.getAddressBook() : []
-			,	item_ids_to_clean = []
-			,	non_shippable_items_count = 0;
+				, items_to_preload = []
+				, address_book = this.isLoggedIn && this.isSecure ? customer.getAddressBook() : []
+				, item_ids_to_clean = []
+				, non_shippable_items_count = 0;
 
 			address_book = _.object(_.pluck(address_book, 'internalid'), address_book);
 
-			_.each(order_fields.items, function (original_line)
-			{
+			_.each(order_fields.items, function (original_line) {
 				// Total may be 0
-				var	total = (original_line.promotionamount) ? toCurrency(original_line.promotionamount) : toCurrency(original_line.amount)
-				,	discount = toCurrency(original_line.promotiondiscount) || 0
-				,	line_to_add
-				,	is_shippable = !_.contains(SC.Configuration.non_shippable_types, original_line.itemtype);
+				var total = (original_line.promotionamount) ? toCurrency(original_line.promotionamount) : toCurrency(original_line.amount)
+					, discount = toCurrency(original_line.promotiondiscount) || 0
+					, line_to_add
+					, is_shippable = !_.contains(SC.Configuration.non_shippable_types, original_line.itemtype);
 
 				line_to_add = {
 					internalid: original_line.orderitemid
-				,	quantity: original_line.quantity
-				,	rate: parseFloat(original_line.rate)
-				,	rate_formatted: original_line.rate_formatted
-				,	amount: toCurrency(original_line.amount)
-				,	tax_amount: 0
-				,	tax_rate: null
-				,	tax_code: null
-				,	discount: discount
-				,	total: total
-				,	item: original_line.internalid
-				,	itemtype: original_line.itemtype
-				,	isshippable: is_shippable
-				,	options: original_line.options
-				,	shipaddress: original_line.shipaddress
-				,	shipmethod: original_line.shipmethod
+					, quantity: original_line.quantity
+					, rate: parseFloat(original_line.rate)
+					, rate_formatted: original_line.rate_formatted
+					, amount: toCurrency(original_line.amount)
+					, tax_amount: 0
+					, tax_rate: null
+					, tax_code: null
+					, discount: discount
+					, total: total
+					, item: original_line.internalid
+					, itemtype: original_line.itemtype
+					, isshippable: is_shippable
+					, options: original_line.options
+					, shipaddress: original_line.shipaddress
+					, shipmethod: original_line.shipmethod
 				};
 
 				lines.push(line_to_add);
 
-				if (!is_shippable)
-				{
+				if (!is_shippable) {
 					non_shippable_items_count++;
 				}
 
-				if (line_to_add.shipaddress && !address_book[line_to_add.shipaddress])
-				{
+				if (line_to_add.shipaddress && !address_book[line_to_add.shipaddress]) {
 					line_to_add.shipaddress = null;
 					line_to_add.shipmethod = null;
 					item_ids_to_clean.push(line_to_add.internalid);
 				}
-				else
-				{
+				else {
 					items_to_preload.push({
 						id: original_line.internalid
-					,	type: original_line.itemtype
+						, type: original_line.itemtype
 					});
 				}
 			});
 
-			if (item_ids_to_clean.length)
-			{
+			if (item_ids_to_clean.length) {
 				order.setItemShippingAddress(item_ids_to_clean, null);
 				order.setItemShippingMethod(item_ids_to_clean, null);
 			}
 
 			var store_item = Application.getModel('StoreItem')
-			,	restart = false;
+				, restart = false;
 
 			store_item.preloadItems(items_to_preload);
 
-			lines.forEach(function (line)
-			{
+			lines.forEach(function (line) {
 				line.item = store_item.get(line.item, line.itemtype);
 
-				if (!line.item)
-				{
+				if (!line.item) {
 					self.removeLine(line.internalid);
 					restart = true;
 				}
-				else
-				{
+				else {
 					line.rate_formatted = formatCurrency(line.rate);
 					line.amount_formatted = formatCurrency(line.amount);
 					line.tax_amount_formatted = formatCurrency(line.tax_amount);
@@ -2545,30 +2366,25 @@ Application.defineModel('LiveOrder', {
 				}
 			});
 
-			if (restart)
-			{
-				throw {code: 'ERR_CHK_ITEM_NOT_FOUND'};
+			if (restart) {
+				throw { code: 'ERR_CHK_ITEM_NOT_FOUND' };
 			}
 
-			if (this.getIsMultiShipTo(order_fields) && non_shippable_items_count)
-			{
+			if (this.getIsMultiShipTo(order_fields) && non_shippable_items_count) {
 				order.setEnableItemLineShipping(false);
-				throw {code: 'ERR_CHK_DISABLED_MST'};
+				throw { code: 'ERR_CHK_DISABLED_MST' };
 			}
 
 			// Sort the items in the order they were added, this is because the update operation alters the order
 			// TODO Check if this is necessary when instead of removing line on edition, lines are updated correctly
 			var lines_sort = this.getLinesSort();
 
-			if (lines_sort.length)
-			{
-				lines = _.sortBy(lines, function (line)
-				{
+			if (lines_sort.length) {
+				lines = _.sortBy(lines, function (line) {
 					return _.indexOf(lines_sort, line.internalid);
 				});
 			}
-			else
-			{
+			else {
 				this.setLinesSort(_.pluck(lines, 'internalid'));
 			}
 		}
@@ -2576,209 +2392,172 @@ Application.defineModel('LiveOrder', {
 		return lines;
 	}
 
-,	getIsMultiShipTo: function (order_fields)
-	{
+	, getIsMultiShipTo: function (order_fields) {
 		'use strict';
 		return this.isMultiShippingEnabled && order_fields.ismultishipto === 'T';
 	}
 
-,	setLinesSort: function (lines_sort)
-	{
+	, setLinesSort: function (lines_sort) {
 		'use strict';
 		return context.setSessionObject('lines_sort', lines_sort || []);
 	}
 
-,	setBillingAddress: function (data, current_order)
-	{
+	, setBillingAddress: function (data, current_order) {
 		'use strict';
 
-		if (data.sameAs)
-		{
+		if (data.sameAs) {
 			data.billaddress = data.shipaddress;
 		}
 
-		if (data.billaddress !== current_order.billaddress)
-		{
-			if (data.billaddress)
-			{
-				if (data.billaddress && !~data.billaddress.indexOf('null'))
-				{
+		if (data.billaddress !== current_order.billaddress) {
+			if (data.billaddress) {
+				if (data.billaddress && !~data.billaddress.indexOf('null')) {
 					// Heads Up!: This "new String" is to fix a nasty bug
 					order.setBillingAddress(new String(data.billaddress).toString());
 				}
 			}
-			else if (this.isSecure)
-			{
+			else if (this.isSecure) {
 				order.removeBillingAddress();
 			}
 		}
 	}
 
-,	setShippingAddressAndMethod: function (data, current_order)
-	{
+	, setShippingAddressAndMethod: function (data, current_order) {
 		'use strict';
 
 		var current_package
-		,	packages = {}
-		,	item_ids_to_clean = []
-		,	original_line;
+			, packages = {}
+			, item_ids_to_clean = []
+			, original_line;
 
-		_.each(data.lines, function (line)
-		{
-			original_line = _.find(current_order.lines, function (order_line)
-			{
+		_.each(data.lines, function (line) {
+			original_line = _.find(current_order.lines, function (order_line) {
 				return order_line.internalid === line.internalid;
 			});
 
-			if (original_line && original_line.isshippable)
-			{
-				if (line.shipaddress)
-				{
+			if (original_line && original_line.isshippable) {
+				if (line.shipaddress) {
 					packages[line.shipaddress] = packages[line.shipaddress] || {
 						shipMethodId: null,
 						itemIds: []
 					};
 
 					packages[line.shipaddress].itemIds.push(line.internalid);
-					if (!packages[line.shipaddress].shipMethodId && line.shipmethod)
-					{
+					if (!packages[line.shipaddress].shipMethodId && line.shipmethod) {
 						packages[line.shipaddress].shipMethodId = line.shipmethod;
 					}
 				}
-				else
-				{
+				else {
 					item_ids_to_clean.push(line.internalid);
 				}
 			}
 		});
 
 		//CLEAR Shipping address and shipping methods
-		if (item_ids_to_clean.length)
-		{
+		if (item_ids_to_clean.length) {
 			order.setItemShippingAddress(item_ids_to_clean, null);
 			order.setItemShippingMethod(item_ids_to_clean, null);
 		}
 
 		//SET Shipping address and shipping methods
-		_.each(_.keys(packages), function (address_id)
-		{
+		_.each(_.keys(packages), function (address_id) {
 			current_package = packages[address_id];
 			order.setItemShippingAddress(current_package.itemIds, parseInt(address_id, 10));
 
-			if (current_package.shipMethodId)
-			{
+			if (current_package.shipMethodId) {
 				order.setItemShippingMethod(current_package.itemIds, parseInt(current_package.shipMethodId, 10));
 			}
 		});
 	}
 
-,	setShippingAddress: function (data, current_order)
-	{
+	, setShippingAddress: function (data, current_order) {
 		'use strict';
 
-		if (data.shipaddress !== current_order.shipaddress)
-		{
-			if (data.shipaddress)
-			{
-				if (this.isSecure && !~data.shipaddress.indexOf('null'))
-				{
+		if (data.shipaddress !== current_order.shipaddress) {
+			if (data.shipaddress) {
+				if (this.isSecure && !~data.shipaddress.indexOf('null')) {
 					// Heads Up!: This "new String" is to fix a nasty bug
 					order.setShippingAddress(new String(data.shipaddress).toString());
 				}
-				else
-				{
-					var address = _.find(data.addresses, function (address)
-					{
+				else {
+					var address = _.find(data.addresses, function (address) {
 						return address.internalid === data.shipaddress;
 					});
 
 					address && order.estimateShippingCost(address);
 				}
 			}
-			else if (this.isSecure)
-			{
+			else if (this.isSecure) {
 				order.removeShippingAddress();
 			}
-			else
-			{
+			else {
 				order.estimateShippingCost({
 					zip: null
-				,	country: null
+					, country: null
 				});
 			}
 		}
 	}
 
-,	setPaymentMethods: function (data)
-	{
+	, setPaymentMethods: function (data) {
 		'use strict';
 
 		// Because of an api issue regarding Gift Certificates, we are going to handle them separately
-		var gift_certificate_methods = _.where(data.paymentmethods, {type: 'giftcertificate'})
-		,	non_certificate_methods = _.difference(data.paymentmethods, gift_certificate_methods);
+		var gift_certificate_methods = _.where(data.paymentmethods, { type: 'giftcertificate' })
+			, non_certificate_methods = _.difference(data.paymentmethods, gift_certificate_methods);
 
 		// Payment Methods non gift certificate
-		if (this.isSecure && non_certificate_methods && non_certificate_methods.length && this.isLoggedIn)
-		{
-			_.sortBy(non_certificate_methods, 'primary').forEach(function (paymentmethod)
-			{
+		if (this.isSecure && non_certificate_methods && non_certificate_methods.length && this.isLoggedIn) {
+			_.sortBy(non_certificate_methods, 'primary').forEach(function (paymentmethod) {
 
-				if (paymentmethod.type === 'creditcard' && paymentmethod.creditcard)
-				{
+				if (paymentmethod.type === 'creditcard' && paymentmethod.creditcard) {
 
 					var credit_card = paymentmethod.creditcard
-					,	require_cc_security_code = session.getSiteSettings(['checkout']).checkout.requireccsecuritycode === 'T'
-					,	cc_obj = credit_card && {
-									internalid: credit_card.internalid
-								,	ccnumber: credit_card.ccnumber
-								,	ccname: credit_card.ccname
-								,	ccexpiredate: credit_card.ccexpiredate
-								,	expmonth: credit_card.expmonth
-								,	expyear:  credit_card.expyear
-								,	paymentmethod: {
-										internalid: credit_card.paymentmethod.internalid
-									,	name: credit_card.paymentmethod.name
-									,	creditcard: credit_card.paymentmethod.creditcard ? 'T' : 'F'
-									,	ispaypal:  credit_card.paymentmethod.ispaypal ? 'T' : 'F'
-									}
-								};
+						, require_cc_security_code = session.getSiteSettings(['checkout']).checkout.requireccsecuritycode === 'T'
+						, cc_obj = credit_card && {
+							internalid: credit_card.internalid
+							, ccnumber: credit_card.ccnumber
+							, ccname: credit_card.ccname
+							, ccexpiredate: credit_card.ccexpiredate
+							, expmonth: credit_card.expmonth
+							, expyear: credit_card.expyear
+							, paymentmethod: {
+								internalid: credit_card.paymentmethod.internalid
+								, name: credit_card.paymentmethod.name
+								, creditcard: credit_card.paymentmethod.creditcard ? 'T' : 'F'
+								, ispaypal: credit_card.paymentmethod.ispaypal ? 'T' : 'F'
+							}
+						};
 
-					if (credit_card.ccsecuritycode)
-					{
+					if (credit_card.ccsecuritycode) {
 						cc_obj.ccsecuritycode = credit_card.ccsecuritycode;
 					}
 
-					if (!require_cc_security_code || require_cc_security_code && credit_card.ccsecuritycode)
-					{
+					if (!require_cc_security_code || require_cc_security_code && credit_card.ccsecuritycode) {
 						// the user's default credit card may be expired so we detect this using try&catch and if it is we remove the payment methods.
-						try
-						{
+						try {
 							order.removePayment();
 
 							order.setPayment({
 								paymentterms: 'CreditCard'
-							,	creditcard: cc_obj
+								, creditcard: cc_obj
 							});
 
 							context.setSessionObject('paypal_complete', 'F');
 						}
-						catch (e)
-						{
-							if (e && e.code && e.code === 'ERR_WS_INVALID_PAYMENT')
-							{
+						catch (e) {
+							if (e && e.code && e.code === 'ERR_WS_INVALID_PAYMENT') {
 								order.removePayment();
 							}
 							throw e;
 						}
 					}
 					// if the the given credit card don't have a security code and it is required we just remove it from the order
-					else if (require_cc_security_code && !credit_card.ccsecuritycode)
-					{
+					else if (require_cc_security_code && !credit_card.ccsecuritycode) {
 						order.removePayment();
 					}
 				}
-				else if (paymentmethod.type === 'invoice')
-				{
+				else if (paymentmethod.type === 'invoice') {
 					order.removePayment();
 
 					order.setPayment({ paymentterms: 'Invoice' });
@@ -2787,17 +2566,15 @@ Application.defineModel('LiveOrder', {
 
 					context.setSessionObject('paypal_complete', 'F');
 				}
-				else if (paymentmethod.type === 'paypal' && context.getSessionObject('paypal_complete') === 'F')
-				{
+				else if (paymentmethod.type === 'paypal' && context.getSessionObject('paypal_complete') === 'F') {
 					order.removePayment();
 
-					var paypal = _.findWhere(session.getPaymentMethods(), {ispaypal: 'T'});
-					paypal && order.setPayment({paymentterms: '', paymentmethod: paypal.internalid});
+					var paypal = _.findWhere(session.getPaymentMethods(), { ispaypal: 'T' });
+					paypal && order.setPayment({ paymentterms: '', paymentmethod: paypal.internalid });
 				}
 			});
 		}
-		else if (this.isSecure && this.isLoggedIn)
-		{
+		else if (this.isSecure && this.isLoggedIn) {
 			order.removePayment();
 		}
 
@@ -2805,79 +2582,64 @@ Application.defineModel('LiveOrder', {
 		this.setGiftCertificates(gift_certificate_methods);
 	}
 
-,	setGiftCertificates:  function (gift_certificates)
-	{
+	, setGiftCertificates: function (gift_certificates) {
 		'use strict';
 
 		// Remove all gift certificates so we can re-enter them in the appropriate order
 		order.removeAllGiftCertificates();
 
-		_.forEach(gift_certificates, function (gift_certificate)
-		{
+		_.forEach(gift_certificates, function (gift_certificate) {
 			order.applyGiftCertificate(gift_certificate.code);
 		});
 	}
 
-,	setShippingMethod: function (data, current_order)
-	{
+	, setShippingMethod: function (data, current_order) {
 		'use strict';
-		if ((!this.isMultiShippingEnabled || !data.ismultishipto) && this.isSecure && data.shipmethod !== current_order.shipmethod)
-		{
-			var shipmethod = _.findWhere(current_order.shipmethods, {internalid: data.shipmethod});
+		if ((!this.isMultiShippingEnabled || !data.ismultishipto) && this.isSecure && data.shipmethod !== current_order.shipmethod) {
+			var shipmethod = _.findWhere(current_order.shipmethods, { internalid: data.shipmethod });
 
-			if (shipmethod)
-			{
+			if (shipmethod) {
 				order.setShippingMethod({
 					shipmethod: shipmethod.internalid
-				,	shipcarrier: shipmethod.shipcarrier
+					, shipcarrier: shipmethod.shipcarrier
 				});
 			}
-			else
-			{
+			else {
 				order.removeShippingMethod();
 			}
 		}
 	}
 
-,	setPromoCode: function (data, current_order)
-	{
+	, setPromoCode: function (data, current_order) {
 		'use strict';
-		if (data.promocode && (!current_order.promocode || data.promocode.code !== current_order.promocode.code))
-		{
-			try
-			{
+		if (data.promocode && (!current_order.promocode || data.promocode.code !== current_order.promocode.code)) {
+			try {
 				order.applyPromotionCode(data.promocode.code);
 			}
-			catch (e)
-			{
+			catch (e) {
 				order.removePromotionCode(data.promocode.code);
 				current_order.promocode && order.removePromotionCode(current_order.promocode.code);
 				throw e;
 			}
 		}
-		else if (!data.promocode && current_order.promocode)
-		{
+		else if (!data.promocode && current_order.promocode) {
 			order.removePromotionCode(current_order.promocode.code);
 		}
 	}
 
-,	setTermsAndConditions: function(data)
-	{
+	, setTermsAndConditions: function (data) {
 		'use strict';
 		var require_terms_and_conditions = session.getSiteSettings(['checkout']).checkout.requiretermsandconditions;
 
-		if (require_terms_and_conditions.toString() === 'T' && this.isSecure && !_.isUndefined(data.agreetermcondition))
-		{
+		if (require_terms_and_conditions.toString() === 'T' && this.isSecure && !_.isUndefined(data.agreetermcondition)) {
 			order.setTermsAndConditions(data.agreetermcondition);
 		}
 	}
 
-,	setTransactionBodyField: function(data)
-	{
+	, setTransactionBodyField: function (data) {
 		'use strict';
 		// Transaction Body Field
-		if (this.isSecure && !_.isEmpty(data.options))
-		{
+		if (this.isSecure && !_.isEmpty(data.options)) {
 			order.setCustomFieldValues(data.options);
 		}
 	}
@@ -2891,37 +2653,36 @@ Application.defineModel('LiveOrder', {
 // Handles fetching of ordered items
 Application.defineModel('OrderItem', {
 
-	search: function (order_id, query, query_filters)
-	{
+	search: function (order_id, query, query_filters) {
 		'use strict';
 
 		var filters = [
-				new nlobjSearchFilter('entity', null, 'is', nlapiGetUser())
-			,	new nlobjSearchFilter('quantity', null, 'greaterthan', 0)
-			,	new nlobjSearchFilter('mainline', null, 'is', 'F')
-			,	new nlobjSearchFilter('cogs', null, 'is', 'F')
-			,	new nlobjSearchFilter('taxline', null, 'is', 'F')
-			,	new nlobjSearchFilter('shipping', null, 'is', 'F')
-			,	new nlobjSearchFilter('transactiondiscount', null, 'is', 'F')
-			,	new nlobjSearchFilter('isonline', 'item', 'is', 'T')
-			,	new nlobjSearchFilter('isinactive', 'item', 'is', 'F')
-			,   new nlobjSearchFilter('type', 'item', 'noneof', 'GiftCert')
-			]
+			new nlobjSearchFilter('entity', null, 'is', nlapiGetUser())
+			, new nlobjSearchFilter('quantity', null, 'greaterthan', 0)
+			, new nlobjSearchFilter('mainline', null, 'is', 'F')
+			, new nlobjSearchFilter('cogs', null, 'is', 'F')
+			, new nlobjSearchFilter('taxline', null, 'is', 'F')
+			, new nlobjSearchFilter('shipping', null, 'is', 'F')
+			, new nlobjSearchFilter('transactiondiscount', null, 'is', 'F')
+			, new nlobjSearchFilter('isonline', 'item', 'is', 'T')
+			, new nlobjSearchFilter('isinactive', 'item', 'is', 'F')
+			, new nlobjSearchFilter('type', 'item', 'noneof', 'GiftCert')
+		]
 
-		,	columns = [
+			, columns = [
 				new nlobjSearchColumn('internalid', 'item', 'group')
-			,	new nlobjSearchColumn('type', 'item', 'group')
-			,	new nlobjSearchColumn('parent', 'item', 'group')
-			,	new nlobjSearchColumn('options', null, 'group')
-			// to sort by price we fetch the max onlinecustomerprice
-			,	new nlobjSearchColumn('onlinecustomerprice', 'item', 'max')
-			// to sort by recently purchased we grab the last date the item was purchased
-			,	new nlobjSearchColumn('trandate', null, 'max')
-			// to sort by frequently purchased we count the number of orders which contains an item
-			,	new nlobjSearchColumn('internalid', null, 'count')
+				, new nlobjSearchColumn('type', 'item', 'group')
+				, new nlobjSearchColumn('parent', 'item', 'group')
+				, new nlobjSearchColumn('options', null, 'group')
+				// to sort by price we fetch the max onlinecustomerprice
+				, new nlobjSearchColumn('onlinecustomerprice', 'item', 'max')
+				// to sort by recently purchased we grab the last date the item was purchased
+				, new nlobjSearchColumn('trandate', null, 'max')
+				// to sort by frequently purchased we count the number of orders which contains an item
+				, new nlobjSearchColumn('internalid', null, 'count')
 			]
 
-		,	item_name =  new nlobjSearchColumn('formulatext','item', 'group');
+			, item_name = new nlobjSearchColumn('formulatext', 'item', 'group');
 
 		// when sorting by name, if the item has displayname we sort by that field, if not we sort by itemid
 		item_name.setFormula('case when LENGTH({item.displayname}) > 0 then {item.displayname} else {item.itemid} end');
@@ -2929,92 +2690,84 @@ Application.defineModel('OrderItem', {
 		columns.push(item_name);
 
 		// if the site is multisite we add the siteid to the search filter
-		if (context.getFeature('MULTISITE') && session.getSiteSettings(['siteid']))
-		{
+		if (context.getFeature('MULTISITE') && session.getSiteSettings(['siteid'])) {
 			filters.push(new nlobjSearchFilter('website', 'item', 'is', session.getSiteSettings(['siteid']).siteid));
 			filters.push(new nlobjSearchFilter('website', null, 'anyof', [session.getSiteSettings(['siteid']).siteid, '@NONE@']));
 		}
 
 		// show only items from one order
-		if (order_id)
-		{
+		if (order_id) {
 			filters.push(new nlobjSearchFilter('internalid', null, 'is', order_id));
 			columns.push(new nlobjSearchColumn('tranid', null, 'group'));
 		}
 
-		if (query_filters.date.from && query_filters.date.to)
-		{
+		if (query_filters.date.from && query_filters.date.to) {
 			var offset = new Date().getTimezoneOffset() * 60 * 1000;
 			filters.push(new nlobjSearchFilter('trandate', null, 'within', new Date(parseInt(query_filters.date.from, 10) + offset), new Date(parseInt(query_filters.date.to, 10) + offset)));
 		}
 
-		if (query)
-		{
+		if (query) {
 			filters.push(
 				new nlobjSearchFilter('itemid', 'item', 'contains', query).setLeftParens(true).setOr(true)
-			,	new nlobjSearchFilter('displayname', 'item', 'contains', query).setRightParens(true)
+				, new nlobjSearchFilter('displayname', 'item', 'contains', query).setRightParens(true)
 			);
 		}
 
 		// select field to sort by
-		switch (query_filters.sort)
-		{
+		switch (query_filters.sort) {
 			// sort by name
 			case 'name':
 				item_name.setSort(query_filters.order > 0);
-			break;
+				break;
 
 			// sort by price
 			case 'price':
 				columns[4].setSort(query_filters.order > 0);
-			break;
+				break;
 
 			// sort by recently purchased
 			case 'date':
 				columns[5].setSort(query_filters.order > 0);
-			break;
+				break;
 
 			// sort by frequenlty purchased
 			case 'quantity':
 				columns[6].setSort(query_filters.order > 0);
-			break;
+				break;
 
 			default:
 				columns[6].setSort(true);
-			break;
+				break;
 		}
 		// fetch items
 		var result = Application.getPaginatedSearchResults({
-				record_type: 'salesorder'
-			,	filters: filters
-			,	columns: columns
-			,	page: query_filters.page
-			,	column_count: new nlobjSearchColumn('formulatext', null, 'count').setFormula('CONCAT({item}, {options})')
-			})
-		// prepare an item collection, this will be used to preload item's details
-		,	items_info = _.map(result.records, function (line)
-			{
+			record_type: 'salesorder'
+			, filters: filters
+			, columns: columns
+			, page: query_filters.page
+			, column_count: new nlobjSearchColumn('formulatext', null, 'count').setFormula('CONCAT({item}, {options})')
+		})
+			// prepare an item collection, this will be used to preload item's details
+			, items_info = _.map(result.records, function (line) {
 				return {
 					id: line.getValue('internalid', 'item', 'group')
-				,	type: line.getValue('type', 'item', 'group')
+					, type: line.getValue('type', 'item', 'group')
 				};
 			});
 
-		if (items_info.length)
-		{
+		if (items_info.length) {
 			var store_item = Application.getModel('StoreItem');
 
 			// preload order's items information
 			store_item.preloadItems(items_info);
 
-			result.records = _.map(result.records, function (line)
-			{
+			result.records = _.map(result.records, function (line) {
 				// prepare the collection for the frontend
 				return {
-						item: store_item.get( line.getValue('internalid', 'item', 'group'), line.getValue('type', 'item', 'group') )
-					,	tranid: line.getValue('tranid', null, 'group') ||  null
-					,	options_object: getItemOptionsObject( line.getValue('options', null, 'group') )
-					,	trandate: line.getValue('trandate', null, 'max')
+					item: store_item.get(line.getValue('internalid', 'item', 'group'), line.getValue('type', 'item', 'group'))
+					, tranid: line.getValue('tranid', null, 'group') || null
+					, options_object: getItemOptionsObject(line.getValue('options', null, 'group'))
+					, trandate: line.getValue('trandate', null, 'max')
 				};
 			});
 		}
@@ -3032,211 +2785,190 @@ var PlacedOrder = Application.getModel('PlacedOrder');
 
 Application.defineModel('Receipts', _.extend({}, PlacedOrder, {
 
-	_getReceiptType: function (type)
-	{
+	_getReceiptType: function (type) {
 		'use strict';
 
 		var receipt_type = ['CustInvc', 'CashSale'];
 
-		if (type === 'invoice')
-		{
+		if (type === 'invoice') {
 			receipt_type = ['CustInvc'];
 		}
-		else if (type === 'cashsale')
-		{
+		else if (type === 'cashsale') {
 			receipt_type = ['CashSale'];
 		}
 
 		return receipt_type;
 	}
 
-,	_getReceiptStatus: function (type, status)
-	{
+	, _getReceiptStatus: function (type, status) {
 		'use strict';
 
-		if (type === 'CustInvc')
-		{
+		if (type === 'CustInvc') {
 			status = this._getInvoiceStatus(status);
 		}
-		else if (type === 'CashSale')
-		{
+		else if (type === 'CashSale') {
 			status = this._getCashSaleStatus(status);
 		}
 
 		return type + ':' + status;
 	}
 
-,	_getCashSaleStatus: function (status)
-	{
+	, _getCashSaleStatus: function (status) {
 		'use strict';
 
 		var response = null;
 
-		switch (status)
-		{
+		switch (status) {
 			case 'unapproved':
 				response = 'A';
-			break;
+				break;
 
 			case 'notdeposited':
 				response = 'B';
-			break;
+				break;
 
 			case 'deposited':
 				response = 'C';
-			break;
+				break;
 		}
 
 		return response;
 	}
 
-,	_getInvoiceStatus: function (status)
-	{
+	, _getInvoiceStatus: function (status) {
 		'use strict';
 
 		var response = null;
 
-		switch (status)
-		{
+		switch (status) {
 			case 'open':
 				response = 'A';
-			break;
+				break;
 
 			case 'paid':
 				response = 'B';
-			break;
+				break;
 		}
 
 		return response;
 	}
 
 	// gets all the user's receipts
-,	list: function (options)
-	{
+	, list: function (options) {
 		'use strict';
 
 		options = options || {};
 
 		var reciept_type = this._getReceiptType(options.type)
-		,	isMultiCurrency = context.getFeature('MULTICURRENCY')
-		,	settings_site_id = session.getSiteSettings(['siteid'])
-		,	site_id = settings_site_id && settings_site_id.siteid
-		,	amount_field = isMultiCurrency ? 'fxamount' : 'amount'
-		,	filters = [
+			, isMultiCurrency = context.getFeature('MULTICURRENCY')
+			, settings_site_id = session.getSiteSettings(['siteid'])
+			, site_id = settings_site_id && settings_site_id.siteid
+			, amount_field = isMultiCurrency ? 'fxamount' : 'amount'
+			, filters = [
 				new nlobjSearchFilter('entity', null, 'is', nlapiGetUser())
-			,	new nlobjSearchFilter('mainline', null, 'is', 'T')
-			,	new nlobjSearchFilter('type', null, 'anyof', reciept_type)
+				, new nlobjSearchFilter('mainline', null, 'is', 'T')
+				, new nlobjSearchFilter('type', null, 'anyof', reciept_type)
 			]
 
-		,	columns = [
+			, columns = [
 				new nlobjSearchColumn('internalid')
-			,	new nlobjSearchColumn('tranid')
-			,	new nlobjSearchColumn('trandate')
-			,	new nlobjSearchColumn('status')
-			,	new nlobjSearchColumn('type')
-			,	new nlobjSearchColumn('closedate')
-			,	new nlobjSearchColumn('mainline')
-			,	new nlobjSearchColumn('duedate').setSort()
-			,	new nlobjSearchColumn(amount_field)
+				, new nlobjSearchColumn('tranid')
+				, new nlobjSearchColumn('trandate')
+				, new nlobjSearchColumn('status')
+				, new nlobjSearchColumn('type')
+				, new nlobjSearchColumn('closedate')
+				, new nlobjSearchColumn('mainline')
+				, new nlobjSearchColumn('duedate').setSort()
+				, new nlobjSearchColumn(amount_field)
 			]
-		,	amount_remaining;
+			, amount_remaining;
 
-		if (isMultiCurrency)
-		{
+		if (isMultiCurrency) {
 			amount_remaining = new nlobjSearchColumn('formulanumeric').setFormula('{amountremaining} / {exchangerate}');
 		}
-		else
-		{
+		else {
 			amount_remaining = new nlobjSearchColumn('amountremaining');
 		}
 
 		columns.push(amount_remaining);
 
 		// if the store has multiple currencies we add the currency column to the query
-		if (isMultiCurrency)
-		{
+		if (isMultiCurrency) {
 			columns.push(new nlobjSearchColumn('currency'));
 		}
 
 		// if the site is multisite we add the siteid to the search filter
-		if (context.getFeature('MULTISITE') && site_id)
-		{
+		if (context.getFeature('MULTISITE') && site_id) {
 			filters.push(new nlobjSearchFilter('website', null, 'anyof', [site_id, '@NONE@']));
 		}
 
-		if (options.status)
-		{
+		if (options.status) {
 			var self = this;
 
 			filters.push(
-				new nlobjSearchFilter('status', null, 'anyof', _.map(reciept_type, function (type)
-				{
+				new nlobjSearchFilter('status', null, 'anyof', _.map(reciept_type, function (type) {
 					return self._getReceiptStatus(type, options.status);
 				}))
 			);
 		}
 
-		if (options.orderid)
-		{
+		if (options.orderid) {
 			filters.push(new nlobjSearchFilter('createdfrom', null, 'anyof', options.orderid));
 		}
 
-		if (options.internalid)
-		{
+		if (options.internalid) {
 			filters.push(new nlobjSearchFilter('internalid', null, 'anyof', options.internalid));
 		}
 
 		var results = Application.getAllSearchResults(options.type === 'invoice' ? 'invoice' : 'transaction', filters, columns)
-		,	now = new Date().getTime();
+			, now = new Date().getTime();
 
 
-		return _.map(results || [], function (record)
-		{
+		return _.map(results || [], function (record) {
 
 			var due_date = record.getValue('duedate')
-			,	close_date = record.getValue('closedate')
-			,	tran_date = record.getValue('trandate')
-			,	due_in_milliseconds = new Date(due_date).getTime() - now
-			,	total = toCurrency(record.getValue(amount_field))
-			,	total_formatted = formatCurrency(record.getValue(amount_field));
+				, close_date = record.getValue('closedate')
+				, tran_date = record.getValue('trandate')
+				, due_in_milliseconds = new Date(due_date).getTime() - now
+				, total = toCurrency(record.getValue(amount_field))
+				, total_formatted = formatCurrency(record.getValue(amount_field));
 
 			return {
 				internalid: record.getId()
-			,	tranid: record.getValue('tranid')
-			,	order_number: record.getValue('tranid') // Legacy attribute
-			,	date: tran_date // Legacy attribute
-			,	summary: { // Legacy attribute
+				, tranid: record.getValue('tranid')
+				, order_number: record.getValue('tranid') // Legacy attribute
+				, date: tran_date // Legacy attribute
+				, summary: { // Legacy attribute
 					total: total
-				,	total_formatted: total_formatted
+					, total_formatted: total_formatted
 				}
-			,	total: total
-			,	total_formatted: total_formatted
-			,	recordtype: record.getValue('type')
-			,	mainline: record.getValue('mainline')
-			,	amountremaining: toCurrency(record.getValue(amount_remaining))
-			,	amountremaining_formatted: formatCurrency(record.getValue(amount_remaining))
-			,	closedate: close_date
-			,	closedateInMilliseconds: new Date(close_date).getTime()
-			,	trandate: tran_date
-			,	tranDateInMilliseconds: new Date(tran_date).getTime()
-			,	duedate: due_date
-			,	dueinmilliseconds: due_in_milliseconds
-			,	isOverdue: due_in_milliseconds <= 0 && ((-1 * due_in_milliseconds) / 1000 / 60 / 60 / 24) >= 1
-			,	status: {
+				, total: total
+				, total_formatted: total_formatted
+				, recordtype: record.getValue('type')
+				, mainline: record.getValue('mainline')
+				, amountremaining: toCurrency(record.getValue(amount_remaining))
+				, amountremaining_formatted: formatCurrency(record.getValue(amount_remaining))
+				, closedate: close_date
+				, closedateInMilliseconds: new Date(close_date).getTime()
+				, trandate: tran_date
+				, tranDateInMilliseconds: new Date(tran_date).getTime()
+				, duedate: due_date
+				, dueinmilliseconds: due_in_milliseconds
+				, isOverdue: due_in_milliseconds <= 0 && ((-1 * due_in_milliseconds) / 1000 / 60 / 60 / 24) >= 1
+				, status: {
 					internalid: record.getValue('status')
-				,	name: record.getText('status')
+					, name: record.getText('status')
 				}
-			,	currency: {
+				, currency: {
 					internalid: record.getValue('currency')
-				,	name: record.getText('currency')
+					, name: record.getText('currency')
 				}
 			};
 		});
 
 	}
 
-,	setAdjustments: function (receipt, result)
-	{
+	, setAdjustments: function (receipt, result) {
 		'use strict';
 
 		result.payments = [];
@@ -3245,46 +2977,41 @@ Application.defineModel('Receipts', _.extend({}, PlacedOrder, {
 
 		var filters = [
 			new nlobjSearchFilter('appliedtotransaction', null, 'is', receipt.getId())
-		,	new nlobjSearchFilter('type', null, 'anyof', ['CustCred', 'DepAppl', 'CustPymt'])
+			, new nlobjSearchFilter('type', null, 'anyof', ['CustCred', 'DepAppl', 'CustPymt'])
 		]
-		,	columns = [
+			, columns = [
 				new nlobjSearchColumn('total')
-			,	new nlobjSearchColumn('tranid')
-			,	new nlobjSearchColumn('status')
-			,	new nlobjSearchColumn('trandate')
-			,	new nlobjSearchColumn('appliedtotransaction')
-			,	new nlobjSearchColumn('amountremaining')
-			,	new nlobjSearchColumn('amountpaid')
-			,	new nlobjSearchColumn('amount')
-			,	new nlobjSearchColumn('type')
-			,	new nlobjSearchColumn('appliedtoforeignamount')
-		]
-		,	searchresults = nlapiSearchRecord('transaction', null, filters, columns);
+				, new nlobjSearchColumn('tranid')
+				, new nlobjSearchColumn('status')
+				, new nlobjSearchColumn('trandate')
+				, new nlobjSearchColumn('appliedtotransaction')
+				, new nlobjSearchColumn('amountremaining')
+				, new nlobjSearchColumn('amountpaid')
+				, new nlobjSearchColumn('amount')
+				, new nlobjSearchColumn('type')
+				, new nlobjSearchColumn('appliedtoforeignamount')
+			]
+			, searchresults = nlapiSearchRecord('transaction', null, filters, columns);
 
-		if (searchresults)
-		{
-			_.each(searchresults, function (payout)
-			{
+		if (searchresults) {
+			_.each(searchresults, function (payout) {
 				var array = (payout.getValue('type') === 'CustPymt') ? result.payments :
-							(payout.getValue('type') === 'CustCred') ? result.credit_memos :
-							(payout.getValue('type') === 'DepAppl') ? result.deposit_applications : null;
+					(payout.getValue('type') === 'CustCred') ? result.credit_memos :
+						(payout.getValue('type') === 'DepAppl') ? result.deposit_applications : null;
 
-				if (array)
-				{
+				if (array) {
 					var internal_id = payout.getId()
-					,	duplicated_item = _.findWhere(array, {internalid: internal_id});
+						, duplicated_item = _.findWhere(array, { internalid: internal_id });
 
-					if (!duplicated_item)
-					{
+					if (!duplicated_item) {
 						array.push({
 							internalid: internal_id
-						,	tranid: payout.getValue('tranid')
-						,	appliedtoforeignamount : toCurrency(payout.getValue('appliedtoforeignamount'))
-						,	appliedtoforeignamount_formatted : formatCurrency(payout.getValue('appliedtoforeignamount'))
+							, tranid: payout.getValue('tranid')
+							, appliedtoforeignamount: toCurrency(payout.getValue('appliedtoforeignamount'))
+							, appliedtoforeignamount_formatted: formatCurrency(payout.getValue('appliedtoforeignamount'))
 						});
 					}
-					else
-					{
+					else {
 						duplicated_item.appliedtoforeignamount += toCurrency(payout.getValue('appliedtoforeignamount'));
 						duplicated_item.appliedtoforeignamount_formatted = formatCurrency(duplicated_item.appliedtoforeignamount);
 					}
@@ -3293,94 +3020,87 @@ Application.defineModel('Receipts', _.extend({}, PlacedOrder, {
 		}
 	}
 
-,	setSalesRep: function (receipt, result)
-	{
+	, setSalesRep: function (receipt, result) {
 		'use strict';
 
 		var salesrep_id = receipt.getFieldValue('salesrep')
-		,	salesrep_name = receipt.getFieldText('salesrep');
+			, salesrep_name = receipt.getFieldText('salesrep');
 
-		if (salesrep_id)
-		{
+		if (salesrep_id) {
 			result.salesrep = {
 				name: salesrep_name
-			,	internalid: salesrep_id
+				, internalid: salesrep_id
 			};
 
 			var filters = [
 				new nlobjSearchFilter('internalid', null, 'is', receipt.getId())
-			,	new nlobjSearchFilter('internalid', 'salesrep', 'is', 'salesrep')
+				, new nlobjSearchFilter('internalid', 'salesrep', 'is', 'salesrep')
 			]
 
-			,	columns = [
+				, columns = [
 					new nlobjSearchColumn('duedate')
-				,	new nlobjSearchColumn('salesrep')
-				,	new nlobjSearchColumn('email','salesrep')
-				,	new nlobjSearchColumn('entityid','salesrep')
-				,	new nlobjSearchColumn('mobilephone','salesrep')
-				,	new nlobjSearchColumn('fax','salesrep')
-			];
+					, new nlobjSearchColumn('salesrep')
+					, new nlobjSearchColumn('email', 'salesrep')
+					, new nlobjSearchColumn('entityid', 'salesrep')
+					, new nlobjSearchColumn('mobilephone', 'salesrep')
+					, new nlobjSearchColumn('fax', 'salesrep')
+				];
 
 			var search_results = nlapiSearchRecord('invoice', null, filters, columns);
 
-			if (search_results)
-			{
+			if (search_results) {
 				var invoice = search_results[0];
-				result.salesrep.phone = invoice.getValue('phone','salesrep');
-				result.salesrep.email = invoice.getValue('email','salesrep');
-				result.salesrep.fullname = invoice.getValue('entityid','salesrep');
-				result.salesrep.mobilephone = invoice.getText('mobilephone','salesrep');
-				result.salesrep.fax = invoice.getValue('fax','salesrep');
+				result.salesrep.phone = invoice.getValue('phone', 'salesrep');
+				result.salesrep.email = invoice.getValue('email', 'salesrep');
+				result.salesrep.fullname = invoice.getValue('entityid', 'salesrep');
+				result.salesrep.mobilephone = invoice.getText('mobilephone', 'salesrep');
+				result.salesrep.fax = invoice.getValue('fax', 'salesrep');
 			}
 		}
 	}
 
-,	get: function (id, type)
-	{
+	, get: function (id, type) {
 		'use strict';
 		// get the transaction header
 		var filters = [
-				new nlobjSearchFilter('mainline', null, 'is', 'T')
-			,	new nlobjSearchFilter('type', null, 'anyof', this._getReceiptType(type))
-			,	new nlobjSearchFilter('entity', null, 'is', nlapiGetUser())
-			,	new nlobjSearchFilter('internalid', null, 'is', id)
-			]
+			new nlobjSearchFilter('mainline', null, 'is', 'T')
+			, new nlobjSearchFilter('type', null, 'anyof', this._getReceiptType(type))
+			, new nlobjSearchFilter('entity', null, 'is', nlapiGetUser())
+			, new nlobjSearchFilter('internalid', null, 'is', id)
+		]
 			// TODO: review this code.
-		,	columns = [
+			, columns = [
 				new nlobjSearchColumn('status')
-			,	new nlobjSearchColumn('createdfrom')
-			,	new nlobjSearchColumn('total')
-			,	new nlobjSearchColumn('taxtotal')
+				, new nlobjSearchColumn('createdfrom')
+				, new nlobjSearchColumn('total')
+				, new nlobjSearchColumn('taxtotal')
 			]
 
-		,	mainline = Application.getAllSearchResults('transaction', filters, columns);
+			, mainline = Application.getAllSearchResults('transaction', filters, columns);
 
-		if (!mainline[0])
-		{
+		if (!mainline[0]) {
 			throw forbiddenError;
 		}
 
-		var	receipt = nlapiLoadRecord(mainline[0].getRecordType(), id)
-		,	result = this.createResult(receipt);
+		var receipt = nlapiLoadRecord(mainline[0].getRecordType(), id)
+			, result = this.createResult(receipt);
 
 		this.setAddresses(receipt, result);
 		this.setLines(receipt, result);
 		this.setPaymentMethod(receipt, result);
 
-		if (type === 'invoice')
-		{
+		if (type === 'invoice') {
 			this.setAdjustments(receipt, result);
 			this.setSalesRep(receipt, result);
 		}
 
 		result.promocode = receipt.getFieldValue('promocode') ? {
 			internalid: receipt.getFieldValue('promocode')
-		,	name: receipt.getFieldText('promocode')
-		,	code: receipt.getFieldText('couponcode')
+			, name: receipt.getFieldText('promocode')
+			, code: receipt.getFieldText('couponcode')
 		} : null;
 
-		result.lines = _.reject(result.lines, function (line)
-		{
+		result.lines = _.reject(result.lines, function (line) {
 			return line.quantity === 0;
 		});
 
@@ -3390,7 +3110,7 @@ Application.defineModel('Receipts', _.extend({}, PlacedOrder, {
 
 		result.createdfrom = {
 			id: mainline[0].getValue(columns[1])
-		,	name: mainline[0].getText(columns[1])
+			, name: mainline[0].getText(columns[1])
 		};
 
 		result.summary.total = toCurrency(mainline[0].getValue('total'));
@@ -3407,83 +3127,80 @@ Application.defineModel('Receipts', _.extend({}, PlacedOrder, {
 		return result;
 	}
 
-,	createResult: function (placed_order)
-	{
+	, createResult: function (placed_order) {
 		'use strict';
 
 		return {
 			internalid: placed_order.getId()
-		,	type: placed_order.getRecordType()
-		,	trantype: placed_order.getFieldValue('type')
-		,	order_number: placed_order.getFieldValue('tranid')
-		,	purchasenumber: placed_order.getFieldValue('otherrefnum')
-		,	dueDate: placed_order.getFieldValue('duedate')
-		,	amountDue: toCurrency(placed_order.getFieldValue('amountremainingtotalbox'))
-		,	amountDue_formatted: formatCurrency(placed_order.getFieldValue('amountremainingtotalbox'))
-		,	memo: placed_order.getFieldValue('memo')
-		,   date: placed_order.getFieldValue('trandate')
-		,   status: placed_order.getFieldValue('status')
-		,	isReturnable: this.isReturnable(placed_order)
-		,	summary: {
+			, type: placed_order.getRecordType()
+			, trantype: placed_order.getFieldValue('type')
+			, order_number: placed_order.getFieldValue('tranid')
+			, purchasenumber: placed_order.getFieldValue('otherrefnum')
+			, dueDate: placed_order.getFieldValue('duedate')
+			, amountDue: toCurrency(placed_order.getFieldValue('amountremainingtotalbox'))
+			, amountDue_formatted: formatCurrency(placed_order.getFieldValue('amountremainingtotalbox'))
+			, memo: placed_order.getFieldValue('memo')
+			, date: placed_order.getFieldValue('trandate')
+			, status: placed_order.getFieldValue('status')
+			, isReturnable: this.isReturnable(placed_order)
+			, summary: {
 				subtotal: toCurrency(placed_order.getFieldValue('subtotal'))
-			,	subtotal_formatted: formatCurrency(placed_order.getFieldValue('subtotal'))
+				, subtotal_formatted: formatCurrency(placed_order.getFieldValue('subtotal'))
 
-			,	taxtotal: toCurrency(placed_order.getFieldValue('taxtotal'))
-			,	taxtotal_formatted: formatCurrency(placed_order.getFieldValue('taxtotal'))
+				, taxtotal: toCurrency(placed_order.getFieldValue('taxtotal'))
+				, taxtotal_formatted: formatCurrency(placed_order.getFieldValue('taxtotal'))
 
-			,	tax2total: toCurrency(0)
-			,	tax2total_formatted: formatCurrency(0)
+				, tax2total: toCurrency(0)
+				, tax2total_formatted: formatCurrency(0)
 
-			,	shippingcost: toCurrency(placed_order.getFieldValue('shippingcost'))
-			,	shippingcost_formatted: formatCurrency(placed_order.getFieldValue('shippingcost'))
+				, shippingcost: toCurrency(placed_order.getFieldValue('shippingcost'))
+				, shippingcost_formatted: formatCurrency(placed_order.getFieldValue('shippingcost'))
 
-			,	handlingcost: toCurrency(placed_order.getFieldValue('althandlingcost'))
-			,	handlingcost_formatted: formatCurrency(placed_order.getFieldValue('althandlingcost'))
+				, handlingcost: toCurrency(placed_order.getFieldValue('althandlingcost'))
+				, handlingcost_formatted: formatCurrency(placed_order.getFieldValue('althandlingcost'))
 
-			,	estimatedshipping: 0
-			,	estimatedshipping_formatted: formatCurrency(0)
+				, estimatedshipping: 0
+				, estimatedshipping_formatted: formatCurrency(0)
 
-			,	taxonshipping: toCurrency(0)
-			,	taxonshipping_formatted: formatCurrency(0)
+				, taxonshipping: toCurrency(0)
+				, taxonshipping_formatted: formatCurrency(0)
 
-			,	discounttotal: toCurrency(placed_order.getFieldValue('discounttotal'))
-			,	discounttotal_formatted: formatCurrency(placed_order.getFieldValue('discounttotal'))
+				, discounttotal: toCurrency(placed_order.getFieldValue('discounttotal'))
+				, discounttotal_formatted: formatCurrency(placed_order.getFieldValue('discounttotal'))
 
-			,	taxondiscount: toCurrency(0)
-			,	taxondiscount_formatted: formatCurrency(0)
+				, taxondiscount: toCurrency(0)
+				, taxondiscount_formatted: formatCurrency(0)
 
-			,	discountrate: toCurrency(0)
-			,	discountrate_formatted: formatCurrency(0)
+				, discountrate: toCurrency(0)
+				, discountrate_formatted: formatCurrency(0)
 
-			,	discountedsubtotal: toCurrency(0)
-			,	discountedsubtotal_formatted: formatCurrency(0)
+				, discountedsubtotal: toCurrency(0)
+				, discountedsubtotal_formatted: formatCurrency(0)
 
-			,	giftcertapplied: toCurrency(placed_order.getFieldValue('giftcertapplied'))
-			,	giftcertapplied_formatted: formatCurrency(placed_order.getFieldValue('giftcertapplied'))
+				, giftcertapplied: toCurrency(placed_order.getFieldValue('giftcertapplied'))
+				, giftcertapplied_formatted: formatCurrency(placed_order.getFieldValue('giftcertapplied'))
 
-			,	total: toCurrency(placed_order.getFieldValue('total'))
-			,	total_formatted: formatCurrency(placed_order.getFieldValue('total'))
+				, total: toCurrency(placed_order.getFieldValue('total'))
+				, total_formatted: formatCurrency(placed_order.getFieldValue('total'))
 			}
 
-		,	currency: context.getFeature('MULTICURRENCY') ?
-			{
-				internalid: placed_order.getFieldValue('currency')
-			,	name: placed_order.getFieldValue('currencyname')
-			} : null
+			, currency: context.getFeature('MULTICURRENCY') ?
+				{
+					internalid: placed_order.getFieldValue('currency')
+					, name: placed_order.getFieldValue('currencyname')
+				} : null
 		};
 	}
-	,	setLines: function(placed_order, result)
-	{
+	, setLines: function (placed_order, result) {
 		'use strict';
 
 		result.lines = {};
 		var items_to_preload = []
-		,	amount;
+			, amount;
 
 		for (var i = 1; i <= placed_order.getLineItemCount('item'); i++) {
 
-			if (placed_order.getLineItemValue('item', 'itemtype', i) === 'Discount' && placed_order.getLineItemValue('item', 'discline', i))
-			{
+			if (placed_order.getLineItemValue('item', 'itemtype', i) === 'Discount' && placed_order.getLineItemValue('item', 'discline', i)) {
 				var discline = placed_order.getLineItemValue('item', 'discline', i);
 
 				amount = Math.abs(parseFloat(placed_order.getLineItemValue('item', 'amount', i)));
@@ -3491,43 +3208,42 @@ Application.defineModel('Receipts', _.extend({}, PlacedOrder, {
 				result.lines[discline].discount = (result.lines[discline].discount) ? result.lines[discline].discount + amount : amount;
 				result.lines[discline].total = result.lines[discline].amount + result.lines[discline].tax_amount - result.lines[discline].discount;
 			}
-			else
-			{
+			else {
 				var rate = toCurrency(placed_order.getLineItemValue('item', 'rate', i))
-				,	item_id = placed_order.getLineItemValue('item', 'item', i)
-				,	item_type = placed_order.getLineItemValue('item', 'itemtype', i);
+					, item_id = placed_order.getLineItemValue('item', 'item', i)
+					, item_type = placed_order.getLineItemValue('item', 'itemtype', i);
 
 				amount = toCurrency(placed_order.getLineItemValue('item', 'amount', i));
 
-				var	tax_amount = toCurrency(placed_order.getLineItemValue('item', 'tax1amt', i)) || 0
-				,	total = amount + tax_amount;
+				var tax_amount = toCurrency(placed_order.getLineItemValue('item', 'tax1amt', i)) || 0
+					, total = amount + tax_amount;
 
 				result.lines[placed_order.getLineItemValue('item', 'line', i)] = {
 					internalid: placed_order.getLineItemValue('item', 'id', i)
-				,   quantity: parseFloat(placed_order.getLineItemValue('item', 'quantity', i))
+					, quantity: parseFloat(placed_order.getLineItemValue('item', 'quantity', i))
 
-				,   rate: rate
+					, rate: rate
 
-				,   amount: amount
+					, amount: amount
 
-				,	tax_amount: tax_amount
-				,	tax_rate: placed_order.getLineItemValue('item', 'taxrate1', i)
-				,	tax_code: placed_order.getLineItemValue('item', 'taxcode_display', i)
+					, tax_amount: tax_amount
+					, tax_rate: placed_order.getLineItemValue('item', 'taxrate1', i)
+					, tax_code: placed_order.getLineItemValue('item', 'taxcode_display', i)
 
-				,	discount: 0
+					, discount: 0
 
-				,	total: total
+					, total: total
 
-				,	item: item_id
-				,	type: item_type
-				,   options: getItemOptionsObject(placed_order.getLineItemValue('item', 'options', i))
-				,   shipaddress: placed_order.getLineItemValue('item', 'shipaddress', i) ? result.listAddresseByIdTmp[placed_order.getLineItemValue('item', 'shipaddress', i)] : null
-				,   shipmethod:  placed_order.getLineItemValue('item', 'shipmethod', i) || null
+					, item: item_id
+					, type: item_type
+					, options: getItemOptionsObject(placed_order.getLineItemValue('item', 'options', i))
+					, shipaddress: placed_order.getLineItemValue('item', 'shipaddress', i) ? result.listAddresseByIdTmp[placed_order.getLineItemValue('item', 'shipaddress', i)] : null
+					, shipmethod: placed_order.getLineItemValue('item', 'shipmethod', i) || null
 				};
 
 				items_to_preload[item_id] = {
 					id: item_id
-				,	type: item_type
+					, type: item_type
 				};
 			}
 
@@ -3542,47 +3258,42 @@ Application.defineModel('Receipts', _.extend({}, PlacedOrder, {
 
 		// The api wont bring disabled items so we need to query them directly
 		var items_to_query = []
-		,	self = this;
+			, self = this;
 
-		_.each(result.lines, function(line)
-		{
-			if (line.item)
-			{
+		_.each(result.lines, function (line) {
+			if (line.item) {
 				var item = self.store_item.get(line.item, line.type);
-				if (!item || typeof item.itemid === 'undefined')
-				{
+				if (!item || typeof item.itemid === 'undefined') {
 					items_to_query.push(line.item);
 				}
 			}
 		});
 
-		if (items_to_query.length > 0)
-		{
+		if (items_to_query.length > 0) {
 			var filters = [
-					new nlobjSearchFilter('entity', null, 'is', nlapiGetUser())
-				,	new nlobjSearchFilter('internalid', null, 'is', result.internalid)
-				,	new nlobjSearchFilter('internalid', 'item', 'anyof', items_to_query)
-				]
+				new nlobjSearchFilter('entity', null, 'is', nlapiGetUser())
+				, new nlobjSearchFilter('internalid', null, 'is', result.internalid)
+				, new nlobjSearchFilter('internalid', 'item', 'anyof', items_to_query)
+			]
 
-			,	columns = [
+				, columns = [
 					new nlobjSearchColumn('internalid', 'item')
-				,	new nlobjSearchColumn('type', 'item')
-				,	new nlobjSearchColumn('parent', 'item')
-				,	new nlobjSearchColumn('displayname', 'item')
-				,	new nlobjSearchColumn('storedisplayname', 'item')
-				,	new nlobjSearchColumn('itemid', 'item')
+					, new nlobjSearchColumn('type', 'item')
+					, new nlobjSearchColumn('parent', 'item')
+					, new nlobjSearchColumn('displayname', 'item')
+					, new nlobjSearchColumn('storedisplayname', 'item')
+					, new nlobjSearchColumn('itemid', 'item')
 				]
 
-			,	inactive_items_search = Application.getAllSearchResults('transaction', filters, columns);
+				, inactive_items_search = Application.getAllSearchResults('transaction', filters, columns);
 
-			inactive_items_search.forEach(function(item)
-			{
+			inactive_items_search.forEach(function (item) {
 				var inactive_item = {
 					internalid: item.getValue('internalid', 'item')
-				,	type: item.getValue('type', 'item')
-				,	displayname: item.getValue('displayname', 'item')
-				,	storedisplayname: item.getValue('storedisplayname', 'item')
-				,	itemid: item.getValue('itemid', 'item')
+					, type: item.getValue('type', 'item')
+					, displayname: item.getValue('displayname', 'item')
+					, storedisplayname: item.getValue('storedisplayname', 'item')
+					, itemid: item.getValue('itemid', 'item')
 				};
 
 				self.store_item.set(inactive_item);
@@ -3593,8 +3304,7 @@ Application.defineModel('Receipts', _.extend({}, PlacedOrder, {
 
 		result.lines = _.values(result.lines);
 
-		result.lines.forEach(function(line)
-		{
+		result.lines.forEach(function (line) {
 			line.rate_formatted = formatCurrency(line.rate);
 			line.amount_formatted = formatCurrency(line.amount);
 			line.tax_amount_formatted = formatCurrency(line.tax_amount);
@@ -3616,45 +3326,39 @@ Application.defineModel('Receipts', _.extend({}, PlacedOrder, {
 Application.defineModel('CreditCard', {
 
 	validation: {
-		ccname: {required: true, msg: 'Name is required'}
-	,	paymentmethod: {required: true, msg: 'Card Type is required'}
-	,	ccnumber: {required: true, msg: 'Card Number is required'}
-	,	expmonth: {required: true, msg: 'Expiration is required'}
-	,	expyear: {required: true, msg: 'Expiration is required'}
+		ccname: { required: true, msg: 'Name is required' }
+		, paymentmethod: { required: true, msg: 'Card Type is required' }
+		, ccnumber: { required: true, msg: 'Card Number is required' }
+		, expmonth: { required: true, msg: 'Expiration is required' }
+		, expyear: { required: true, msg: 'Expiration is required' }
 	}
 
-,	get: function (id)
-	{
+	, get: function (id) {
 		'use strict';
 
 		//Return a specific credit card
 		return customer.getCreditCard(id);
 	}
 
-,	getDefault: function ()
-	{
+	, getDefault: function () {
 		'use strict';
 
 		//Return the credit card that the customer setted to default
-		return _.find(customer.getCreditCards(), function (credit_card)
-		{
+		return _.find(customer.getCreditCards(), function (credit_card) {
 			return credit_card.ccdefault === 'T';
 		});
 	}
 
-,	list: function ()
-	{
+	, list: function () {
 		'use strict';
 
 		//Return all the credit cards with paymentmethod
-		return _.filter(customer.getCreditCards(), function (credit_card)
-		{
+		return _.filter(customer.getCreditCards(), function (credit_card) {
 			return credit_card.paymentmethod;
 		});
 	}
 
-,	update: function (id, data)
-	{
+	, update: function (id, data) {
 		'use strict';
 
 		//Update the credit card if the data is valid
@@ -3664,8 +3368,7 @@ Application.defineModel('CreditCard', {
 		return customer.updateCreditCard(data);
 	}
 
-,	create: function (data)
-	{
+	, create: function (data) {
 		'use strict';
 
 		//Create a new credit card if the data is valid
@@ -3674,8 +3377,7 @@ Application.defineModel('CreditCard', {
 		return customer.addCreditCard(data);
 	}
 
-,	remove: function (id)
-	{
+	, remove: function (id) {
 		'use strict';
 
 		//Remove a specific credit card
@@ -3686,12 +3388,11 @@ Application.defineModel('CreditCard', {
 //Model.js
 Application.defineModel('CreditMemo', {
 
-	get: function (id)
-	{
+	get: function (id) {
 		'use strict';
 
 		var creditmemo = nlapiLoadRecord('creditmemo', id)
-		,	result = {};
+			, result = {};
 
 		this.createRecord(creditmemo, result);
 		this.setInvoices(creditmemo, result);
@@ -3701,8 +3402,7 @@ Application.defineModel('CreditMemo', {
 		return result;
 	}
 
-,	createRecord: function(record, result)
-	{
+	, createRecord: function (record, result) {
 		'use strict';
 
 		result.internalid = record.getId();
@@ -3728,52 +3428,48 @@ Application.defineModel('CreditMemo', {
 		result.memo = record.getFieldValue('memo');
 	}
 
-,	setInvoices: function(record, result)
-	{
+	, setInvoices: function (record, result) {
 		'use strict';
 
 		result.invoices = [];
 
-		for (var i = 1; i <= record.getLineItemCount('apply'); i++)
-		{
+		for (var i = 1; i <= record.getLineItemCount('apply'); i++) {
 			var invoice = {
-					line: i
-				,	internalid: record.getLineItemValue('apply', 'internalid', i)
-				,	type: record.getLineItemValue('apply', 'type', i)
-				,	total: toCurrency(record.getLineItemValue('apply', 'total', i))
-				,	total_formatted: formatCurrency(record.getLineItemValue('apply', 'total', i))
-				,	apply: record.getLineItemValue('apply', 'apply', i) === 'T'
-				,	applydate: record.getLineItemValue('apply', 'applydate', i)
-				,	currency: record.getLineItemValue('apply', 'currency', i)
+				line: i
+				, internalid: record.getLineItemValue('apply', 'internalid', i)
+				, type: record.getLineItemValue('apply', 'type', i)
+				, total: toCurrency(record.getLineItemValue('apply', 'total', i))
+				, total_formatted: formatCurrency(record.getLineItemValue('apply', 'total', i))
+				, apply: record.getLineItemValue('apply', 'apply', i) === 'T'
+				, applydate: record.getLineItemValue('apply', 'applydate', i)
+				, currency: record.getLineItemValue('apply', 'currency', i)
 
-				,	amount: toCurrency(record.getLineItemValue('apply', 'amount', i))
-				,	amount_formatted: formatCurrency(record.getLineItemValue('apply', 'amount', i))
-				,	due: toCurrency(record.getLineItemValue('apply', 'due', i))
-				,	due_formatted: formatCurrency(record.getLineItemValue('apply', 'due', i))
-				,	refnum: record.getLineItemValue('apply', 'refnum', i)
+				, amount: toCurrency(record.getLineItemValue('apply', 'amount', i))
+				, amount_formatted: formatCurrency(record.getLineItemValue('apply', 'amount', i))
+				, due: toCurrency(record.getLineItemValue('apply', 'due', i))
+				, due_formatted: formatCurrency(record.getLineItemValue('apply', 'due', i))
+				, refnum: record.getLineItemValue('apply', 'refnum', i)
 			};
 
 			result.invoices.push(invoice);
 		}
 	}
 
-,	setItems: function(record, result)
-	{
+	, setItems: function (record, result) {
 		'use strict';
 
 		result.items = [];
 
-		for (var i = 1; i <= record.getLineItemCount('item'); i++)
-		{
+		for (var i = 1; i <= record.getLineItemCount('item'); i++) {
 			var item = {
-					internalid: record.getLineItemValue('item', 'item', i)
-				,	id: record.getLineItemValue('item', 'item', i)
-				,	type: record.getLineItemValue('item', 'itemtype', i)
-				,	quantity: record.getLineItemValue('item', 'quantity', i)
-				,	unitprice: toCurrency(record.getLineItemValue('item', 'rate', i))
-				,	unitprice_formatted: formatCurrency(record.getLineItemValue('item', 'rate', i))
-				,	total:  toCurrency(record.getLineItemValue('item', 'amount', i))
-				,	total_formatted: formatCurrency(record.getLineItemValue('item', 'amount', i))
+				internalid: record.getLineItemValue('item', 'item', i)
+				, id: record.getLineItemValue('item', 'item', i)
+				, type: record.getLineItemValue('item', 'itemtype', i)
+				, quantity: record.getLineItemValue('item', 'quantity', i)
+				, unitprice: toCurrency(record.getLineItemValue('item', 'rate', i))
+				, unitprice_formatted: formatCurrency(record.getLineItemValue('item', 'rate', i))
+				, total: toCurrency(record.getLineItemValue('item', 'amount', i))
+				, total_formatted: formatCurrency(record.getLineItemValue('item', 'amount', i))
 
 			};
 
@@ -3781,12 +3477,10 @@ Application.defineModel('CreditMemo', {
 		}
 	}
 
-,	loadItems: function(record, result)
-	{
+	, loadItems: function (record, result) {
 		'use strict';
 
-		if (result.items.length)
-		{
+		if (result.items.length) {
 			// Preloads info about the item
 			var storeItem = Application.getModel('StoreItem');
 
@@ -3795,57 +3489,50 @@ Application.defineModel('CreditMemo', {
 			// The api wont bring disabled items so we need to query them directly
 			var itemsToQuery = [];
 
-			_.each(result.items, function(item)
-			{
+			_.each(result.items, function (item) {
 				var itemStored = storeItem.get(item.internalid, item.type);
-				if (!itemStored || typeof itemStored.itemid === 'undefined')
-				{
+				if (!itemStored || typeof itemStored.itemid === 'undefined') {
 					itemsToQuery.push(item);
 				}
-				else
-				{
+				else {
 					var preItem = _.findWhere(result.items, { internalid: itemStored.internalid + '' });
-					if (preItem)
-					{
+					if (preItem) {
 						_.extend(preItem, itemStored);
 					}
 				}
 			});
 
-			if (itemsToQuery.length > 0)
-			{
+			if (itemsToQuery.length > 0) {
 				var filters = [
-						new nlobjSearchFilter('entity', null, 'is', nlapiGetUser())
-					,	new nlobjSearchFilter('internalid', null, 'is', result.internalid)
-					,	new nlobjSearchFilter('internalid', 'item', 'anyof', _.pluck(itemsToQuery, 'internalid'))
-					]
+					new nlobjSearchFilter('entity', null, 'is', nlapiGetUser())
+					, new nlobjSearchFilter('internalid', null, 'is', result.internalid)
+					, new nlobjSearchFilter('internalid', 'item', 'anyof', _.pluck(itemsToQuery, 'internalid'))
+				]
 
-				,	columns = [
+					, columns = [
 						new nlobjSearchColumn('internalid', 'item')
-					,	new nlobjSearchColumn('type', 'item')
-					,	new nlobjSearchColumn('parent', 'item')
-					,	new nlobjSearchColumn('displayname', 'item')
-					,	new nlobjSearchColumn('storedisplayname', 'item')
-					,	new nlobjSearchColumn('itemid', 'item')
+						, new nlobjSearchColumn('type', 'item')
+						, new nlobjSearchColumn('parent', 'item')
+						, new nlobjSearchColumn('displayname', 'item')
+						, new nlobjSearchColumn('storedisplayname', 'item')
+						, new nlobjSearchColumn('itemid', 'item')
 					]
 
-				,	inactive_items_search = Application.getAllSearchResults('transaction', filters, columns);
+					, inactive_items_search = Application.getAllSearchResults('transaction', filters, columns);
 
-				inactive_items_search.forEach(function(item)
-				{
+				inactive_items_search.forEach(function (item) {
 					var inactive_item = {
 						internalid: item.getValue('internalid', 'item')
-					,	type: item.getValue('type', 'item')
-					,	displayname: item.getValue('displayname', 'item')
-					,	storedisplayname: item.getValue('storedisplayname', 'item')
-					,	itemid: item.getValue('itemid', 'item')
+						, type: item.getValue('type', 'item')
+						, displayname: item.getValue('displayname', 'item')
+						, storedisplayname: item.getValue('storedisplayname', 'item')
+						, itemid: item.getValue('itemid', 'item')
 					};
 
 					storeItem.set(inactive_item);
 
 					var preItem = _.findWhere(result.items, { internalid: inactive_item.internalid + '' });
-					if (preItem)
-					{
+					if (preItem) {
 						_.extend(preItem, inactive_item);
 					}
 				});
@@ -3868,46 +3555,39 @@ Application.defineModel('StoreItem', {
 
 	// Returns a collection of items with the items iformation
 	// the 'items' parameter is an array of objects {id,type}
-	preloadItems: function (items)
-	{
+	preloadItems: function (items) {
 		'use strict';
 
 		var self = this
-		,	items_by_id = {}
-		,	parents_by_id = {};
+			, items_by_id = {}
+			, parents_by_id = {};
 
 		items = items || [];
 
 		this.preloadedItems = this.preloadedItems || {};
 
-		items.forEach(function (item)
-		{
-			if (!item.id || !item.type || item.type === 'Discount')
-			{
+		items.forEach(function (item) {
+			if (!item.id || !item.type || item.type === 'Discount') {
 				return;
 			}
-			if (!self.preloadedItems[item.id])
-			{
+			if (!self.preloadedItems[item.id]) {
 				items_by_id[item.id] = {
 					internalid: new String(item.id).toString()
-				,	itemtype: item.type
-				,	itemfields: SC.Configuration.items_fields_standard_keys
+					, itemtype: item.type
+					, itemfields: SC.Configuration.items_fields_standard_keys
 				};
 			}
 		});
 
-		if (!_.size(items_by_id))
-		{
+		if (!_.size(items_by_id)) {
 			return this.preloadedItems;
 		}
 
 		var items_details = this.getItemFieldValues(items_by_id);
 
 		// Generates a map by id for easy access. Notice that for disabled items the array element can be null
-		_.each(items_details, function (item)
-		{
-			if (item && typeof item.itemid !== 'undefined')
-			{
+		_.each(items_details, function (item) {
+			if (item && typeof item.itemid !== 'undefined') {
 				// TODO: Remove support for Releted and Correlated items by default because of performance issues
 				/*
 				if (!is_advanced)
@@ -3919,12 +3599,11 @@ Application.defineModel('StoreItem', {
 				}
 				*/
 
-				if (item.itemoptions_detail && item.itemoptions_detail.matrixtype === 'child')
-				{
+				if (item.itemoptions_detail && item.itemoptions_detail.matrixtype === 'child') {
 					parents_by_id[item.itemoptions_detail.parentid] = {
 						internalid: new String(item.itemoptions_detail.parentid).toString()
-					,	itemtype: item.itemtype
-					,	itemfields: SC.Configuration.items_fields_standard_keys
+						, itemtype: item.itemtype
+						, itemfields: SC.Configuration.items_fields_standard_keys
 					};
 				}
 
@@ -3932,24 +3611,19 @@ Application.defineModel('StoreItem', {
 			}
 		});
 
-		if (_.size(parents_by_id))
-		{
+		if (_.size(parents_by_id)) {
 			var parents_details = this.getItemFieldValues(parents_by_id);
 
-			_.each(parents_details, function (item)
-			{
-				if (item && typeof item.itemid !== 'undefined')
-				{
+			_.each(parents_details, function (item) {
+				if (item && typeof item.itemid !== 'undefined') {
 					self.preloadedItems[item.internalid] = item;
 				}
 			});
 		}
 
 		// Adds the parent inforamtion to the child
-		_.each(this.preloadedItems, function (item)
-		{
-			if (item.itemoptions_detail && item.itemoptions_detail.matrixtype === 'child')
-			{
+		_.each(this.preloadedItems, function (item) {
+			if (item.itemoptions_detail && item.itemoptions_detail.matrixtype === 'child') {
 				item.matrix_parent = self.preloadedItems[item.itemoptions_detail.parentid];
 			}
 		});
@@ -3957,58 +3631,49 @@ Application.defineModel('StoreItem', {
 		return this.preloadedItems;
 	}
 
-,	getItemFieldValues: function (items_by_id)
-	{
+	, getItemFieldValues: function (items_by_id) {
 		'use strict';
 
-		var	item_ids = _.values(items_by_id)
-		,	is_advanced = session.getSiteSettings(['sitetype']).sitetype === 'ADVANCED';
+		var item_ids = _.values(items_by_id)
+			, is_advanced = session.getSiteSettings(['sitetype']).sitetype === 'ADVANCED';
 
 		// Check if we have access to fieldset
-		if (is_advanced)
-		{
-			try
-			{
+		if (is_advanced) {
+			try {
 				// SuiteCommerce Advanced website have fieldsets
 				return session.getItemFieldValues(SC.Configuration.items_fields_advanced_name, _.pluck(item_ids, 'internalid')).items;
 			}
-			catch (e)
-			{
+			catch (e) {
 				throw invalidItemsFieldsAdvancedName;
 			}
 		}
-		else
-		{
+		else {
 			// Sitebuilder website version doesn't have fieldsets
 			return session.getItemFieldValues(item_ids);
 		}
 	}
 
 	// Return the information for the given item
-,	get: function (id, type)
-	{
+	, get: function (id, type) {
 		'use strict';
 
 		this.preloadedItems = this.preloadedItems || {};
 
-		if (!this.preloadedItems[id])
-		{
+		if (!this.preloadedItems[id]) {
 			this.preloadItems([{
 				id: id
-			,	type: type
+				, type: type
 			}]);
 		}
 		return this.preloadedItems[id];
 	}
 
-,	set: function (item)
-	{
+	, set: function (item) {
 		'use strict';
 
 		this.preloadedItems = this.preloadedItems || {};
 
-		if (item.internalid)
-		{
+		if (item.internalid) {
 			this.preloadedItems[item.internalid] = item;
 		}
 	}
@@ -4020,8 +3685,7 @@ Application.defineModel('StoreItem', {
 // Defines the model used by the payment.ss service
 Application.defineModel('Payment', {
 
-	get: function (id)
-	{
+	get: function (id) {
 		'use strict';
 
 		var customer_payment = nlapiLoadRecord('customerpayment', id);
@@ -4029,22 +3693,20 @@ Application.defineModel('Payment', {
 		return this.createResult(customer_payment);
 	}
 
-,	setPaymentMethod: function (customer_payment, result)
-	{
+	, setPaymentMethod: function (customer_payment, result) {
 		'use strict';
 
 		result.paymentmethods = [];
 		return setPaymentMethodToResult(customer_payment, result);
 	}
 
-,	createResult: function (customer_payment)
-	{
+	, createResult: function (customer_payment) {
 		'use strict';
 
 		var result = {};
 
 		result.internalid = customer_payment.getId();
-		result.type =  customer_payment.getRecordType();
+		result.type = customer_payment.getRecordType();
 		result.tranid = customer_payment.getFieldValue('tranid');
 		result.autoapply = customer_payment.getFieldValue('autoapply');
 		result.trandate = customer_payment.getFieldValue('trandate');
@@ -4060,34 +3722,31 @@ Application.defineModel('Payment', {
 
 		return result;
 	}
-,	setInvoices: function(customer_payment, result)
-	{
+	, setInvoices: function (customer_payment, result) {
 		'use strict';
 
 		result.invoices = [];
 
-		for (var i = 1; i <= customer_payment.getLineItemCount('apply') ; i++)
-		{
+		for (var i = 1; i <= customer_payment.getLineItemCount('apply'); i++) {
 			var apply = customer_payment.getLineItemValue('apply', 'apply', i) === 'T';
 
-			if (apply)
-			{
+			if (apply) {
 				var invoice = {
 
 					internalid: customer_payment.getLineItemValue('apply', 'internalid', i)
-				,	type: customer_payment.getLineItemValue('apply', 'type', i)
-				,	total: toCurrency(customer_payment.getLineItemValue('apply', 'total', i))
-				,	total_formatted: formatCurrency(customer_payment.getLineItemValue('apply', 'total', i))
-				,	apply: apply
-				,	applydate: customer_payment.getLineItemValue('apply', 'applydate', i)
-				,	currency: customer_payment.getLineItemValue('apply', 'currency', i)
-				,	disc: toCurrency(customer_payment.getLineItemValue('apply', 'disc', i))
-				,	disc_formatted: formatCurrency(customer_payment.getLineItemValue('apply', 'disc', i))
-				,	amount: toCurrency(customer_payment.getLineItemValue('apply', 'amount', i))
-				,	amount_formatted: formatCurrency(customer_payment.getLineItemValue('apply', 'amount', i))
-				,	due: toCurrency(customer_payment.getLineItemValue('apply', 'due', i))
-				,	due_formatted: formatCurrency(customer_payment.getLineItemValue('apply', 'due', i))
-				,	refnum: customer_payment.getLineItemValue('apply', 'refnum', i)
+					, type: customer_payment.getLineItemValue('apply', 'type', i)
+					, total: toCurrency(customer_payment.getLineItemValue('apply', 'total', i))
+					, total_formatted: formatCurrency(customer_payment.getLineItemValue('apply', 'total', i))
+					, apply: apply
+					, applydate: customer_payment.getLineItemValue('apply', 'applydate', i)
+					, currency: customer_payment.getLineItemValue('apply', 'currency', i)
+					, disc: toCurrency(customer_payment.getLineItemValue('apply', 'disc', i))
+					, disc_formatted: formatCurrency(customer_payment.getLineItemValue('apply', 'disc', i))
+					, amount: toCurrency(customer_payment.getLineItemValue('apply', 'amount', i))
+					, amount_formatted: formatCurrency(customer_payment.getLineItemValue('apply', 'amount', i))
+					, due: toCurrency(customer_payment.getLineItemValue('apply', 'due', i))
+					, due_formatted: formatCurrency(customer_payment.getLineItemValue('apply', 'due', i))
+					, refnum: customer_payment.getLineItemValue('apply', 'refnum', i)
 				};
 
 				result.invoices.push(invoice);
@@ -4106,8 +3765,7 @@ Application.defineModel('Payment', {
 // Defines the model used by the live-payment.ss service
 Application.defineModel('LivePayment', {
 
-	create: function()
-	{
+	create: function () {
 		'use strict';
 		var customer_payment = nlapiCreateRecord('customerpayment');
 
@@ -4117,45 +3775,38 @@ Application.defineModel('LivePayment', {
 		return customer_payment;
 	}
 
-,	get: function()
-	{
+	, get: function () {
 		'use strict';
 
-		try
-		{
+		try {
 			var customer_payment = this.create();
 			return this.createResult(customer_payment);
 		}
-		catch (e)
-		{
+		catch (e) {
 
-			if (e instanceof nlobjError && e.getCode() === 'INSUFFICIENT_PERMISSION')
-			{
+			if (e instanceof nlobjError && e.getCode() === 'INSUFFICIENT_PERMISSION') {
 				return {};
 			}
-			else
-			{
+			else {
 				throw e;
 			}
 		}
 	}
 
-,	setPaymentMethod: function (customer_payment, result)
-	{
+	, setPaymentMethod: function (customer_payment, result) {
 		'use strict';
 
 		result.paymentmethods = [];
 		return setPaymentMethodToResult(customer_payment, result);
 	}
 
-,	createResult: function (customer_payment)
-	{
+	, createResult: function (customer_payment) {
 		'use strict';
 
 		var result = {};
 
 		result.internalid = customer_payment.getId();
-		result.type =  customer_payment.getRecordType();
+		result.type = customer_payment.getRecordType();
 		result.tranid = customer_payment.getFieldValue('tranid');
 		result.autoapply = customer_payment.getFieldValue('autoapply');
 		result.trandate = customer_payment.getFieldValue('trandate');
@@ -4174,47 +3825,43 @@ Application.defineModel('LivePayment', {
 		return result;
 	}
 
-,	setInvoices: function(customer_payment, result)
-	{
+	, setInvoices: function (customer_payment, result) {
 		'use strict';
 
 		result.invoices = [];
 
-		for (var i = 1; i <= customer_payment.getLineItemCount('apply') ; i++)
-		{
+		for (var i = 1; i <= customer_payment.getLineItemCount('apply'); i++) {
 			var invoice = {
 
-					internalid: customer_payment.getLineItemValue('apply', 'internalid', i)
-				,	total: toCurrency(customer_payment.getLineItemValue('apply', 'total', i))
-				,	total_formatted: formatCurrency(customer_payment.getLineItemValue('apply', 'total', i))
-				,	apply: customer_payment.getLineItemValue('apply', 'apply', i) === 'T'
-				,	applydate: customer_payment.getLineItemValue('apply', 'applydate', i)
-				,	currency: customer_payment.getLineItemValue('apply', 'currency', i)
-				,	discamt: toCurrency(customer_payment.getLineItemValue('apply', 'discamt', i))
-				,	discamt_formatted: formatCurrency(customer_payment.getLineItemValue('apply', 'discamt', i))
-				,	disc: toCurrency(customer_payment.getLineItemValue('apply', 'disc', i))
-				,	disc_formatted: formatCurrency(customer_payment.getLineItemValue('apply', 'disc', i))
-				,	discdate: customer_payment.getLineItemValue('apply', 'discdate', i)
-				,	amount: toCurrency(customer_payment.getLineItemValue('apply', 'amount', i))
-				,	amount_formatted: formatCurrency(customer_payment.getLineItemValue('apply', 'amount', i))
-				,	due: toCurrency(customer_payment.getLineItemValue('apply', 'due', i))
-				,	due_formatted: formatCurrency(customer_payment.getLineItemValue('apply', 'due', i))
-				,	refnum: customer_payment.getLineItemValue('apply', 'refnum', i)
+				internalid: customer_payment.getLineItemValue('apply', 'internalid', i)
+				, total: toCurrency(customer_payment.getLineItemValue('apply', 'total', i))
+				, total_formatted: formatCurrency(customer_payment.getLineItemValue('apply', 'total', i))
+				, apply: customer_payment.getLineItemValue('apply', 'apply', i) === 'T'
+				, applydate: customer_payment.getLineItemValue('apply', 'applydate', i)
+				, currency: customer_payment.getLineItemValue('apply', 'currency', i)
+				, discamt: toCurrency(customer_payment.getLineItemValue('apply', 'discamt', i))
+				, discamt_formatted: formatCurrency(customer_payment.getLineItemValue('apply', 'discamt', i))
+				, disc: toCurrency(customer_payment.getLineItemValue('apply', 'disc', i))
+				, disc_formatted: formatCurrency(customer_payment.getLineItemValue('apply', 'disc', i))
+				, discdate: customer_payment.getLineItemValue('apply', 'discdate', i)
+				, amount: toCurrency(customer_payment.getLineItemValue('apply', 'amount', i))
+				, amount_formatted: formatCurrency(customer_payment.getLineItemValue('apply', 'amount', i))
+				, due: toCurrency(customer_payment.getLineItemValue('apply', 'due', i))
+				, due_formatted: formatCurrency(customer_payment.getLineItemValue('apply', 'due', i))
+				, refnum: customer_payment.getLineItemValue('apply', 'refnum', i)
 			};
 
 			result.invoices.push(invoice);
 		}
 
-		if (result.invoices.length)
-		{
+		if (result.invoices.length) {
 			var invoices_info = Application.getModel('Receipts').list({
-					type: 'invoice'
-				,	internalid: _.pluck(result.invoices, 'internalid')
+				type: 'invoice'
+				, internalid: _.pluck(result.invoices, 'internalid')
 			});
 
-			_.each(result.invoices, function(invoice)
-			{
-				invoice = _.extend(invoice, _.findWhere(invoices_info, {internalid: invoice.internalid}));
+			_.each(result.invoices, function (invoice) {
+				invoice = _.extend(invoice, _.findWhere(invoices_info, { internalid: invoice.internalid }));
 
 				invoice.discountapplies = (invoice.due === invoice.total) && (invoice.discdate && stringtodate(invoice.discdate) >= new Date());
 				invoice.discount = invoice.discamt && invoice.total ? BigNumber(invoice.discamt).div(invoice.total).times(100).round(2).toNumber() : 0;
@@ -4233,27 +3880,25 @@ Application.defineModel('LivePayment', {
 		return result;
 	}
 
-,	setCredits: function(customer_payment, result)
-	{
+	, setCredits: function (customer_payment, result) {
 		'use strict';
 
 		result.credits = [];
 		result.creditmemosremaining = 0;
 
-		for (var i = 1; i <= customer_payment.getLineItemCount('credit') ; i++)
-		{
+		for (var i = 1; i <= customer_payment.getLineItemCount('credit'); i++) {
 			var creditmemo = {
-					internalid: customer_payment.getLineItemValue('credit', 'internalid', i)
-				,	type: customer_payment.getLineItemValue('credit', 'type', i)
-				,	total: toCurrency(customer_payment.getLineItemValue('credit', 'total', i))
-				,	total_formatted: formatCurrency(customer_payment.getLineItemValue('credit', 'total', i))
-				,	apply: customer_payment.getLineItemValue('credit', 'apply', i) === 'T'
-				,	currency: customer_payment.getLineItemValue('apply', 'currency', i)
-				,	remaining: toCurrency(customer_payment.getLineItemValue('credit', 'due', i))
-				,	remaining_formatted: formatCurrency(customer_payment.getLineItemValue('credit', 'due', i))
-				,	amount: toCurrency(customer_payment.getLineItemValue('credit', 'amount', i))
-				,	amount_formatted: formatCurrency(customer_payment.getLineItemValue('credit', 'amount', i))
-				,	refnum: customer_payment.getLineItemValue('credit', 'refnum', i)
+				internalid: customer_payment.getLineItemValue('credit', 'internalid', i)
+				, type: customer_payment.getLineItemValue('credit', 'type', i)
+				, total: toCurrency(customer_payment.getLineItemValue('credit', 'total', i))
+				, total_formatted: formatCurrency(customer_payment.getLineItemValue('credit', 'total', i))
+				, apply: customer_payment.getLineItemValue('credit', 'apply', i) === 'T'
+				, currency: customer_payment.getLineItemValue('apply', 'currency', i)
+				, remaining: toCurrency(customer_payment.getLineItemValue('credit', 'due', i))
+				, remaining_formatted: formatCurrency(customer_payment.getLineItemValue('credit', 'due', i))
+				, amount: toCurrency(customer_payment.getLineItemValue('credit', 'amount', i))
+				, amount_formatted: formatCurrency(customer_payment.getLineItemValue('credit', 'amount', i))
+				, refnum: customer_payment.getLineItemValue('credit', 'refnum', i)
 			};
 
 			result.creditmemosremaining = BigNumber(creditmemo.remaining).plus(result.creditmemosremaining).toNumber();
@@ -4265,29 +3910,27 @@ Application.defineModel('LivePayment', {
 		return result;
 	}
 
-,	setDeposits: function(customer_payment, result)
-	{
+	, setDeposits: function (customer_payment, result) {
 		'use strict';
 
 		result.deposits = [];
 
 		result.depositsremaining = 0;
 
-		for (var i = 1; i <= customer_payment.getLineItemCount('deposit') ; i++)
-		{
+		for (var i = 1; i <= customer_payment.getLineItemCount('deposit'); i++) {
 			var deposit = {
-					internalid: customer_payment.getLineItemValue('deposit', 'doc', i)
-				,	total: toCurrency(customer_payment.getLineItemValue('deposit', 'total', i))
-				,	total_formatted: formatCurrency(customer_payment.getLineItemValue('deposit', 'total', i))
-				,	apply: customer_payment.getLineItemValue('deposit', 'apply', i) === 'T'
-				,	currency: customer_payment.getLineItemValue('deposit', 'currency', i)
-				,	depositdate: customer_payment.getLineItemValue('deposit', 'depositdate', i)
-				,	remaining: toCurrency(customer_payment.getLineItemValue('deposit', 'remaining', i))
-				,	remaining_formatted: formatCurrency(customer_payment.getLineItemValue('deposit', 'remaining', i))
-				,	amount: toCurrency(customer_payment.getLineItemValue('deposit', 'amount', i))
-				,	amount_formatted: formatCurrency(customer_payment.getLineItemValue('deposit', 'amount', i))
-				,	refnum: customer_payment.getLineItemValue('deposit', 'refnum', i)
-				};
+				internalid: customer_payment.getLineItemValue('deposit', 'doc', i)
+				, total: toCurrency(customer_payment.getLineItemValue('deposit', 'total', i))
+				, total_formatted: formatCurrency(customer_payment.getLineItemValue('deposit', 'total', i))
+				, apply: customer_payment.getLineItemValue('deposit', 'apply', i) === 'T'
+				, currency: customer_payment.getLineItemValue('deposit', 'currency', i)
+				, depositdate: customer_payment.getLineItemValue('deposit', 'depositdate', i)
+				, remaining: toCurrency(customer_payment.getLineItemValue('deposit', 'remaining', i))
+				, remaining_formatted: formatCurrency(customer_payment.getLineItemValue('deposit', 'remaining', i))
+				, amount: toCurrency(customer_payment.getLineItemValue('deposit', 'amount', i))
+				, amount_formatted: formatCurrency(customer_payment.getLineItemValue('deposit', 'amount', i))
+				, refnum: customer_payment.getLineItemValue('deposit', 'refnum', i)
+			};
 
 			result.depositsremaining = BigNumber(deposit.remaining).plus(result.depositsremaining).toNumber();
 			result.deposits.push(deposit);
@@ -4298,26 +3941,23 @@ Application.defineModel('LivePayment', {
 		return result;
 	}
 
-,	update: function (payment_record, data)
-	{
+	, update: function (payment_record, data) {
 		'use strict';
 
 		var self = this
-		,	invoices = data.invoices
-		,	credits = data.credits
-		,	deposits = data.deposits
-		,	credit_card = data.paymentmethods && data.paymentmethods[0] && data.paymentmethods[0].creditcard;
+			, invoices = data.invoices
+			, credits = data.credits
+			, deposits = data.deposits
+			, credit_card = data.paymentmethods && data.paymentmethods[0] && data.paymentmethods[0].creditcard;
 
 		// invoices
 
-		for (var i = 1; i <= payment_record.getLineItemCount('apply'); i++)
-		{
+		for (var i = 1; i <= payment_record.getLineItemCount('apply'); i++) {
 			var invoice = _.findWhere(invoices, {
 				internalid: payment_record.getLineItemValue('apply', 'internalid', i)
 			});
 
-			if (invoice && invoice.apply)
-			{
+			if (invoice && invoice.apply) {
 				payment_record.setLineItemValue('apply', 'apply', i, 'T');
 				payment_record.setLineItemValue('apply', 'amount', i, invoice.amount);
 
@@ -4328,8 +3968,7 @@ Application.defineModel('LivePayment', {
 				invoice.discountapplies = (invoice.due === invoice.total) && (invoice.discdate && stringtodate(invoice.discdate) >= new Date());
 				invoice.duewithdiscount = BigNumber(invoice.due).minus(invoice.discountapplies ? invoice.discamt : 0).toNumber();
 
-				if (self._isPayFull(invoice) && invoice.discountapplies && invoice.discamt)
-				{
+				if (self._isPayFull(invoice) && invoice.discountapplies && invoice.discamt) {
 					payment_record.setLineItemValue('apply', 'disc', i, invoice.discamt);
 				}
 			}
@@ -4337,14 +3976,12 @@ Application.defineModel('LivePayment', {
 
 		// deposits
 
-		for (i = 1; i <= payment_record.getLineItemCount('deposit'); i++)
-		{
+		for (i = 1; i <= payment_record.getLineItemCount('deposit'); i++) {
 			var deposit = _.findWhere(deposits, {
 				internalid: payment_record.getLineItemValue('deposit', 'doc', i)
 			});
 
-			if (deposit && deposit.apply)
-			{
+			if (deposit && deposit.apply) {
 				payment_record.setLineItemValue('deposit', 'apply', i, 'T');
 				payment_record.setLineItemValue('deposit', 'amount', i, deposit.amount);
 			}
@@ -4352,30 +3989,26 @@ Application.defineModel('LivePayment', {
 
 		// credits
 
-		for (i = 1; i <= payment_record.getLineItemCount('credit'); i++)
-		{
+		for (i = 1; i <= payment_record.getLineItemCount('credit'); i++) {
 			var credit = _.findWhere(credits, {
 				internalid: payment_record.getLineItemValue('credit', 'internalid', i)
 			});
 
-			if (credit && credit.apply)
-			{
+			if (credit && credit.apply) {
 				payment_record.setLineItemValue('credit', 'apply', i, 'T');
 				payment_record.setLineItemValue('credit', 'amount', i, credit.amount);
 			}
 		}
 
-		if (data.payment && credit_card && data.billaddress)
-		{
+		if (data.payment && credit_card && data.billaddress) {
 
 			var selected_address = customer.getAddress(data.billaddress);
 
-			if (selected_address)
-			{
+			if (selected_address) {
 				customer.updateAddress({
 					internalid: selected_address.internalid
-				,	addressee: selected_address.addressee
-				,	defaultbilling : 'T'
+					, addressee: selected_address.addressee
+					, defaultbilling: 'T'
 				});
 
 				payment_record.setFieldValue('ccstreet', selected_address.addr1);
@@ -4384,13 +4017,12 @@ Application.defineModel('LivePayment', {
 
 			customer.updateCreditCard({
 				internalid: credit_card.internalid
-			,	ccdefault : 'T'
+				, ccdefault: 'T'
 			});
 
 			payment_record.setFieldValue('paymentmethod', credit_card.paymentmethod.internalid);
 
-			if (credit_card.ccsecuritycode)
-			{
+			if (credit_card.ccsecuritycode) {
 				payment_record.setFieldValue('ccsecuritycode', credit_card.ccsecuritycode);
 			}
 
@@ -4402,38 +4034,32 @@ Application.defineModel('LivePayment', {
 
 	}
 
-,	_isPayFull: function (invoice)
-	{
+	, _isPayFull: function (invoice) {
 		'use strict';
 
-		if (invoice.discountapplies)
-		{
+		if (invoice.discountapplies) {
 			return invoice.amount === invoice.duewithdiscount;
 		}
-		else
-		{
+		else {
 			return invoice.amount === invoice.due;
 		}
 	}
 
-,	submit: function (data)
-	{
+	, submit: function (data) {
 		'use strict';
 
 		// update record
 		var payment_record = this.update(this.create(), data)
-		// save record.
-		,	payment_record_id = nlapiSubmitRecord(payment_record)
-		// create new record to next payment.
-		,	new_payment_record = this.get();
+			// save record.
+			, payment_record_id = nlapiSubmitRecord(payment_record)
+			// create new record to next payment.
+			, new_payment_record = this.get();
 
-		if (payment_record_id !== '0')
-		{
+		if (payment_record_id !== '0') {
 			// send confirmation
 			new_payment_record.confirmation = _.extend(data, Application.getModel('Payment').get(payment_record_id));
 		}
-		else
-		{
+		else {
 			data.internalid = '0';
 			new_payment_record.confirmation = data;
 		}
@@ -4448,12 +4074,11 @@ Application.defineModel('LivePayment', {
 
 Application.defineModel('Deposit', {
 
-	get: function (id)
-	{
+	get: function (id) {
 		'use strict';
 
 		var deposit = nlapiLoadRecord('customerdeposit', id)
-		,	result = {};
+			, result = {};
 
 		this.createRecord(deposit, result);
 		this.setInvoices(deposit, result);
@@ -4462,8 +4087,7 @@ Application.defineModel('Deposit', {
 		return result;
 	}
 
-,	createRecord: function(record, result)
-	{
+	, createRecord: function (record, result) {
 		'use strict';
 
 		result.internalid = record.getId();
@@ -4475,33 +4099,31 @@ Application.defineModel('Deposit', {
 		result.memo = record.getFieldValue('memo');
 	}
 
-,	setInvoices: function(record, result)
-	{
+	, setInvoices: function (record, result) {
 		'use strict';
 
 		result.invoices = [];
 		var invoicesTotal = 0;
 
-		for (var i = 1; i <= record.getLineItemCount('apply'); i++)
-		{
+		for (var i = 1; i <= record.getLineItemCount('apply'); i++) {
 			var invoice = {
-					line: i
-				,	invoice_id: record.getLineItemValue('apply', 'id2', i)
-				,	deposit_id: record.getLineItemValue('apply', 'id', i)
+				line: i
+				, invoice_id: record.getLineItemValue('apply', 'id2', i)
+				, deposit_id: record.getLineItemValue('apply', 'id', i)
 
-				,	type: record.getLineItemValue('apply', 'type', i)
-				,	total: toCurrency(record.getLineItemValue('apply', 'total', i))
-				,	total_formatted: formatCurrency(record.getLineItemValue('apply', 'total', i))
+				, type: record.getLineItemValue('apply', 'type', i)
+				, total: toCurrency(record.getLineItemValue('apply', 'total', i))
+				, total_formatted: formatCurrency(record.getLineItemValue('apply', 'total', i))
 
-				,	invoicedate: record.getLineItemValue('apply', 'applydate', i)
-				,	depositdate: record.getLineItemValue('apply', 'depositdate', i)
+				, invoicedate: record.getLineItemValue('apply', 'applydate', i)
+				, depositdate: record.getLineItemValue('apply', 'depositdate', i)
 
-				,	currency: record.getLineItemValue('apply', 'currency', i)
-				,	amount: toCurrency(record.getLineItemValue('apply', 'amount', i))
-				,	amount_formatted: formatCurrency(record.getLineItemValue('apply', 'amount', i))
-				,	due: toCurrency(record.getLineItemValue('apply', 'due', i))
-				,	due_formatted: formatCurrency(record.getLineItemValue('apply', 'due', i))
-				,	refnum: record.getLineItemValue('apply', 'refnum', i)
+				, currency: record.getLineItemValue('apply', 'currency', i)
+				, amount: toCurrency(record.getLineItemValue('apply', 'amount', i))
+				, amount_formatted: formatCurrency(record.getLineItemValue('apply', 'amount', i))
+				, due: toCurrency(record.getLineItemValue('apply', 'due', i))
+				, due_formatted: formatCurrency(record.getLineItemValue('apply', 'due', i))
+				, refnum: record.getLineItemValue('apply', 'refnum', i)
 			};
 
 			invoicesTotal += invoice.amount;
@@ -4514,49 +4136,44 @@ Application.defineModel('Deposit', {
 		result.remaining_formatted = formatCurrency(result.remaining);
 	}
 
-,	setPaymentMethod: function (record, result)
-	{
+	, setPaymentMethod: function (record, result) {
 		'use strict';
 
 		var paymentmethod = {
 			type: record.getFieldValue('paymethtype')
-		,	primary: true
+			, primary: true
 		};
 
-		if (paymentmethod.type === 'creditcard')
-		{
+		if (paymentmethod.type === 'creditcard') {
 			paymentmethod.creditcard = {
 				ccnumber: record.getFieldValue('ccnumber')
-			,	ccexpiredate: record.getFieldValue('ccexpiredate')
-			,	ccname: record.getFieldValue('ccname')
-			,	paymentmethod: {
+				, ccexpiredate: record.getFieldValue('ccexpiredate')
+				, ccname: record.getFieldValue('ccname')
+				, paymentmethod: {
 					ispaypal: 'F'
-				,	name: record.getFieldText('paymentmethod')
-				,	creditcard: 'T'
-				,	internalid: record.getFieldValue('paymentmethod')
+					, name: record.getFieldText('paymentmethod')
+					, creditcard: 'T'
+					, internalid: record.getFieldValue('paymentmethod')
 				}
 			};
 		}
 
-		if (record.getFieldValue('ccstreet'))
-		{
+		if (record.getFieldValue('ccstreet')) {
 			paymentmethod.ccstreet = record.getFieldValue('ccstreet');
 		}
 
-		if (record.getFieldValue('cczipcode'))
-		{
+		if (record.getFieldValue('cczipcode')) {
 			paymentmethod.cczipcode = record.getFieldValue('cczipcode');
 		}
 
-		if (record.getFieldValue('terms'))
-		{
+		if (record.getFieldValue('terms')) {
 			paymentmethod.type = 'invoice';
 
 			paymentmethod.purchasenumber = record.getFieldValue('otherrefnum');
 
 			paymentmethod.paymentterms = {
-					internalid: record.getFieldValue('terms')
-				,	name: record.getFieldText('terms')
+				internalid: record.getFieldValue('terms')
+				, name: record.getFieldText('terms')
 			};
 		}
 
@@ -4567,12 +4184,11 @@ Application.defineModel('Deposit', {
 //Model.js
 Application.defineModel('DepositApplication', {
 
-	get: function (id)
-	{
+	get: function (id) {
 		'use strict';
 
 		var record = nlapiLoadRecord('depositapplication', id)
-		,	result = {};
+			, result = {};
 
 		this.createResult(record, result);
 		this.setInvoices(record, result);
@@ -4580,8 +4196,7 @@ Application.defineModel('DepositApplication', {
 		return result;
 	}
 
-,	createResult: function(record, result)
-	{
+	, createResult: function (record, result) {
 		'use strict';
 
 		result.internalid = record.getId();
@@ -4590,38 +4205,36 @@ Application.defineModel('DepositApplication', {
 		result.total_formatted = formatCurrency(record.getFieldValue('total'));
 
 		result.deposit =
-		{
-			internalid: record.getFieldValue('deposit')
-		,	name: record.getFieldText('deposit')
-		};
+			{
+				internalid: record.getFieldValue('deposit')
+				, name: record.getFieldText('deposit')
+			};
 
 		result.depositdate = record.getFieldValue('depositdate');
 		result.trandate = record.getFieldValue('trandate');
 		result.memo = record.getFieldValue('memo');
 	}
 
-,	setInvoices: function(record, result)
-	{
+	, setInvoices: function (record, result) {
 		'use strict';
 
 		result.invoices = [];
 
-		for (var i = 1; i <= record.getLineItemCount('apply'); i++)
-		{
+		for (var i = 1; i <= record.getLineItemCount('apply'); i++) {
 			var invoice = {
-					line: i
-				,	internalid: record.getLineItemValue('apply', 'internalid', i)
-				,	type: record.getLineItemValue('apply', 'type', i)
-				,	total: toCurrency(record.getLineItemValue('apply', 'total', i))
-				,	total_formatted: formatCurrency(record.getLineItemValue('apply', 'total', i))
-				,	apply: record.getLineItemValue('apply', 'apply', i) === 'T'
-				,	applydate: record.getLineItemValue('apply', 'applydate', i)
-				,	currency: record.getLineItemValue('apply', 'currency', i)
-				,	amount: toCurrency(record.getLineItemValue('apply', 'amount', i))
-				,	amount_formatted: formatCurrency(record.getLineItemValue('apply', 'amount', i))
-				,	due: toCurrency(record.getLineItemValue('apply', 'due', i))
-				,	due_formatted: formatCurrency(record.getLineItemValue('apply', 'due', i))
-				,	refnum: record.getLineItemValue('apply', 'refnum', i)
+				line: i
+				, internalid: record.getLineItemValue('apply', 'internalid', i)
+				, type: record.getLineItemValue('apply', 'type', i)
+				, total: toCurrency(record.getLineItemValue('apply', 'total', i))
+				, total_formatted: formatCurrency(record.getLineItemValue('apply', 'total', i))
+				, apply: record.getLineItemValue('apply', 'apply', i) === 'T'
+				, applydate: record.getLineItemValue('apply', 'applydate', i)
+				, currency: record.getLineItemValue('apply', 'currency', i)
+				, amount: toCurrency(record.getLineItemValue('apply', 'amount', i))
+				, amount_formatted: formatCurrency(record.getLineItemValue('apply', 'amount', i))
+				, due: toCurrency(record.getLineItemValue('apply', 'due', i))
+				, due_formatted: formatCurrency(record.getLineItemValue('apply', 'due', i))
+				, refnum: record.getLineItemValue('apply', 'refnum', i)
 			};
 
 			result.invoices.push(invoice);
@@ -4637,94 +4250,80 @@ Application.defineModel('DepositApplication', {
 Application.defineModel('ProductList', {
 	// ## General settings
 	configuration: SC.Configuration.product_lists
-,	later_type_id: '2'
+	, later_type_id: '2'
 
-,	verifySession: function()
-	{
+	, verifySession: function () {
 		'use strict';
 
-		if (!(this.configuration.loginRequired && isLoggedIn()))
-		{
+		if (!(this.configuration.loginRequired && isLoggedIn())) {
 			throw unauthorizedError;
 		}
 	}
 
-,	getColumns: function ()
-	{
+	, getColumns: function () {
 		'use strict';
 
 		return {
 			internalid: new nlobjSearchColumn('internalid')
-		,	templateid: new nlobjSearchColumn('custrecord_ns_pl_pl_templateid')
-		,	name: new nlobjSearchColumn('name')
-		,	description: new nlobjSearchColumn('custrecord_ns_pl_pl_description')
-		,	owner: new nlobjSearchColumn('custrecord_ns_pl_pl_owner')
-		,	scope: new nlobjSearchColumn('custrecord_ns_pl_pl_scope')
-		,	type: new nlobjSearchColumn('custrecord_ns_pl_pl_type')
-		,	created: new nlobjSearchColumn('created')
-		,	lastmodified: new nlobjSearchColumn('lastmodified')
+			, templateid: new nlobjSearchColumn('custrecord_ns_pl_pl_templateid')
+			, name: new nlobjSearchColumn('name')
+			, description: new nlobjSearchColumn('custrecord_ns_pl_pl_description')
+			, owner: new nlobjSearchColumn('custrecord_ns_pl_pl_owner')
+			, scope: new nlobjSearchColumn('custrecord_ns_pl_pl_scope')
+			, type: new nlobjSearchColumn('custrecord_ns_pl_pl_type')
+			, created: new nlobjSearchColumn('created')
+			, lastmodified: new nlobjSearchColumn('lastmodified')
 		};
 	}
 
 	// Returns a product list based on a given id and userId
-,	get: function (id)
-	{
+	, get: function (id) {
 		'use strict';
 
 		// Verify session if and only if we are in My Account...
-		if (request.getURL().indexOf('https') === 0)
-		{
+		if (request.getURL().indexOf('https') === 0) {
 			this.verifySession();
 		}
 
 		var filters = [new nlobjSearchFilter('internalid', null, 'is', id)
-			,	new nlobjSearchFilter('isinactive', null, 'is', 'F')
-			,	new nlobjSearchFilter('custrecord_ns_pl_pl_owner', null, 'is', nlapiGetUser())]
-		,	product_lists = this.searchHelper(filters, this.getColumns(), true);
+			, new nlobjSearchFilter('isinactive', null, 'is', 'F')
+			, new nlobjSearchFilter('custrecord_ns_pl_pl_owner', null, 'is', nlapiGetUser())]
+			, product_lists = this.searchHelper(filters, this.getColumns(), true);
 
-		if (product_lists.length >= 1)
-		{
+		if (product_lists.length >= 1) {
 			return product_lists[0];
 		}
-		else
-		{
+		else {
 			throw notFoundError;
 		}
 	}
 
 	// Returns the user's saved for later product list
-,	getSavedForLaterProductList: function ()
-	{
+	, getSavedForLaterProductList: function () {
 		'use strict';
 
 		this.verifySession();
 
 		var filters = [new nlobjSearchFilter('custrecord_ns_pl_pl_type', null, 'is', this.later_type_id)
-			,	new nlobjSearchFilter('custrecord_ns_pl_pl_owner', null, 'is', nlapiGetUser())
-			,	new nlobjSearchFilter('isinactive', null, 'is', 'F')]
-		,	product_lists = this.searchHelper(filters, this.getColumns(), true);
+			, new nlobjSearchFilter('custrecord_ns_pl_pl_owner', null, 'is', nlapiGetUser())
+			, new nlobjSearchFilter('isinactive', null, 'is', 'F')]
+			, product_lists = this.searchHelper(filters, this.getColumns(), true);
 
-		if (product_lists.length >= 1)
-		{
+		if (product_lists.length >= 1) {
 			return product_lists[0];
 		}
-		else
-		{
+		else {
 			var self = this
-			,	sfl_template = _(_(this.configuration.list_templates).filter(function (pl)
-			{
-				return pl.type && pl.type.id && pl.type.id === self.later_type_id;
-			})).first();
+				, sfl_template = _(_(this.configuration.list_templates).filter(function (pl) {
+					return pl.type && pl.type.id && pl.type.id === self.later_type_id;
+				})).first();
 
-			if (sfl_template)
-			{
-				if (!sfl_template.scope)
-				{
+			if (sfl_template) {
+				if (!sfl_template.scope) {
 					sfl_template.scope = { id: '2', name: 'private' };
 				}
 
-				if (!sfl_template.description)
-				{
+				if (!sfl_template.description) {
 					sfl_template.description = '';
 				}
 
@@ -4736,60 +4335,56 @@ Application.defineModel('ProductList', {
 	}
 
 	// Sanitize html input
-,	sanitize: function (text)
-	{
+	, sanitize: function (text) {
 		'use strict';
 
 		return text ? text.replace(/<br>/g, '\n').replace(/</g, '&lt;').replace(/\>/g, '&gt;') : '';
 	}
 
-,	searchHelper: function(filters, columns, include_store_items, order, template_ids)
-	{
+	, searchHelper: function (filters, columns, include_store_items, order, template_ids) {
 		'use strict';
 
 		// Sets the sort order
 		var order_tokens = order && order.split(':') || []
-		,	sort_column = order_tokens[0] || 'name'
-		,	sort_direction = order_tokens[1] || 'ASC'
-		,	productLists = [];
+			, sort_column = order_tokens[0] || 'name'
+			, sort_direction = order_tokens[1] || 'ASC'
+			, productLists = [];
 
 		columns[sort_column] && columns[sort_column].setSort(sort_direction === 'DESC');
 
 		// Makes the request and format the response
 		var records = Application.getAllSearchResults('customrecord_ns_pl_productlist', filters, _.values(columns))
-		,	ProductListItem = Application.getModel('ProductListItem');
+			, ProductListItem = Application.getModel('ProductListItem');
 
-		_.each(records, function (productListSearchRecord)
-		{
+		_.each(records, function (productListSearchRecord) {
 			var product_list_type_text = productListSearchRecord.getText('custrecord_ns_pl_pl_type')
-			,	productList = {
+				, productList = {
 					internalid: productListSearchRecord.getId()
-				,	templateid: productListSearchRecord.getValue('custrecord_ns_pl_pl_templateid')
-				,	name: productListSearchRecord.getValue('name')
-				,	description: productListSearchRecord.getValue('custrecord_ns_pl_pl_description') ? productListSearchRecord.getValue('custrecord_ns_pl_pl_description').replace(/\n/g, '<br>') : ''
-				,	owner: {
+					, templateid: productListSearchRecord.getValue('custrecord_ns_pl_pl_templateid')
+					, name: productListSearchRecord.getValue('name')
+					, description: productListSearchRecord.getValue('custrecord_ns_pl_pl_description') ? productListSearchRecord.getValue('custrecord_ns_pl_pl_description').replace(/\n/g, '<br>') : ''
+					, owner: {
 						id: productListSearchRecord.getValue('custrecord_ns_pl_pl_owner')
-					,	name: productListSearchRecord.getText('custrecord_ns_pl_pl_owner')
+						, name: productListSearchRecord.getText('custrecord_ns_pl_pl_owner')
 					}
-				,	scope: {
+					, scope: {
 						id: productListSearchRecord.getValue('custrecord_ns_pl_pl_scope')
-					,	name: productListSearchRecord.getText('custrecord_ns_pl_pl_scope')
+						, name: productListSearchRecord.getText('custrecord_ns_pl_pl_scope')
 					}
-				,	type: {
+					, type: {
 						id: productListSearchRecord.getValue('custrecord_ns_pl_pl_type')
-					,	name: product_list_type_text
+						, name: product_list_type_text
 					}
-				,	created: productListSearchRecord.getValue('created')
-				,	lastmodified: productListSearchRecord.getValue('lastmodified')
-				,	items: ProductListItem.search(productListSearchRecord.getId(), include_store_items, {
-							sort: 'created'
-						,	order: '-1'
-						,	page: -1
+					, created: productListSearchRecord.getValue('created')
+					, lastmodified: productListSearchRecord.getValue('lastmodified')
+					, items: ProductListItem.search(productListSearchRecord.getId(), include_store_items, {
+						sort: 'created'
+						, order: '-1'
+						, page: -1
 					})
 				};
 
-			if (template_ids && productList.templateid)
-			{
+			if (template_ids && productList.templateid) {
 				template_ids.push(productList.templateid);
 			}
 
@@ -4800,44 +4395,36 @@ Application.defineModel('ProductList', {
 	}
 
 	// Retrieves all Product Lists for a given user
-,	search: function (order)
-	{
+	, search: function (order) {
 		'use strict';
 
 		// Verify session if and only if we are in My Account...
-		if (request.getURL().indexOf('https') === 0)
-		{
+		if (request.getURL().indexOf('https') === 0) {
 			this.verifySession();
 		}
 
 		var filters = [new nlobjSearchFilter('isinactive', null, 'is', 'F')
-			,	new nlobjSearchFilter('custrecord_ns_pl_pl_owner', null, 'is', nlapiGetUser())]
-		,	template_ids = []
-		,	product_lists = this.searchHelper(filters, this.getColumns(), false, order, template_ids)
-		,	self = this;
+			, new nlobjSearchFilter('custrecord_ns_pl_pl_owner', null, 'is', nlapiGetUser())]
+			, template_ids = []
+			, product_lists = this.searchHelper(filters, this.getColumns(), false, order, template_ids)
+			, self = this;
 
 		// Add possible missing predefined list templates
-		_(this.configuration.list_templates).each(function(template) {
-			if (!_(template_ids).contains(template.templateid))
-			{
-				if (!template.templateid || !template.name)
-				{
+		_(this.configuration.list_templates).each(function (template) {
+			if (!_(template_ids).contains(template.templateid)) {
+				if (!template.templateid || !template.name) {
 					console.log('Error: Wrong predefined Product List. Please check backend configuration.');
 				}
-				else
-				{
-					if (!template.scope)
-					{
+				else {
+					if (!template.scope) {
 						template.scope = { id: '2', name: 'private' };
 					}
 
-					if (!template.description)
-					{
+					if (!template.description) {
 						template.description = '';
 					}
 
-					if (!template.type)
-					{
+					if (!template.type) {
 						template.type = { id: '3', name: 'predefined' };
 					}
 
@@ -4846,23 +4433,19 @@ Application.defineModel('ProductList', {
 			}
 		});
 
-		if (this.isSingleList())
-		{
-			return _.filter(product_lists, function(pl)
-			{
+		if (this.isSingleList()) {
+			return _.filter(product_lists, function (pl) {
 				// Only return predefined lists.
 				return pl.type.name === 'predefined';
 			});
 		}
 
-		return product_lists.filter(function (pl)
-		{
+		return product_lists.filter(function (pl) {
 			return pl.type.id !== self.later_type_id;
 		});
 	}
 
-,	isSingleList: function ()
-	{
+	, isSingleList: function () {
 		'use strict';
 		var self = this;
 
@@ -4870,8 +4453,7 @@ Application.defineModel('ProductList', {
 	}
 
 	// Creates a new Product List record
-,	create: function (data)
-	{
+	, create: function (data) {
 		'use strict';
 
 		this.verifySession();
@@ -4890,16 +4472,14 @@ Application.defineModel('ProductList', {
 	}
 
 	// Updates a given Product List given its id
-,	update: function (id, data)
-	{
+	, update: function (id, data) {
 		'use strict';
 
 		this.verifySession();
 
 		var product_list = nlapiLoadRecord('customrecord_ns_pl_productlist', id);
 
-		if (parseInt(product_list.getFieldValue('custrecord_ns_pl_pl_owner'), 10) !== nlapiGetUser())
-		{
+		if (parseInt(product_list.getFieldValue('custrecord_ns_pl_pl_owner'), 10) !== nlapiGetUser()) {
 			throw unauthorizedError;
 		}
 
@@ -4913,16 +4493,14 @@ Application.defineModel('ProductList', {
 	}
 
 	// Deletes a Product List given its id
-,	delete: function(id)
-	{
+	, delete: function (id) {
 		'use strict';
 
 		this.verifySession();
 
 		var product_list = nlapiLoadRecord('customrecord_ns_pl_productlist', id);
 
-		if (parseInt(product_list.getFieldValue('custrecord_ns_pl_pl_owner'), 10) !== nlapiGetUser())
-		{
+		if (parseInt(product_list.getFieldValue('custrecord_ns_pl_pl_owner'), 10) !== nlapiGetUser()) {
 			throw unauthorizedError;
 		}
 
@@ -4942,52 +4520,45 @@ Application.defineModel('ProductListItem', {
 	// ## General settings
 	configuration: SC.Configuration.product_lists
 
-,	verifySession: function()
-	{
+	, verifySession: function () {
 		'use strict';
 
-		if (!(this.configuration.loginRequired && isLoggedIn()))
-		{
+		if (!(this.configuration.loginRequired && isLoggedIn())) {
 			throw unauthorizedError;
 		}
 	}
 
 	// Returns a product list item based on a given id
-,	get: function (id)
-	{
+	, get: function (id) {
 		'use strict';
 
 		this.verifySession();
 
 		var filters = [new nlobjSearchFilter('internalid', null, 'is', id)
-				,	new nlobjSearchFilter('isinactive', null, 'is', 'F')
-				,	new nlobjSearchFilter('custrecord_ns_pl_pl_owner', 'custrecord_ns_pl_pli_productlist', 'is', nlapiGetUser())]
-		,	sort_column = 'custrecord_ns_pl_pli_item'
-		,	sort_direction = 'ASC'
-		,	productlist_items = this.searchHelper(filters, sort_column, sort_direction, true);
+			, new nlobjSearchFilter('isinactive', null, 'is', 'F')
+			, new nlobjSearchFilter('custrecord_ns_pl_pl_owner', 'custrecord_ns_pl_pli_productlist', 'is', nlapiGetUser())]
+			, sort_column = 'custrecord_ns_pl_pli_item'
+			, sort_direction = 'ASC'
+			, productlist_items = this.searchHelper(filters, sort_column, sort_direction, true);
 
-		if (productlist_items.length >= 1)
-		{
+		if (productlist_items.length >= 1) {
 			return productlist_items[0];
 		}
-		else
-		{
+		else {
 			throw notFoundError;
 		}
 	}
 
-,	delete: function (id)
-	{
+	, delete: function (id) {
 		'use strict';
 
 		this.verifySession();
 
 		var ProductList = Application.getModel('ProductList')
-		,	product_list_item = nlapiLoadRecord('customrecord_ns_pl_productlistitem', id)
-		,	parent_product_list = ProductList.get(product_list_item.getFieldValue('custrecord_ns_pl_pli_productlist'));
+			, product_list_item = nlapiLoadRecord('customrecord_ns_pl_productlistitem', id)
+			, parent_product_list = ProductList.get(product_list_item.getFieldValue('custrecord_ns_pl_pli_productlist'));
 
-		if (parseInt(parent_product_list.owner.id, 10) !== nlapiGetUser())
-		{
+		if (parseInt(parent_product_list.owner.id, 10) !== nlapiGetUser()) {
 			throw unauthorizedError;
 		}
 
@@ -4996,18 +4567,15 @@ Application.defineModel('ProductListItem', {
 		return nlapiSubmitRecord(product_list_item);
 	}
 
-,	getProductName: function (item)
-	{
+	, getProductName: function (item) {
 		'use strict';
 
-		if (!item)
-		{
+		if (!item) {
 			return '';
 		}
 
 		// If its a matrix child it will use the name of the parent
-		if (item && item.matrix_parent && item.matrix_parent.internalid)
-		{
+		if (item && item.matrix_parent && item.matrix_parent.internalid) {
 			return item.matrix_parent.storedisplayname2 || item.matrix_parent.displayname;
 		}
 
@@ -5016,30 +4584,26 @@ Application.defineModel('ProductListItem', {
 	}
 
 	// Sanitize html input
-,	sanitize: function (text)
-	{
+	, sanitize: function (text) {
 		'use strict';
 
 		return text ? text.replace(/<br>/g, '\n').replace(/</g, '&lt;').replace(/\>/g, '&gt;') : '';
 	}
 
 	// Creates a new Product List Item record
-,	create: function (data)
-	{
+	, create: function (data) {
 		'use strict';
 
 		this.verifySession();
 
-		if (!(data.productList && data.productList.id))
-		{
+		if (!(data.productList && data.productList.id)) {
 			throw notFoundError;
 		}
 
 		var ProductList = Application.getModel('ProductList')
-		,	parent_product_list = ProductList.get(data.productList.id);
+			, parent_product_list = ProductList.get(data.productList.id);
 
-		if (parseInt(parent_product_list.owner.id, 10) !== nlapiGetUser())
-		{
+		if (parseInt(parent_product_list.owner.id, 10) !== nlapiGetUser()) {
 			throw unauthorizedError;
 		}
 
@@ -5047,9 +4611,8 @@ Application.defineModel('ProductListItem', {
 
 		data.description && productListItem.setFieldValue('custrecord_ns_pl_pli_description', this.sanitize(data.description));
 
-		if (data.options)
-		{
-			data.options && productListItem.setFieldValue('custrecord_ns_pl_pli_options', JSON.stringify(data.options || {}));
+		if (data.options) {
+			data.options && productListItem.setFieldValue('custrecord_ns_pl_pli_options', JSON.stringify(data.options || {}));
 		}
 
 		data.quantity && productListItem.setFieldValue('custrecord_ns_pl_pli_quantity', data.quantity);
@@ -5063,23 +4626,21 @@ Application.defineModel('ProductListItem', {
 	}
 
 	// Updates a given Product List Item given its id
-,	update: function (id, data)
-	{
+	, update: function (id, data) {
 		'use strict';
 
 		this.verifySession();
 
 		var ProductList = Application.getModel('ProductList')
-		,	product_list_item = nlapiLoadRecord('customrecord_ns_pl_productlistitem', id)
-		,	parent_product_list = ProductList.get(product_list_item.getFieldValue('custrecord_ns_pl_pli_productlist'));
+			, product_list_item = nlapiLoadRecord('customrecord_ns_pl_productlistitem', id)
+			, parent_product_list = ProductList.get(product_list_item.getFieldValue('custrecord_ns_pl_pli_productlist'));
 
-		if (parseInt(parent_product_list.owner.id, 10) !== nlapiGetUser())
-		{
+		if (parseInt(parent_product_list.owner.id, 10) !== nlapiGetUser()) {
 			throw unauthorizedError;
 		}
 
 		product_list_item.setFieldValue('custrecord_ns_pl_pli_description', this.sanitize(data.description));
-		data.options && product_list_item.setFieldValue('custrecord_ns_pl_pli_options', JSON.stringify(data.options || {}));
+		data.options && product_list_item.setFieldValue('custrecord_ns_pl_pli_options', JSON.stringify(data.options || {}));
 		data.quantity && product_list_item.setFieldValue('custrecord_ns_pl_pli_quantity', data.quantity);
 
 		data.item && data.item.id && product_list_item.setFieldValue('custrecord_ns_pl_pli_item', data.item.id);
@@ -5090,121 +4651,110 @@ Application.defineModel('ProductListItem', {
 	}
 
 	// Retrieves all Product List Items related to the given Product List Id
-,	search: function (product_list_id, include_store_item, sort_and_paging_data)
-	{
+	, search: function (product_list_id, include_store_item, sort_and_paging_data) {
 		'use strict';
 
 		this.verifySession();
 
-		if (!product_list_id)
-		{
+		if (!product_list_id) {
 			return []; //it may happens when target list is a template and don't have a record yet.
 		}
 
 		var filters = [
 			new nlobjSearchFilter('custrecord_ns_pl_pli_productlist', null, 'is', product_list_id)
-		,	new nlobjSearchFilter('isinactive', null, 'is', 'F')
-		,	new nlobjSearchFilter('custrecord_ns_pl_pl_owner', 'custrecord_ns_pl_pli_productlist', 'is', nlapiGetUser())]
-		,	sort_column = sort_and_paging_data.sort
-		,	sort_direction = sort_and_paging_data.order;
+			, new nlobjSearchFilter('isinactive', null, 'is', 'F')
+			, new nlobjSearchFilter('custrecord_ns_pl_pl_owner', 'custrecord_ns_pl_pli_productlist', 'is', nlapiGetUser())]
+			, sort_column = sort_and_paging_data.sort
+			, sort_direction = sort_and_paging_data.order;
 
-		if (!sort_column)
-		{
+		if (!sort_column) {
 			sort_column = 'created';
 		}
 
-		if (!sort_direction)
-		{
+		if (!sort_direction) {
 			sort_direction = '-1';
 		}
 
 		return this.searchHelper(filters, sort_column, sort_direction === '-1' ? 'DESC' : 'ASC', include_store_item);
 	}
 
-,	searchHelper: function (filters, sort_column, sort_direction, include_store_item)
-	{
+	, searchHelper: function (filters, sort_column, sort_direction, include_store_item) {
 		'use strict';
 
 		// Selects the columns
 		var productListItemColumns = {
 			internalid: new nlobjSearchColumn('internalid')
-		,	name:  new nlobjSearchColumn('formulatext', 'custrecord_ns_pl_pli_item').setFormula('case when LENGTH({custrecord_ns_pl_pli_item.displayname}) > 0 then {custrecord_ns_pl_pli_item.displayname} else {custrecord_ns_pl_pli_item.itemid} end')
-		,	description: new nlobjSearchColumn('custrecord_ns_pl_pli_description')
-		,	options: new nlobjSearchColumn('custrecord_ns_pl_pli_options')
-		,	quantity: new nlobjSearchColumn('custrecord_ns_pl_pli_quantity')
-		,	price: new nlobjSearchColumn('price', 'custrecord_ns_pl_pli_item')
-		,	created: new nlobjSearchColumn('created')
-		,	item_id: new nlobjSearchColumn('custrecord_ns_pl_pli_item')
-		,	item_type: new nlobjSearchColumn('type', 'custrecord_ns_pl_pli_item')
-		,	priority: new nlobjSearchColumn('custrecord_ns_pl_pli_priority')
-		,	lastmodified: new nlobjSearchColumn('lastmodified')
+			, name: new nlobjSearchColumn('formulatext', 'custrecord_ns_pl_pli_item').setFormula('case when LENGTH({custrecord_ns_pl_pli_item.displayname}) > 0 then {custrecord_ns_pl_pli_item.displayname} else {custrecord_ns_pl_pli_item.itemid} end')
+			, description: new nlobjSearchColumn('custrecord_ns_pl_pli_description')
+			, options: new nlobjSearchColumn('custrecord_ns_pl_pli_options')
+			, quantity: new nlobjSearchColumn('custrecord_ns_pl_pli_quantity')
+			, price: new nlobjSearchColumn('price', 'custrecord_ns_pl_pli_item')
+			, created: new nlobjSearchColumn('created')
+			, item_id: new nlobjSearchColumn('custrecord_ns_pl_pli_item')
+			, item_type: new nlobjSearchColumn('type', 'custrecord_ns_pl_pli_item')
+			, priority: new nlobjSearchColumn('custrecord_ns_pl_pli_priority')
+			, lastmodified: new nlobjSearchColumn('lastmodified')
 		};
 
 		productListItemColumns[sort_column] && productListItemColumns[sort_column].setSort(sort_direction === 'DESC');
 
 		// Makes the request and format the response
 		var records = Application.getAllSearchResults('customrecord_ns_pl_productlistitem', filters, _.values(productListItemColumns))
-		,	productlist_items = []
-		,	StoreItem = Application.getModel('StoreItem')
-		,	self = this;
+			, productlist_items = []
+			, StoreItem = Application.getModel('StoreItem')
+			, self = this;
 
-		_(records).each(function (productListItemSearchRecord)
-		{
+		_(records).each(function (productListItemSearchRecord) {
 			var itemInternalId = productListItemSearchRecord.getValue('custrecord_ns_pl_pli_item')
-			,	itemType = productListItemSearchRecord.getValue('type', 'custrecord_ns_pl_pli_item')
-			,	productListItem = {
+				, itemType = productListItemSearchRecord.getValue('type', 'custrecord_ns_pl_pli_item')
+				, productListItem = {
 					internalid: productListItemSearchRecord.getId()
-				,	description: productListItemSearchRecord.getValue('custrecord_ns_pl_pli_description')
-				,	options: JSON.parse(productListItemSearchRecord.getValue('custrecord_ns_pl_pli_options') || '{}')
-				,	quantity: parseInt(productListItemSearchRecord.getValue('custrecord_ns_pl_pli_quantity'), 10)
-				,	created: productListItemSearchRecord.getValue('created')
-				,	lastmodified: productListItemSearchRecord.getValue('lastmodified')
+					, description: productListItemSearchRecord.getValue('custrecord_ns_pl_pli_description')
+					, options: JSON.parse(productListItemSearchRecord.getValue('custrecord_ns_pl_pli_options') || '{}')
+					, quantity: parseInt(productListItemSearchRecord.getValue('custrecord_ns_pl_pli_quantity'), 10)
+					, created: productListItemSearchRecord.getValue('created')
+					, lastmodified: productListItemSearchRecord.getValue('lastmodified')
 					// we temporary store the item reference, after this loop we use StoreItem.preloadItems instead doing multiple StoreItem.get()
-				,	store_item_reference: {id: itemInternalId, type: itemType}
-				,	priority: {
+					, store_item_reference: { id: itemInternalId, type: itemType }
+					, priority: {
 						id: productListItemSearchRecord.getValue('custrecord_ns_pl_pli_priority')
-					,	name: productListItemSearchRecord.getText('custrecord_ns_pl_pli_priority')
+						, name: productListItemSearchRecord.getText('custrecord_ns_pl_pli_priority')
 					}
 				};
 			productlist_items.push(productListItem);
 		});
 
 		var store_item_references = _(productlist_items).pluck('store_item_reference')
-		,	results = [];
+			, results = [];
 
 		// preload all the store items at once for performance
 		StoreItem.preloadItems(store_item_references);
 
-		_(productlist_items).each(function (productlist_item)
-		{
+		_(productlist_items).each(function (productlist_item) {
 			var store_item_reference = productlist_item.store_item_reference
-			// get the item - fast because it was preloaded before. Can be null!
-			,	store_item = StoreItem.get(store_item_reference.id, store_item_reference.type);
+				// get the item - fast because it was preloaded before. Can be null!
+				, store_item = StoreItem.get(store_item_reference.id, store_item_reference.type);
 
 			delete productlist_item.store_item_reference;
 
-			if (!store_item)
-			{
+			if (!store_item) {
 				return;
 			}
 
-			if (include_store_item)
-			{
+			if (include_store_item) {
 				productlist_item.item = store_item;
 			}
-			else
-			{
+			else {
 				// only include basic store item data - fix the name to support matrix item names.
 				productlist_item.item = {
 					internalid: store_item_reference.id
-				,	displayname: self.getProductName(store_item)
-				,	ispurchasable: store_item.ispurchasable
-				,	itemoptions_detail: store_item.itemoptions_detail
+					, displayname: self.getProductName(store_item)
+					, ispurchasable: store_item.ispurchasable
+					, itemoptions_detail: store_item.itemoptions_detail
 				};
 			}
 
-			if (!include_store_item && store_item && store_item.matrix_parent)
-			{
+			if (!include_store_item && store_item && store_item.matrix_parent) {
 				productlist_item.item.matrix_parent = store_item.matrix_parent;
 			}
 
@@ -5219,72 +4769,68 @@ Application.defineModel('ProductListItem', {
 //Model.js
 Application.defineModel('TransactionHistory', {
 
-	search: function (data)
-	{
+	search: function (data) {
 		'use strict';
 
 		var types = ['CustCred', 'CustDep', 'DepAppl', 'CustPymt', 'CustInvc', 'RtnAuth']
 
-		,	amount_field = context.getFeature('MULTICURRENCY') ? 'fxamount' : 'amount'
+			, amount_field = context.getFeature('MULTICURRENCY') ? 'fxamount' : 'amount'
 
-		,	filters = [
+			, filters = [
 				new nlobjSearchFilter('mainline', null, 'is', 'T')
 			]
 
-		,	columns = [
+			, columns = [
 				new nlobjSearchColumn('trandate')
-			,	new nlobjSearchColumn('internalid')
-			,	new nlobjSearchColumn('tranid')
-			,	new nlobjSearchColumn('status')
-			,	new nlobjSearchColumn('total')
-			,	new nlobjSearchColumn(amount_field)
+				, new nlobjSearchColumn('internalid')
+				, new nlobjSearchColumn('tranid')
+				, new nlobjSearchColumn('status')
+				, new nlobjSearchColumn('total')
+				, new nlobjSearchColumn(amount_field)
 			];
 
-		switch (data.filter)
-		{
+		switch (data.filter) {
 			case 'creditmemo':
 				types = ['CustCred'];
-			break;
+				break;
 
 			case 'customerpayment':
 				types = ['CustPymt'];
-			break;
+				break;
 
 			case 'customerdeposit':
 				types = ['CustDep'];
-			break;
+				break;
 
 			case 'depositapplication':
 				types = ['DepAppl'];
-			break;
+				break;
 
 			case 'invoice':
 				types = ['CustInvc'];
-			break;
+				break;
 
 			case 'returnauthorization':
 				types = ['RtnAuth'];
-			break;
+				break;
 		}
 
 		filters.push(new nlobjSearchFilter('type', null, 'anyof', types));
 
-		if (data.from && data.to)
-		{
+		if (data.from && data.to) {
 			var offset = new Date().getTimezoneOffset() * 60 * 1000;
 
 			filters.push(new nlobjSearchFilter('trandate', null, 'within', new Date(parseInt(data.from, 10) + offset), new Date(parseInt(data.to, 10) + offset)));
 		}
 
-		switch (data.sort)
-		{
+		switch (data.sort) {
 			case 'number':
 				columns[2].setSort(data.order >= 0);
-			break;
+				break;
 
 			case 'amount':
 				columns[5].setSort(data.order >= 0);
-			break;
+				break;
 
 			default:
 				columns[0].setSort(data.order > 0);
@@ -5292,22 +4838,21 @@ Application.defineModel('TransactionHistory', {
 		}
 
 		var result = Application.getPaginatedSearchResults({
-				record_type: 'transaction'
-			,	filters: filters
-			,	columns: columns
-			,	page: data.page
-			});
+			record_type: 'transaction'
+			, filters: filters
+			, columns: columns
+			, page: data.page
+		});
 
-		result.records = _.map(result.records, function (record)
-		{
+		result.records = _.map(result.records, function (record) {
 			return {
 				recordtype: record.getRecordType()
-			,	internalid: record.getValue('internalid')
-			,	tranid: record.getValue('tranid')
-			,	trandate: record.getValue('trandate')
-			,	status: record.getText('status')
-			,	amount: toCurrency(record.getValue(amount_field))
-			,	amount_formatted: formatCurrency(record.getValue(amount_field))
+				, internalid: record.getValue('internalid')
+				, tranid: record.getValue('tranid')
+				, trandate: record.getValue('trandate')
+				, status: record.getText('status')
+				, amount: toCurrency(record.getValue(amount_field))
+				, amount_formatted: formatCurrency(record.getValue(amount_field))
 			};
 		});
 
@@ -5318,28 +4863,27 @@ Application.defineModel('TransactionHistory', {
 //Model.js
 Application.defineModel('PrintStatement', {
 
-	getUrl: function(data)
-	{
+	getUrl: function (data) {
 		'use strict';
 		var customerId = customer.getFieldValues(['internalid']).internalid
-		,	offset = new Date().getTimezoneOffset() * 60 * 1000
-		,	statementDate = null
-		,	startDate = null
-		,	openOnly = data.openOnly ? 'T' : 'F'
-		,	inCustomerLocale = data.inCustomerLocale ? 'T' : 'F'
-		,	consolidatedStatement = data.consolidatedStatement ? 'T' : 'F'
-		,	statementTimestamp = parseInt(data.statementDate,10)
-		,	startDateParam = data.startDate
-		,	startTimestamp = parseInt(startDateParam,10)
-		,	email = data.email
-		,	baseUrl = email ? '/app/accounting/transactions/email.nl' : '/app/accounting/print/NLSPrintForm.nl'
-		,	url = baseUrl + '?submitted=T&printtype=statement&currencyprecision=2&formdisplayview=NONE&type=statement';
+			, offset = new Date().getTimezoneOffset() * 60 * 1000
+			, statementDate = null
+			, startDate = null
+			, openOnly = data.openOnly ? 'T' : 'F'
+			, inCustomerLocale = data.inCustomerLocale ? 'T' : 'F'
+			, consolidatedStatement = data.consolidatedStatement ? 'T' : 'F'
+			, statementTimestamp = parseInt(data.statementDate, 10)
+			, startDateParam = data.startDate
+			, startTimestamp = parseInt(startDateParam, 10)
+			, email = data.email
+			, baseUrl = email ? '/app/accounting/transactions/email.nl' : '/app/accounting/print/NLSPrintForm.nl'
+			, url = baseUrl + '?submitted=T&printtype=statement&currencyprecision=2&formdisplayview=NONE&type=statement';
 
-		if(isNaN(statementTimestamp) || (startDateParam && isNaN(startTimestamp))){
+		if (isNaN(statementTimestamp) || (startDateParam && isNaN(startTimestamp))) {
 			throw {
 				status: 500
-			,	code: 'ERR_INVALID_DATE_FORMAT'
-			,	message: 'Invalid date format'
+				, code: 'ERR_INVALID_DATE_FORMAT'
+				, message: 'Invalid date format'
 			};
 		}
 
@@ -5348,7 +4892,7 @@ Application.defineModel('PrintStatement', {
 
 		url += '&customer=' + customerId;
 		url += startDate ? ('&start_date=' + startDate) : '';
-		url += '&statement_date=' +  statementDate;
+		url += '&statement_date=' + statementDate;
 		url += '&consolstatement=' + consolidatedStatement;
 		url += '&openonly=' + openOnly;
 		url += '&incustlocale=' + inCustomerLocale;
@@ -5363,35 +4907,33 @@ Application.defineModel('PrintStatement', {
 // Defines the model used by the quote.ss service
 Application.defineModel('Quote', {
 
-	get: function (id)
-	{
+	get: function (id) {
 		'use strict';
 
 		var fields = ['entitystatus']
-		,	recordLookup = nlapiLookupField('estimate', id, fields, true)
-		,	record = nlapiLoadRecord('estimate', id);
+			, recordLookup = nlapiLookupField('estimate', id, fields, true)
+			, record = nlapiLoadRecord('estimate', id);
 
 		return this.createResultSingle(record, recordLookup);
 	}
 
-,	list: function (data)
-	{
+	, list: function (data) {
 		'use strict';
 
 		var self = this
-		,   page = data.page
-		,	result = {}
-		,   filters = [
+			, page = data.page
+			, result = {}
+			, filters = [
 				new nlobjSearchFilter('mainline', null, 'is', 'T')
 			]
-		,   columns = [
+			, columns = [
 				new nlobjSearchColumn('internalid')
-			,   new nlobjSearchColumn('tranid')
-			,   new nlobjSearchColumn('trandate')
-			,   new nlobjSearchColumn('duedate')
-			,   new nlobjSearchColumn('expectedclosedate')
-			,   new nlobjSearchColumn('entitystatus')
-			,   new nlobjSearchColumn('total')
+				, new nlobjSearchColumn('tranid')
+				, new nlobjSearchColumn('trandate')
+				, new nlobjSearchColumn('duedate')
+				, new nlobjSearchColumn('expectedclosedate')
+				, new nlobjSearchColumn('entitystatus')
+				, new nlobjSearchColumn('total')
 			];
 
 		self.setFilter(data.filter, filters);
@@ -5405,41 +4947,34 @@ Application.defineModel('Quote', {
 			, page: page
 		});
 
-		result.records = _.map(result.records, function (record)
-		{
+		result.records = _.map(result.records, function (record) {
 			return self.createResultMultiple(record);
 		});
 
 		return result;
 	}
 
-,	setFilter: function (filter, filters)
-	{
+	, setFilter: function (filter, filters) {
 		'use strict';
 
-		if (filter && 0 < filter)
-		{
+		if (filter && 0 < filter) {
 			filters.push(new nlobjSearchFilter('entitystatus', null, 'is', filter));
 		}
 	}
 
-,	setDateFromTo: function (from, to, filters)
-	{
+	, setDateFromTo: function (from, to, filters) {
 		'use strict';
 
-		if (from)
-		{
+		if (from) {
 			filters.push(new nlobjSearchFilter('trandate', null, 'onorafter', this.setDateInt(from), null));
 		}
 
-		if (to)
-		{
+		if (to) {
 			filters.push(new nlobjSearchFilter('trandate', null, 'onorbefore', this.setDateInt(to), null));
 		}
 	}
 
-,	setDateInt: function (date)
-	{
+	, setDateInt: function (date) {
 		'use strict';
 
 		var offset = new Date().getTimezoneOffset() * 60 * 1000;
@@ -5447,38 +4982,35 @@ Application.defineModel('Quote', {
 		return new Date(parseInt(date, 10) + offset);
 	}
 
-,	setSortOrder: function (sort, order, columns)
-	{
+	, setSortOrder: function (sort, order, columns) {
 		'use strict';
 
-		switch (sort)
-		{
+		switch (sort) {
 			case 'trandate':
 				columns[2].setSort(order > 0);
-			break;
+				break;
 
 			case 'duedate':
 				columns[3].setSort(order > 0);
-			break;
+				break;
 
 			case 'total':
 				columns[6].setSort(order > 0);
-			break;
+				break;
 
 			default:
 				columns[1].setSort(order > 0);
 		}
 	}
 
-,	createResultSingle: function (record, recordLookup)
-	{
+	, createResultSingle: function (record, recordLookup) {
 		'use strict';
 
 		var result = {}
-		,	duedate = record.getFieldValue('duedate');
+			, duedate = record.getFieldValue('duedate');
 
 		result.internalid = record.getId();
-		result.type =  record.getRecordType();
+		result.type = record.getRecordType();
 		result.tranid = record.getFieldValue('tranid');
 		result.trandate = record.getFieldValue('trandate');
 		result.duedate = duedate;
@@ -5492,11 +5024,11 @@ Application.defineModel('Quote', {
 		result.lineItems = this.getLines(record, 'item');
 		result.itemsExtradata = {
 			couponcode: record.getFieldText('couponcode')
-		,	promocode: record.getFieldText('promocode')
-		,	exchangerate: toCurrency(record.getFieldValue('exchangerate'))
-		,	exchangerate_formatted: formatCurrency(record.getFieldValue('exchangerate'))
-		,	discountitem: record.getFieldText('discountitem')
-		,	discountrate: record.getFieldValue('discountrate')
+			, promocode: record.getFieldText('promocode')
+			, exchangerate: toCurrency(record.getFieldValue('exchangerate'))
+			, exchangerate_formatted: formatCurrency(record.getFieldValue('exchangerate'))
+			, discountitem: record.getFieldText('discountitem')
+			, discountrate: record.getFieldValue('discountrate')
 		};
 
 		// Address
@@ -5505,15 +5037,15 @@ Application.defineModel('Quote', {
 		// Shipping
 		result.shipping = {
 			shipcarrier: record.getFieldText('shipcarrier')
-		,	shipmethod: record.getFieldText('shipmethod')
+			, shipmethod: record.getFieldText('shipmethod')
 
-		,	shippingcost: toCurrency(record.getFieldValue('shippingcost'))
-		,	shippingcost_formatted: formatCurrency(record.getFieldValue('shippingcost'))
+			, shippingcost: toCurrency(record.getFieldValue('shippingcost'))
+			, shippingcost_formatted: formatCurrency(record.getFieldValue('shippingcost'))
 
-		,	shippingtaxcode: record.getFieldText('shippingtaxcode')
+			, shippingtaxcode: record.getFieldText('shippingtaxcode')
 
-		,	shippingtax1rate: toCurrency(record.getFieldValue('shippingtax1rate'))
-		,	shippingtax1rate_formatted: formatCurrency(record.getFieldValue('shippingtax1rate'))
+			, shippingtax1rate: toCurrency(record.getFieldValue('shippingtax1rate'))
+			, shippingtax1rate_formatted: formatCurrency(record.getFieldValue('shippingtax1rate'))
 		};
 
 		// Messages
@@ -5523,30 +5055,29 @@ Application.defineModel('Quote', {
 		// Summary
 		result.summary = {
 			subtotal: toCurrency(record.getFieldValue('subtotal'))
-		,   subtotal_formatted: formatCurrency(record.getFieldValue('subtotal'))
+			, subtotal_formatted: formatCurrency(record.getFieldValue('subtotal'))
 
-		,   discounttotal: toCurrency(record.getFieldValue('discounttotal'))
-		,   discounttotal_formatted: formatCurrency(record.getFieldValue('discounttotal'))
+			, discounttotal: toCurrency(record.getFieldValue('discounttotal'))
+			, discounttotal_formatted: formatCurrency(record.getFieldValue('discounttotal'))
 
-		,   taxtotal: toCurrency(record.getFieldValue('taxtotal'))
-		,   taxtotal_formatted: formatCurrency(record.getFieldValue('taxtotal'))
+			, taxtotal: toCurrency(record.getFieldValue('taxtotal'))
+			, taxtotal_formatted: formatCurrency(record.getFieldValue('taxtotal'))
 
-		,   shippingcost: toCurrency(record.getFieldValue('shippingcost'))
-		,   shippingcost_formatted: formatCurrency(record.getFieldValue('shippingcost'))
+			, shippingcost: toCurrency(record.getFieldValue('shippingcost'))
+			, shippingcost_formatted: formatCurrency(record.getFieldValue('shippingcost'))
 
-		,   total: formatCurrency(record.getFieldValue('total'))
-		,   total_formatted: formatCurrency(record.getFieldValue('total'))
+			, total: formatCurrency(record.getFieldValue('total'))
+			, total_formatted: formatCurrency(record.getFieldValue('total'))
 		};
 
 		return result;
 	}
 
-,	createResultMultiple: function (record)
-	{
+	, createResultMultiple: function (record) {
 		'use strict';
 
 		var result = {}
-		,	duedate = record.getValue('duedate');
+			, duedate = record.getValue('duedate');
 
 		result.internalid = record.getValue('internalid');
 		result.tranid = record.getValue('tranid');
@@ -5557,7 +5088,7 @@ Application.defineModel('Quote', {
 		result.expectedclosedate = record.getValue('expectedclosedate');
 		result.entitystatus = {
 			id: record.getValue('entitystatus')
-		,	name: record.getText('entitystatus')
+			, name: record.getText('entitystatus')
 		};
 		result.total = toCurrency(record.getValue('total'));
 		result.total_formatted = formatCurrency(record.getValue('total'));
@@ -5565,45 +5096,42 @@ Application.defineModel('Quote', {
 		return result;
 	}
 
-,	getLines: function (record, name)
-	{
+	, getLines: function (record, name) {
 		'use strict';
 
 		var data = [];
 
-		for (var i = 1; i <= record.getLineItemCount(name); i++)
-		{
+		for (var i = 1; i <= record.getLineItemCount(name); i++) {
 			data.push(this.getLineInformation(record, i, name));
 		}
 
 		return data;
 	}
 
-,	getLineInformation: function (record, index, name)
-	{
+	, getLineInformation: function (record, index, name) {
 		'use strict';
 
 		var lineInformation = {}
-		,	store_item = Application.getModel('StoreItem');
+			, store_item = Application.getModel('StoreItem');
 
 		switch (name) {
 			case 'item':
 				var amount = record.getLineItemValue(name, 'amount', index)
-				,   rate = record.getLineItemValue(name, 'rate', index);
+					, rate = record.getLineItemValue(name, 'rate', index);
 
 				lineInformation = {
 					quantity: record.getLineItemValue(name, 'quantity', index)
-				,   options: getItemOptionsObject(record.getLineItemValue(name, 'options', index))
+					, options: getItemOptionsObject(record.getLineItemValue(name, 'options', index))
 
-				,   amount: toCurrency(amount)
-				,   amount_formatted: formatCurrency(Math.abs(amount))
+					, amount: toCurrency(amount)
+					, amount_formatted: formatCurrency(Math.abs(amount))
 
-				,   rate: toCurrency(rate)
-				,   rate_formatted: formatCurrency(Math.abs(rate))
+					, rate: toCurrency(rate)
+					, rate_formatted: formatCurrency(Math.abs(rate))
 
-				,   item: store_item.get(
+					, item: store_item.get(
 						record.getLineItemValue(name, 'item', index)
-					,   record.getLineItemValue(name, 'itemtype', index)
+						, record.getLineItemValue(name, 'itemtype', index)
 					)
 				};
 				break;
@@ -5611,7 +5139,7 @@ Application.defineModel('Quote', {
 			case 'message':
 				lineInformation = {
 					subject: record.getFieldValue('subject')
-				,	message: record.getFieldText('message')
+					, message: record.getFieldText('message')
 				};
 				break;
 		}
@@ -5619,25 +5147,22 @@ Application.defineModel('Quote', {
 		return lineInformation;
 	}
 
-,	getDateTime: function ()
-	{
+	, getDateTime: function () {
 		'use strict';
 
 		return new Date().getTime();
 	}
 
-,	isDateInterval: function (date)
-	{
+	, isDateInterval: function (date) {
 		'use strict';
 
-		return 0 >= date  && ((-1 * date) / 1000 / 60 / 60 / 24) >= 1;
+		return 0 >= date && ((-1 * date) / 1000 / 60 / 60 / 24) >= 1;
 	}
 
-,	getDaysBeforeExpiration: function ()
-	{
+	, getDaysBeforeExpiration: function () {
 		'use strict';
 
-		return SC.Configuration.quote.days_to_expire*24*60*60*1000;
+		return SC.Configuration.quote.days_to_expire * 24 * 60 * 60 * 1000;
 	}
 });
 
@@ -5652,11 +5177,10 @@ Application.defineModel('Case', {
 	configuration: SC.Configuration.cases
 
 	// Dummy date for cases with no messages. Not common, but it could happen.
-,	dummy_date: new Date(1970, 1 ,1)
+	, dummy_date: new Date(1970, 1, 1)
 
 	// Returns a new Case record
-,	getNew: function ()
-	{
+	, getNew: function () {
 		'use strict';
 
 		var case_record = nlapiCreateRecord('supportcase');
@@ -5669,7 +5193,7 @@ Application.defineModel('Case', {
 		_(category_options).each(function (category_option) {
 			var category_option_value = {
 				id: category_option.id
-			,	text: category_option.text
+				, text: category_option.text
 			};
 
 			category_option_values.push(category_option_value);
@@ -5683,7 +5207,7 @@ Application.defineModel('Case', {
 		_(origin_options).each(function (origin_option) {
 			var origin_option_value = {
 				id: origin_option.id
-			,	text: origin_option.text
+				, text: origin_option.text
 			};
 
 			origin_option_values.push(origin_option_value);
@@ -5697,7 +5221,7 @@ Application.defineModel('Case', {
 		_(status_options).each(function (status_option) {
 			var status_option_value = {
 				id: status_option.id
-			,	text: status_option.text
+				, text: status_option.text
 			};
 
 			status_option_values.push(status_option_value);
@@ -5711,7 +5235,7 @@ Application.defineModel('Case', {
 		_(priority_options).each(function (priority_option) {
 			var priority_option_value = {
 				id: priority_option.id
-			,	text: priority_option.text
+				, text: priority_option.text
 			};
 
 			priority_option_values.push(priority_option_value);
@@ -5720,63 +5244,57 @@ Application.defineModel('Case', {
 		// New record to return
 		var newRecord = {
 			categories: category_option_values
-		,	origins: origin_option_values
-		,	statuses: status_option_values
-		,	priorities: priority_option_values
+			, origins: origin_option_values
+			, statuses: status_option_values
+			, priorities: priority_option_values
 		};
 
 		return newRecord;
 	}
 
-,	getColumnsArray: function ()
-	{
+	, getColumnsArray: function () {
 		'use strict';
 
 		return [
 			new nlobjSearchColumn('internalid')
-		,	new nlobjSearchColumn('casenumber')
-		,	new nlobjSearchColumn('title')
-		,	new nlobjSearchColumn('status')
-		,	new nlobjSearchColumn('origin')
-		,	new nlobjSearchColumn('category')
-		,	new nlobjSearchColumn('company')
-		,	new nlobjSearchColumn('createddate')
-		,	new nlobjSearchColumn('lastmessagedate')
-		,	new nlobjSearchColumn('priority')
-		,	new nlobjSearchColumn('email')
+			, new nlobjSearchColumn('casenumber')
+			, new nlobjSearchColumn('title')
+			, new nlobjSearchColumn('status')
+			, new nlobjSearchColumn('origin')
+			, new nlobjSearchColumn('category')
+			, new nlobjSearchColumn('company')
+			, new nlobjSearchColumn('createddate')
+			, new nlobjSearchColumn('lastmessagedate')
+			, new nlobjSearchColumn('priority')
+			, new nlobjSearchColumn('email')
 		];
 	}
 
 	// Returns a Case based on a given id
-,	get: function (id)
-	{
+	, get: function (id) {
 		'use strict';
 
-		var filters = [new nlobjSearchFilter('internalid', null, 'is', id),	new nlobjSearchFilter('isinactive', null, 'is', 'F')]
-		,	columns = this.getColumnsArray()
-		,	result = this.searchHelper(filters, columns, 1, true);
+		var filters = [new nlobjSearchFilter('internalid', null, 'is', id), new nlobjSearchFilter('isinactive', null, 'is', 'F')]
+			, columns = this.getColumnsArray()
+			, result = this.searchHelper(filters, columns, 1, true);
 
-		if (result.records.length >= 1)
-		{
+		if (result.records.length >= 1) {
 			return result.records[0];
 		}
-		else
-		{
+		else {
 			throw notFoundError;
 		}
 	}
 
 	// Retrieves all Cases for a given user
-,	search: function (customer_id, list_header_data)
-	{
+	, search: function (customer_id, list_header_data) {
 		'use strict';
 
 		var filters = [new nlobjSearchFilter('isinactive', null, 'is', 'F')]
-		,	columns = this.getColumnsArray()
-		,	selected_filter = parseInt(list_header_data.filter, 10);
+			, columns = this.getColumnsArray()
+			, selected_filter = parseInt(list_header_data.filter, 10);
 
-		if (!_.isNaN(selected_filter))
-		{
+		if (!_.isNaN(selected_filter)) {
 			filters.push(new nlobjSearchFilter('status', null, 'anyof', selected_filter));
 		}
 
@@ -5785,55 +5303,52 @@ Application.defineModel('Case', {
 		return this.searchHelper(filters, columns, list_header_data.page, false);
 	}
 
-,	searchHelper: function (filters, columns, page, join_messages)
-	{
+	, searchHelper: function (filters, columns, page, join_messages) {
 		'use strict';
 
 		var self = this
-		,	result = Application.getPaginatedSearchResults({
+			, result = Application.getPaginatedSearchResults({
 				record_type: 'supportcase'
-			,	filters: filters
-			,	columns: columns
-			,	page: page
+				, filters: filters
+				, columns: columns
+				, page: page
 			});
 
-		result.records = _.map(result.records, function (case_record)
-		{
+		result.records = _.map(result.records, function (case_record) {
 			var current_record_id = case_record.getId()
-			,	created_date = nlapiStringToDate(case_record.getValue('createddate'))
-			,	last_message_date = nlapiStringToDate(case_record.getValue('lastmessagedate'))
-			,	support_case = {
+				, created_date = nlapiStringToDate(case_record.getValue('createddate'))
+				, last_message_date = nlapiStringToDate(case_record.getValue('lastmessagedate'))
+				, support_case = {
 					internalid: current_record_id
-				,	caseNumber: case_record.getValue('casenumber')
-				,	title: case_record.getValue('title')
-				,	grouped_messages: []
-				,	status: {
+					, caseNumber: case_record.getValue('casenumber')
+					, title: case_record.getValue('title')
+					, grouped_messages: []
+					, status: {
 						id: case_record.getValue('status')
-					,	name: case_record.getText('status')
+						, name: case_record.getText('status')
 					}
-				,	origin: {
+					, origin: {
 						id: case_record.getValue('origin')
-					,	name: case_record.getText('origin')
+						, name: case_record.getText('origin')
 					}
-				,	category: {
+					, category: {
 						id: case_record.getValue('category')
-					,	name: case_record.getText('category')
+						, name: case_record.getText('category')
 					}
-				,	company: {
+					, company: {
 						id: case_record.getValue('company')
-					,	name: case_record.getText('company')
+						, name: case_record.getText('company')
 					}
-				,	priority: {
+					, priority: {
 						id: case_record.getValue('priority')
-					,	name: case_record.getText('priority')
+						, name: case_record.getText('priority')
 					}
-				,	createdDate: nlapiDateToString(created_date ? created_date : self.dummy_date, 'date')
-				,	lastMessageDate: nlapiDateToString(last_message_date ? last_message_date : self.dummy_date, 'date')
-				,	email: case_record.getValue('email')
+					, createdDate: nlapiDateToString(created_date ? created_date : self.dummy_date, 'date')
+					, lastMessageDate: nlapiDateToString(last_message_date ? last_message_date : self.dummy_date, 'date')
+					, email: case_record.getValue('email')
 				};
 
-			if (join_messages)
-			{
+			if (join_messages) {
 				self.appendMessagesToCase(support_case);
 			}
 
@@ -5843,58 +5358,52 @@ Application.defineModel('Case', {
 		return result;
 	}
 
-,	stripHtmlFromMessage: function (message)
-	{
+	, stripHtmlFromMessage: function (message) {
 		'use strict';
 
 		return message.replace(/<br\s*[\/]?>/gi, '\n').replace(/<(?:.|\n)*?>/gm, '');
 	}
 
 	// When requesting a case detail, messages are included in the response.
-,	appendMessagesToCase: function (support_case)
-	{
+	, appendMessagesToCase: function (support_case) {
 		'use strict';
 
 		var message_columns = {
-					message_col: new nlobjSearchColumn('message', 'messages')
-				,	message_date_col: new nlobjSearchColumn('messagedate', 'messages').setSort(true)
-				,	author_col: new nlobjSearchColumn('author', 'messages')
-			}
-		,	message_filters = [new nlobjSearchFilter('internalid', null, 'is', support_case.internalid), new nlobjSearchFilter('internalonly', 'messages', 'is', 'F')]
-		,	message_records = Application.getAllSearchResults('supportcase', message_filters, _.values(message_columns))
-		,	grouped_messages = []
-		,	messages_count = 0
-		,	self = this;
+			message_col: new nlobjSearchColumn('message', 'messages')
+			, message_date_col: new nlobjSearchColumn('messagedate', 'messages').setSort(true)
+			, author_col: new nlobjSearchColumn('author', 'messages')
+		}
+			, message_filters = [new nlobjSearchFilter('internalid', null, 'is', support_case.internalid), new nlobjSearchFilter('internalonly', 'messages', 'is', 'F')]
+			, message_records = Application.getAllSearchResults('supportcase', message_filters, _.values(message_columns))
+			, grouped_messages = []
+			, messages_count = 0
+			, self = this;
 
-		_(message_records).each(function (message_record)
-		{
+		_(message_records).each(function (message_record) {
 			var customer_id = nlapiGetUser() + ''
-			,	message_date_tmp = nlapiStringToDate(message_record.getValue('messagedate', 'messages'))
-			,	message_date = message_date_tmp ? message_date_tmp : this.dummy_date
-			,	message_date_to_group_by = message_date.getFullYear() + '-' + (message_date.getMonth() + 1) + '-' + message_date.getDate()
-			,	message = {
+				, message_date_tmp = nlapiStringToDate(message_record.getValue('messagedate', 'messages'))
+				, message_date = message_date_tmp ? message_date_tmp : this.dummy_date
+				, message_date_to_group_by = message_date.getFullYear() + '-' + (message_date.getMonth() + 1) + '-' + message_date.getDate()
+				, message = {
 					author: message_record.getValue('author', 'messages') === customer_id ? 'You' : message_record.getText('author', 'messages')
-				,	text: self.stripHtmlFromMessage(message_record.getValue('message', 'messages'))
-				,	messageDate: nlapiDateToString(message_date, 'timeofday')
-				,	initialMessage: false
+					, text: self.stripHtmlFromMessage(message_record.getValue('message', 'messages'))
+					, messageDate: nlapiDateToString(message_date, 'timeofday')
+					, initialMessage: false
 				};
 
-			if (grouped_messages[message_date_to_group_by])
-			{
+			if (grouped_messages[message_date_to_group_by]) {
 				grouped_messages[message_date_to_group_by].messages.push(message);
 			}
-			else
-			{
+			else {
 				grouped_messages[message_date_to_group_by] = {
 					date: self.getMessageDate(message_date)
-				,	messages: [message]
+					, messages: [message]
 				};
 			}
 
-			messages_count ++;
+			messages_count++;
 
-			if (messages_count === message_records.length)
-			{
+			if (messages_count === message_records.length) {
 				message.initialMessage = true;
 			}
 		});
@@ -5903,20 +5412,18 @@ Application.defineModel('Case', {
 		support_case.messages_count = messages_count;
 	}
 
-,	getMessageDate: function (validJsDate)
-	{
+	, getMessageDate: function (validJsDate) {
 		'use strict';
 
 		var today = new Date()
-		,	today_dd = today.getDate()
-		,	today_mm = today.getMonth()
-		,	today_yyyy = today.getFullYear()
-		,	dd = validJsDate.getDate()
-		,	mm = validJsDate.getMonth()
-		,	yyyy = validJsDate.getFullYear();
+			, today_dd = today.getDate()
+			, today_mm = today.getMonth()
+			, today_yyyy = today.getFullYear()
+			, dd = validJsDate.getDate()
+			, mm = validJsDate.getMonth()
+			, yyyy = validJsDate.getFullYear();
 
-		if (today_dd === dd && today_mm === mm && today_yyyy === yyyy)
-		{
+		if (today_dd === dd && today_mm === mm && today_yyyy === yyyy) {
 			return 'Today';
 		}
 
@@ -5924,8 +5431,7 @@ Application.defineModel('Case', {
 	}
 
 	// Creates a new Case record
-,	create: function (customerId, data)
-	{
+	, create: function (customerId, data) {
 		'use strict';
 
 		customerId = customerId || nlapiGetUser() + '';
@@ -5946,19 +5452,17 @@ Application.defineModel('Case', {
 		return nlapiSubmitRecord(newCaseRecord);
 	}
 
-,	setSortOrder: function (sort, order, columns)
-	{
+	, setSortOrder: function (sort, order, columns) {
 		'use strict';
 
-		switch (sort)
-		{
+		switch (sort) {
 			case 'createdDate':
 				columns[7].setSort(order > 0);
-			break;
+				break;
 
 			case 'lastMessageDate':
 				columns[8].setSort(order > 0);
-			break;
+				break;
 
 			default:
 				columns[1].setSort(order > 0);
@@ -5966,26 +5470,21 @@ Application.defineModel('Case', {
 	}
 
 	// Sanitize html input
-,	sanitize: function (text)
-	{
+	, sanitize: function (text) {
 		'use strict';
 
 		return text ? text.replace(/<br>/g, '\n').replace(/</g, '&lt;').replace(/\>/g, '&gt;') : '';
 	}
 
 	// Updates a Support Case given its id
-,	update: function (id, data)
-	{
+	, update: function (id, data) {
 		'use strict';
 
-		if (data && data.status)
-		{
-			if (data.reply && data.reply.length > 0)
-			{
+		if (data && data.status) {
+			if (data.reply && data.reply.length > 0) {
 				nlapiSubmitField('supportcase', id, ['incomingmessage', 'messagenew', 'status'], [this.sanitize(data.reply), 'T', data.status.id]);
 			}
-			else
-			{
+			else {
 				nlapiSubmitField('supportcase', id, ['status'], data.status.id);
 			}
 		}
