@@ -11,27 +11,27 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 	Views.Home = Backbone.View.extend({
 
 		template: 'fit_profile'
-		, title: _('Fit Profile').translate()
-		, attributes: { 'class': 'FitProfileHomeView' }
-		, events: {
-			'change select#clients-options': 'getFitProfile'
-			, 'change select#profiles-options': 'getProfileDetails'
-			, 'click [data-action=remove-rec]': 'removeRec'
-			, 'click [data-action=copy-profile]': 'copyProfile'
-			, 'click [data-action=add-profile]': 'addProfile'
-			, 'click [id=swx-order-client-search]': 'swxOrderClientSearch'
-			, 'click [id=swx-client-profile-select]': 'swxClientProfileSelect'
-			, 'click [id=swx-back-to-client-profile-search]': 'swxBackToClientSearch'
-			, 'click [id=swx-fitprofile-butt-add]': 'swxFitProfileAdd'
-			, 'click [id=swx-fitprofile-viewedit]': 'swxFitProfileViewEdit'
-			, 'click [id=swx-fitprofile-copy]': 'swxFitProfileCopy'
-			, 'click [id=swx-fitprofile-remove]': 'swxFitProfileRemove'
+		,	title: _('Fit Profile').translate()
+		,	attributes: {'class': 'FitProfileHomeView'}
+		,	events: {
+				'change select#clients-options' : 'getFitProfile'
+			,	'change select#profiles-options' : 'getProfileDetails'
+			,	'click [data-action=remove-rec]' : 'removeRec'
+			,	'click [data-action=copy-profile]' : 'copyProfile'
+			,	'click [data-action=add-profile]' : 'addProfile'
+			,	'click [id=swx-order-client-search]' : 'swxOrderClientSearch'
+			,	'click [id=swx-client-profile-select]' : 'swxClientProfileSelect'
+			,	'click [id=swx-back-to-client-profile-search]' : 'swxBackToClientSearch'
+			,	'click [id=swx-fitprofile-butt-add]' : 'swxFitProfileAdd'
+			,	'click [id=swx-fitprofile-viewedit]' : 'swxFitProfileViewEdit'
+			,	'click [id=swx-fitprofile-copy]' : 'swxFitProfileCopy'
+			,	'click [id=swx-fitprofile-remove]' : 'swxFitProfileRemove'
 
-			, 'click [id=butt-modal-submit]': 'swxFitProfileModalButtSubmit'
-			, 'click [id=butt-modal-copy]': 'swxFitProfileModalButtCopy'
-			, 'click [id=butt-modal-remove]': 'swxFitProfileModalButtRemove'
-			, 'click [id=swx-later-add-order]': 'swxFitProfileAddOrder'
-			, 'blur [name="oh_dateneeded"]': 'updateDateNeeded'
+			,	'click [id=butt-modal-submit]' : 'swxFitProfileModalButtSubmit'
+			,	'click [id=butt-modal-copy]' : 'swxFitProfileModalButtCopy'
+			,	'click [id=butt-modal-remove]' : 'swxFitProfileModalButtRemove'
+			,	'click [id=swx-later-add-order]' : 'swxFitProfileAddOrder'
+			,	'blur [name="oh_dateneeded"]': 'updateDateNeeded'
 
 		}
 		, initialize: function (options) {
@@ -110,7 +110,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 			_.toggleMobileNavButt();
 		}
 
-		, swxOrderClientSearch: function (e) {
+		,	swxOrderClientSearch: function (e) {
 			var $ = jQuery;
 			this.model.set('swx_client_profile_order_history', '');
 
@@ -356,7 +356,10 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 
 		, swxFitProfileModalButtRemove: function (e) {
 			var $ = jQuery;
-			jQuery("[id='swx-fitprofile-remove']").click();
+						var message = _("Are you sure that you want to delete this client and their fit profiles?").translate();
+				if (window.confirm(message)) {
+					jQuery("[id='swx-fitprofile-remove']").click();
+				}
 		}
 
 		, swxFitProfileModalButtCopy: function (e) {
