@@ -18,7 +18,10 @@ define('PlacedOrder.Collection', ['PlacedOrder.Model'], function (Model)
 	,	initialize: function (search)
 		{
 			this.url += "?clientName=" + search;
-			
+
 		}
+	, comparator: function(model){
+			return model.get('tranline_status');
+	}
 	});
 });

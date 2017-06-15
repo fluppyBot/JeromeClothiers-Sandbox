@@ -359,9 +359,12 @@
 		,	events: {
 				'click [rel=clickover]': 'showTrakingNumbers'
 			,	'click button[rel=search]': 'search'
+			, 'click button[id=showred]': 'showRed'
 			,	'blur [name="oh_dateneeded"]': 'updateDateNeeded'
 			}
-
+			, showRed : function(){
+				this.collection.sort();
+			}
 		,	search: function(e){
 				e.preventDefault();
 				var url = "ordershistory"
