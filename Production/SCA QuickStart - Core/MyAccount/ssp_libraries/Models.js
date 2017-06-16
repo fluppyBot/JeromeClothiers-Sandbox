@@ -480,7 +480,7 @@ Application.defineModel('PlacedOrder', {
 		if (context.getFeature('MULTISITE') && session.getSiteSettings(['siteid']).siteid) {
 			filters.push(new nlobjSearchFilter('website', null, 'anyof', [session.getSiteSettings(['siteid']).siteid, '@NONE@']));
 		}
-		var result = Application.getSalesOrderPaginatedSearchResults({
+		var result = Application.getAllSalesOrderPaginatedSearchResults({
 			record_type: 'salesorder'
 			, filters: filters
 			, columns: columns
@@ -488,7 +488,6 @@ Application.defineModel('PlacedOrder', {
 		});
 
 		if (clientName) {
-			nlapiLogExecution('debug','hasClientName')
 			filters = [
 				new nlobjSearchFilter('entity', null, 'is', nlapiGetUser())
 				, new nlobjSearchFilter('custcol_itm_category_url', null, 'isnotempty')
@@ -620,15 +619,15 @@ Application.defineModel('PlacedOrder', {
 		});
 		var results_per_page = SC.Configuration.results_per_page;
 
-		// if(sort && sort == 'true'){
-		// 	nlapiLogExecution('debug','sort',sort);
-		// result.records.sort(function(a,b){
-		// 	return (a.tranline_status === b.tranline_status)? 0 : a.tranline_status? -1 : 1
-		// });
-		// }
-		// var range_start = (page * results_per_page) - results_per_page
-		// ,	range_end = page * results_per_page;
-		// result.records = result.records.slice(range_start, range_end);
+		if(sort && sort == 'true'){
+			nlapiLogExecution('debug','sort',sort);
+		result.records.sort(function(a,b){
+			return (a.tranline_status === b.tranline_status)? 0 : a.tranline_status? -1 : 1
+		});
+		}
+		var range_start = (page * results_per_page) - results_per_page
+		,	range_end = page * results_per_page;
+		result.records = result.records.slice(range_start, range_end);
 		/**
 		var arrObjRecords = [];
 		var stRecords = JSON.stringify(result.records);

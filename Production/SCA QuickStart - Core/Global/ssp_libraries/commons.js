@@ -691,6 +691,7 @@ var Application = _.extend({
 				page: page
 			,	recordsPerPage: results_per_page
 			,	records: []
+			, totalRecordsFound:0
 			};
 
 		/**
