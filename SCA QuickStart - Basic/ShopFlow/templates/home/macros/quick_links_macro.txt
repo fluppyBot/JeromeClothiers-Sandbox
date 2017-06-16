@@ -1,10 +1,24 @@
 <% registerMacro('quickLinks', function(model) { %>
-	
+
 	<%
-		console.log('ShopFlow > templates > home > macros > quick_links_macro')
+		var hash = Backbone.history.getFragment() || '';
+		var is_home = hash === '' || hash === '/';
+		
+		//console.log('Global > footer: quickLinks' + '\n' + 'is_home: ' + is_home)
 	%>
 		
-	<div id="quick-button-overlay" class="quick-button-area"></div>
+	<% if (is_home) { %>
+		<div id="quick-button-overlay" class="quick-button-area home"></div>
+	<% } else { %>
+		<div id="quick-button-overlay" class="quick-button-area"></div>
+	<% } %>
+	
+	
+	<%
+		//console.log('model: ' + '\n' + JSON.stringify(model, 'key', '\t'))
+	%>
+	
+	
 	<div id="quick-button-content" class="quick-button-area">
 		<div class="container">
 			<div class="row">

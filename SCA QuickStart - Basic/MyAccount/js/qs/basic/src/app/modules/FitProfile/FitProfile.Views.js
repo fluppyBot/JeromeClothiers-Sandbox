@@ -32,7 +32,9 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 			, 'click [id=butt-modal-remove]': 'swxFitProfileModalButtRemove'
 			, 'click [id=swx-later-add-order]': 'swxFitProfileAddOrder'
 			, 'blur [name="oh_dateneeded"]': 'updateDateNeeded'
-
+			, 'keypress [id="swx-order-client-name"]':'keyPressSwxOrderClientSearch'
+			, 'keypress [id="swx-order-client-email"]':'keyPressSwxOrderClientSearch'
+			, 'keypress [id="swx-order-client-phone"]':'keyPressSwxOrderClientSearch'
 		}
 		, initialize: function (options) {
 			this.model = options.model;
@@ -52,6 +54,12 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 
 
 
+		}
+
+		, keyPressSwxOrderClientSearch: function(e){
+			if(e.which === 13){
+				this.swxOrderClientSearch();
+			}
 		}
 
 		, updateDateNeeded: function (e) {
@@ -182,7 +190,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 					if (model.get('client_name') == clientFullName) {
 						filteredClientOrderHistory.push({
 							orderDate: model.get('date'),
-							orderNum: model.get('order_number'),
+							orderNum: model.get('so_id'),
 							item: model.get('item'),
 							fabricStatus: model.get('fabricstatus'),
 							cmtStatus: model.get('cmtstatus'),
