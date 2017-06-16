@@ -15,7 +15,7 @@ function service (request)
 			,	id = request.getParameter('internalid')
 			,	page = request.getParameter('page') || 1
 			//  custom parameter used for searching.
-			,	clientName = request.getParameter('clientName')
+			,	clientName = request.getParameter('search')
 			//  Order model is defined on ssp library Models.js
 			,	PlacedOrder = Application.getModel('PlacedOrder'),
 			data = JSON.parse(request.getBody() || '{}')

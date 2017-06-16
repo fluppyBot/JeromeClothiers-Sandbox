@@ -362,28 +362,29 @@
 			, 'click button[id="sortred"]': 'sortRed'
 			,	'blur [name="oh_dateneeded"]': 'updateDateNeeded'
 			}
-			,	initialize: function (options)
-				{
-					this.options = options;
-					this.collection = options.collection;
-					this.application = options.application;
-					this.search = options.search;
-					this.page = options.page;
-
-			}
+			// ,	initialize: function (options)
+			// 	{
+			// 		this.options = options;
+			// 		this.collection = options.collection;
+			// 		this.application = options.application;
+			// 		this.search = options.search;
+			// 		this.page = options.page;
+			//
+			// }
 			, sortRed : function(){
 				var options ={};
-				options.page = this.page || 1;
-				options.search = this.search || "";
+				options.page = this.options.page || 1;
+				options.search = this.options.search || "";
 				options.sort = true;
-				this.collection
+				this.options.collection
 					.fetch({
-						killerId: this.application.killerId
+						killerId: this.options.application.killerId
 					,	data: options
 					,	reset: true
 					});
 			}
 		,	search: function(e){
+			console.log('searchclicked')
 				e.preventDefault();
 				var url = "ordershistory"
 				,	search_keyword = jQuery("input[rel=search]").val();
