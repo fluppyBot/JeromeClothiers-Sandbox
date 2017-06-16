@@ -359,11 +359,29 @@
 		,	events: {
 				'click [rel=clickover]': 'showTrakingNumbers'
 			,	'click button[rel=search]': 'search'
-			, 'click button[id=showred]': 'showRed'
+			, 'click button[id="sortred"]': 'sortRed'
 			,	'blur [name="oh_dateneeded"]': 'updateDateNeeded'
 			}
-			, showRed : function(){
-				this.collection.sort();
+			,	initialize: function (options)
+				{
+					this.options = options;
+					this.collection = options.collection;
+					this.application = options.application;
+					this.search = options.search;
+					this.page = options.page;
+
+			}
+			, sortRed : function(){
+				var options ={};
+				options.page = this.page || 1;
+				options.search = this.search || "";
+				options.sort = true;
+				this.collection
+					.fetch({
+						killerId: this.application.killerId
+					,	data: options
+					,	reset: true
+					});
 			}
 		,	search: function(e){
 				e.preventDefault();

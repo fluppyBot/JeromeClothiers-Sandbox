@@ -18,7 +18,8 @@ function service (request)
 			,	clientName = request.getParameter('clientName')
 			//  Order model is defined on ssp library Models.js
 			,	PlacedOrder = Application.getModel('PlacedOrder'),
-			data = JSON.parse(request.getBody() || '{}');
+			data = JSON.parse(request.getBody() || '{}')
+			, sort = request.getParameter('sort');
 
 
 			switch (method)
@@ -26,9 +27,9 @@ function service (request)
 				case 'GET':
 					//If the id exist, sends the response of Order.get(id), else sends the response of (Order.list(page) || [])
 					if (clientName){
-						Application.sendContent(id ? PlacedOrder.get(id) : (PlacedOrder.list(page, clientName) || []));
+						Application.sendContent(id ? PlacedOrder.get(id) : (PlacedOrder.list(page, clientName,sort) || []));
 					} else {
-						Application.sendContent(id ? PlacedOrder.get(id) : (PlacedOrder.list(page) || []));
+						Application.sendContent(id ? PlacedOrder.get(id) : (PlacedOrder.list(page,clientName,sort) || []));
 					}
 
 				break;
