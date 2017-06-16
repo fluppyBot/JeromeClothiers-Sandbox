@@ -200,6 +200,9 @@ define('FitProFile.Views',  ['Client.Model', 'Profile.Model','Profile.Collection
 
 	,	removeRec : function(e){
 			e.preventDefault();
+			var message = _("Are you sure that you want to delete this client and their fit profiles?").translate();
+
+			if (window.confirm(message)) {
 			var selector = jQuery(e.target)
 			,	id = selector.data("id")
 			,	type = selector.data("type")
@@ -217,6 +220,7 @@ define('FitProFile.Views',  ['Client.Model', 'Profile.Model','Profile.Collection
 				//jQuery("#" + selector.context.parentNode.id).val();
 			});
 		}
+		}
 	});
 
 
@@ -226,7 +230,7 @@ define('FitProFile.Views',  ['Client.Model', 'Profile.Model','Profile.Collection
 	,	events: {
 			'change select#in-modal-custrecord_fp_product_type' : 'getMeasurementType'
 		,	'change select#custrecord_fp_measure_type' : 'buildMesureForm'
-    ,   'change select#body-fit': 'rebuildMeasureForm'
+    // ,  'change select#body-fit': 'rebuildMeasureForm'
 		,	'change .allowance-fld' : 'updateFinalMeasure'
 		,	'change .body-measure-fld' : 'updateFinalMeasure'
 		,	'change #fit' : 'updateAllowanceLookup'
@@ -409,6 +413,7 @@ define('FitProFile.Views',  ['Client.Model', 'Profile.Model','Profile.Collection
 		}
 	,	submitProfile: function(e){
 			e.preventDefault();
+			console.log(e);
 			var range = {
 				"Neck" :{min:31,max:59},
 				"Shoulder" :{min:37,max:67},
@@ -446,21 +451,36 @@ define('FitProFile.Views',  ['Client.Model', 'Profile.Model','Profile.Collection
 			,	self = this
 			,	dataToSend = new Array()
 			,	measurementValues = new Array()
+
 			,	profileNameValue = jQuery("#in-modal-name").val() ?
 					jQuery("#in-modal-name").val() : jQuery("#name").val()
 			, 	productTypeValue = jQuery("#in-modal-custrecord_fp_product_type").val() ?
 					jQuery("#in-modal-custrecord_fp_product_type").val() : jQuery("#custrecord_fp_product_type").val()
 			, 	measureTypeValue = jQuery("#in-modal-custrecord_fp_measure_type").val() ?
 					jQuery("#in-modal-custrecord_fp_measure_type").val() : jQuery("#custrecord_fp_measure_type").val()
+
 			if(measureTypeValue == 'Block'){
-				// if(jQuery('#in-modal-body-fit').val() == 'Select' || !jQuery('#in-modal-body-fit').val()){
-				// 	this.showError(_('Please enter Fit Value').translate());
-				// 	return false;
-				// }
-				// if(jQuery('#in-modal-body-block').val() == 'Select' || !jQuery('#in-modal-body-block').val()) {
-				// 	this.showError(_('Please enter Block Value').translate());
-				// 	return false;
-				// }
+				var inmodal = e.target.elements.block.id.indexOf('in-modal')!=-1?true:false;
+				if(inmodal){
+					if(jQuery('#in-modal-body-fit').val() == 'Select' || !jQuery('#in-modal-body-fit').val()){
+						this.showError(_('Please enter Fit Value').translate());
+						return false;
+					}
+					if(jQuery('#in-modal-body-block').val() == 'Select' || !jQuery('#in-modal-body-block').val()) {
+						this.showError(_('Please enter Block Value').translate());
+						return false;
+					}
+				}
+				else{
+					if(jQuery('#body-fit').val() == 'Select' || !jQuery('#body-fit').val()){
+						this.showError(_('Please enter Fit Value').translate());
+						return false;
+					}
+					if(jQuery('#body-block').val() == 'Select' || !jQuery('#body-block').val()) {
+						this.showError(_('Please enter Block Value').translate());
+						return false;
+					}
+				}
 
 			}
 			this.model.set("name", jQuery("#in-modal-name").val());
