@@ -1,4 +1,4 @@
-<h2 style="border-bottom: 1px solid #eee;padding-bottom: 5px;margin-bottom: 10px;margin-top: 35px;"><%= _('Fit Profile').translate() %></h2>
+<h2><%= _('Fit Profile').translate() %></h2><hr/>
 
 <% if(view.groupProfile && view.groupProfile.length > 0){ %>
 	<% _.each(view.groupProfile, function(profile){ %>
@@ -6,10 +6,9 @@
 	<% }); %>
 <% } %>
 
-<!--NOTES: Remove by comsmetuc changes update.-->
-<!--<div class="control-group" data-input="fitprofile-message">
+<div class="control-group" data-input="fitprofile-message">
 	<label class="control-label" for="fitprofile-message"><%= _('Fit Profile Notes').translate() %></label>
 	<div class="controls">
 		<textarea class="input-xxlarge fitprofile-message" id="fitprofile-message" name="fitprofile"></textarea>
 	</div>
-</div>-->
+</div>

@@ -132,12 +132,12 @@ SC.SE = null;
 SC.sessioncheck = function(){
 	self = this;
 	console.log('sessioncheck')
-	//if((new Date()-SC.SESSIONTIME) >= 68400000){
+	if((new Date()-SC.SESSIONTIME) >= 68400000){
     	jQuery.ajax({
     		url: 'http://store.jeromeclothiers.com/api/items'
     	});
 			SC.SESSIONTIME = new Date();
-	//}
+	}
 	if(SC.SE)
 		clearTimeout(SC.SE);
 	SC.SE = setTimeout(function(){SC.sessioncheck();}, 1140000);
@@ -148,7 +148,7 @@ SC.sessioncheck = function(){
 /*
 //loadScript([
 //	'<%= session.getAbsoluteUrl("shopping", 'js/libs/Libraries-0159082576a2.js') %>'
-//,	'<%= session.getAbsoluteUrl("shopping", 'templates/Templates-015c6634474f.js') %>'
-//,	'<%= session.getAbsoluteUrl("shopping", 'js/Application-015c61716e1b.js') %>'
+//,	'<%= session.getAbsoluteUrl("shopping", 'templates/Templates-015be5f95fc6.js') %>'
+//,	'<%= session.getAbsoluteUrl("shopping", 'js/Application-015c0eeaeb65.js') %>'
 //]);
 */

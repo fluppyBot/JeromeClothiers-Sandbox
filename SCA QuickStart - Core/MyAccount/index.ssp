@@ -70,8 +70,8 @@
 		<% if (Error) { %>
 		<script>SC.ENVIRONMENT.contextError = <%= JSON.stringify(Error) %>;</script>
 		<% } %>
-		<script src="<%= session.getAbsoluteUrl('checkout', 'js/Application-015c620df5c8.js') %>"></script>
-		<script src="<%= session.getAbsoluteUrl('checkout', 'templates/Templates-015c66959edd.js') %>"></script>
+		<script src="<%= session.getAbsoluteUrl('checkout', 'js/Application-015b50c7c982.js') %>"></script>
+		<script src="<%= session.getAbsoluteUrl('checkout', 'templates/Templates-015b5122b4fb.js') %>"></script>
 	</head>
 	<body>
 
@@ -92,7 +92,7 @@
 		<div id="main" class="main"></div>
 
 		<% if (siteType && siteType === 'ADVANCED') { %>
-		<link rel="stylesheet" href="<%= session.getAbsoluteUrl('checkout', 'skins/standard/Styles-015c128aef6a.css') %>">
+		<link rel="stylesheet" href="<%= session.getAbsoluteUrl('checkout', 'skins/standard/Styles-015b214e6792.css') %>">
 		<% } %>
 
 	</body>

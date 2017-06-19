@@ -279,15 +279,15 @@ checkoutSteps: [											//an array with the step groups conforming The Checko
 								,	title: _('Enter Shipping Address').translate()
 								}
 							]
-						// ,	'OrderWizard.Module.MultiShipTo.NonShippableItems'
-						// ,	[	'OrderWizard.Module.Proxy.Shipmethod'
-						// 	,	{
-						// 			is_read_only: false
-						// 		,	hide_title: true //All SUB-MODULES does not show its titles
-						// 		,	hide_items: true
-						// 		,	title: _('Choose delivery method').translate()
-						// 		}
-						// 	]
+						,	'OrderWizard.Module.MultiShipTo.NonShippableItems'
+						,	[	'OrderWizard.Module.Proxy.Shipmethod'
+							,	{
+									is_read_only: false
+								,	hide_title: true //All SUB-MODULES does not show its titles
+								,	hide_items: true
+								,	title: _('Choose delivery method').translate()
+								}
+							]
 						,	['OrderWizard.Module.PaymentMethod.GiftCertificates', {title: _('Choose Payment Method').translate()}]
 						,	['OrderWizard.Module.PaymentMethod.Selector', {
 								modules: [
@@ -297,7 +297,7 @@ checkoutSteps: [											//an array with the step groups conforming The Checko
 								// 	,	type: 'creditcard'
 								// 	,	options: {}
 								// 	}
-								// ,	
+								// ,
 									{
 										classModule: 'OrderWizard.Module.PaymentMethod.Invoice'
 									,	name: _('On Account').translate()

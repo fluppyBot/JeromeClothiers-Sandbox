@@ -100,7 +100,6 @@ define('Cart.SaveForLater.View', ['ErrorManagement', 'ProductListDetails.View', 
 		{
 			var self = this;
 			
-			console.log('saveForLaterItemHelper',product.get('item'));
 
 			jQuery.when(this.model.removeLine(product), self.addItemToList(product.get('item'))).then(function() 
 			{
@@ -115,8 +114,6 @@ define('Cart.SaveForLater.View', ['ErrorManagement', 'ProductListDetails.View', 
 		// Add a new product list item into a product list		
 	,	addItemToList: function (product)
 		{
-
-			console.log('addItemToList from Car.SaveForLater.view.js',product);
 			var defer = jQuery.Deferred();
 
 			if (this.validateGiftCertificate(product))

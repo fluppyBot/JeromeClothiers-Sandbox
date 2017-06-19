@@ -394,6 +394,7 @@ define('Wizard.Step', function ()
 		// and asks the wizard to go to the next step
 	,	submit: function (e)
 		{
+			
 			// Disables the navigation Buttons
 			e && this.disableNavButtons();
 

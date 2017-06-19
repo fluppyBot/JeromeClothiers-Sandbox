@@ -15,7 +15,7 @@
         ,   {id: 'pricelevel5:desc', name: _('Price, High to Low ').translate()}
         ];
 
-        application.Configuration.facets = [   
+        application.Configuration.facets = [
 			{
 				id: 'category'
 			,	name: _('Category').translate()
@@ -68,7 +68,7 @@
             ,    collapsed: false
             ,    titleSeparator: ', '
             }
-        
+
         ,   {
                 id: 'onlinecustomerprice'
             ,   name: _('Price').translate()
@@ -84,7 +84,7 @@
                     return _.formatCurrency(value);
                 }
             }
-        ]       
+        ]
 
         application.addModule('FitProFile');
         application.addModule('ModalGallery');

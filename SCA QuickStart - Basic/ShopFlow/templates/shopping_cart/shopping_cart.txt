@@ -31,20 +31,6 @@
 	
 %>
 
-<style>
-    .breadcrumb.hidden-phone{
-        margin-bottom: 0px;
-        
-        padding-bottom: 0px;
-    }
-
-    .no-margin-top{
-        padding-top:0px;
-        padding-bottom:0px;
-    }
-
-
-</style>
 <% if (lines && lines.length) { %>
 	<div class="view-header container">
 		<%= breadcrumb(crumbTrail) %>

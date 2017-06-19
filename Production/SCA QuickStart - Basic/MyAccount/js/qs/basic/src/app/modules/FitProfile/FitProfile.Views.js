@@ -1,11 +1,12 @@
 // Profile.Views.js
 // -----------------------
 // Views for profile's operations
-define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory.Collection'], function (ClientModel, ProfileModel, Collection) {
+define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory.Collection','ItemDetails.Model'], function (ClientModel, ProfileModel, Collection,ItemDetailsModel) {
 	'use strict';
 
 	var Views = {};
 	var saveForLaterItems = [];
+	var saveForlater = [];
 
 	// home page view
 	Views.Home = Backbone.View.extend({
@@ -32,9 +33,9 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 			, 'click [id=butt-modal-remove]': 'swxFitProfileModalButtRemove'
 			, 'click [id=swx-later-add-order]': 'swxFitProfileAddOrder'
 			, 'blur [name="oh_dateneeded"]': 'updateDateNeeded'
-			, 'keypress [id="swx-order-client-name"]':'keyPressSwxOrderClientSearch'
-			, 'keypress [id="swx-order-client-email"]':'keyPressSwxOrderClientSearch'
-			, 'keypress [id="swx-order-client-phone"]':'keyPressSwxOrderClientSearch'
+			//, 'keypress [id="swx-order-client-name"]':'keyPressSwxOrderClientSearch'
+			//, 'keypress [id="swx-order-client-email"]':'keyPressSwxOrderClientSearch'
+			//, 'keypress [id="swx-order-client-phone"]':'keyPressSwxOrderClientSearch'
 		}
 		, initialize: function (options) {
 			this.model = options.model;
@@ -54,6 +55,16 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 
 
 
+		}
+
+		// Gets the ItemDetailsModel for the cart
+	,	getItemForCart: function (id, qty, opts)
+		{
+			return new ItemDetailsModel({
+				internalid: id
+			,	quantity: qty
+			,	options: opts
+			});
 		}
 
 		, keyPressSwxOrderClientSearch: function(e){
@@ -153,20 +164,66 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 
 
 		, swxFitProfileAddOrder: function (e) {
+
+			e.preventDefault();
+
 			var selectedClientItemId = e.target.getAttribute('swx-client-item-id');
 
 			console.log('swxFitProfileAddOrder>selectedClientItemId', selectedClientItemId);
-			console.log('saveForLaterItems', saveForLaterItems);
+			console.log('saveForLaterItems', saveForlater);
 
+			
 			//Filter the saveForLaterItems
-			var itemToAdd = _.findWhere(saveForLaterItems, { displayname: selectedClientItemId });
-			console.log('itemToAdd', itemToAdd);
+			// var itemToAdd = _.findWhere(saveForLaterItems, { displayname: selectedClientItemId });
+			// var tempItem = itemToAdd.itemObject;
+			// console.log('tempItem', tempItem);
 
-			this.application.getCart().addItem(itemToAdd.itemObject).done(function () {
-				console.log('added to cart');
-			});
+			//console.log('self.model.get(items)',this.model('items'));
+
+			//var itemDetails = this.getItemForCart(itemToAdd.internalid,itemToAdd.quantity);
+			//console.log('itemToAdd.internalid',itemToAdd.internalid);
+
+			// var self = this			
+			// ,	selected_product_list_item_id = itemToAdd.internalid
+			// ,	selected_product_list_item = self.model.get('items').findWhere({
+			//  		internalid: selected_product_list_item_id.toString()
+			//  	});
+			// ,	selected_item = selected_product_list_item.get('item')
+			// ,	selected_item_internalid = selected_item.internalid
+			// ,	item_detail = self.getItemForCart(selected_item_internalid, selected_product_list_item.get('quantity'));
+
+			// item_detail.set('_optionsDetails', selected_item.itemoptions_detail);
+			// item_detail.setOptionsArray(selected_product_list_item.getOptionsArray(), true);
+
+			// var add_to_cart_promise = this.addItemToCart(item_detail)
+			// ,	whole_promise = null;
+
+			// if (this.sflMode)
+			// {
+			// 	whole_promise = jQuery.when(add_to_cart_promise, this.deleteListItem(selected_product_list_item)).then(jQuery.proxy(this, 'executeAddToCartCallback'));
+			// }			
+			// else
+			// {
+			// 	whole_promise = jQuery.when(add_to_cart_promise).then(jQuery.proxy(this, 'showConfirmationHelper', selected_product_list_item));
+			// }
+
+			// if (whole_promise)
+			// {
+			// 	this.disableElementsOnPromise(whole_promise, 'article[data-item-id="' + selected_item_internalid + '"] a, article[data-item-id="' + selected_item_internalid + '"] button');
+			// }
+
+
+			
+
+			
+
+			// this.application.getCart().addItem(itemToAdd.itemObject).done(function () {
+			// 	console.log('added to cart');
+			// });
 
 		}
+
+	
 
 		, swxClientProfileOrderHistory: function (e) {
 			var $ = jQuery;
@@ -269,6 +326,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 			this.application.getSavedForLaterProductList(objRef).done(function (response) {
 				//console.log(response);
 				saveForLaterItems = [];
+				saveForlater = response;
 				response.items.forEach(function (element) {
 					//console.log(element);
 					if (element.options.custcol_tailor_client.value === selectedClientIdValue) {

@@ -30,7 +30,7 @@
 									"background-image: url('/assets/images/content/quick buttons/quick_buttons.png'); 
 									 background-position: <%=quickLink.xPosition%> 0px"></div>
 							</div>
-							<div><%=_(quickLink.text).translate() %></div>
+							<div><%= quickLink.text %></div>
 						</a>
 					</div>
 				<% }) %>

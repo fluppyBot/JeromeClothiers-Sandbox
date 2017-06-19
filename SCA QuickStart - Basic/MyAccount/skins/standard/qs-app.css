@@ -1036,6 +1036,3 @@ table.table.order-details.order-details-payment .billing-info-order-sumary {
     width: 18%;
 }
 }
-input[type=date]::-webkit-inner-spin-button {
-    display: none;
-}

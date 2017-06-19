@@ -56,6 +56,7 @@ define('ProductListDetails.View'
 		{
 			this.options = options;
 			this.model = options.model;
+			console.log('ProductlistDetails.View.js>this.model',this.model);
 			this.application = options.application;
 			this.cart = this.application.getCart();
 

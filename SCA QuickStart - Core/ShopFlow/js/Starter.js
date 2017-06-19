@@ -1,4 +1,13 @@
-
+SC.sessioncheck = function(){
+	self = this;
+	console.log('hastimedout');
+	jQuery.ajax({
+		url: 'http://store.jeromeclothiers.com/api/items'
+	});
+	setTimeout(function(){
+		SC.sessioncheck();
+	}, 1140000);
+}
 
 SC.startShopping = function ()
 {
@@ -92,9 +101,7 @@ SC.startShopping = function ()
 				Backbone.history.start({
 					pushState: SC.ENVIRONMENT.seoSupport && SC.ENVIRONMENT.jsEnvironment === 'browser'
 				});
-			}
-			//SC.sessioncheck();
-			
+			}			
 		});
 	});
 	// remove the script added for load script function

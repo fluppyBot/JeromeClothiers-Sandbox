@@ -668,6 +668,66 @@ var Application = _.extend({
 		return result;
 	}
 
+,	getAllSalesOrderPaginatedSearchResults: function (options)
+	{
+		'use strict';
+
+		options = options || {};
+
+		var results_per_page = options.results_per_page || SC.Configuration.results_per_page
+		,	page = options.page || 1
+		,	columns = options.columns || []
+		,	filters = options.filters || []
+		,	record_type = options.record_type
+		//,	range_start = (page * results_per_page) - results_per_page
+		//,	range_end = page * results_per_page
+		/**
+		,	do_real_count = _.any(columns, function (column)
+			{
+				return column.getSummary();
+			})
+		**/
+		,	result = {
+				page: page
+			,	recordsPerPage: results_per_page
+			,	records: []
+			, totalRecordsFound:0
+			};
+
+		/**
+		if (!do_real_count || options.column_count)
+		{
+			var column_count = options.column_count || new nlobjSearchColumn('internalid', null, 'count')
+			,	count_result = nlapiSearchRecord(record_type, null, filters, [column_count]);
+
+			result.totalRecordsFound = parseInt(count_result[0].getValue(column_count), 10);
+		}
+
+		if (do_real_count || (result.totalRecordsFound > 0 && result.totalRecordsFound > range_start))
+		{
+			var search = nlapiCreateSearch(record_type, filters, columns).runSearch();
+			result.records = search.getResults(range_start, range_end);
+
+			if (do_real_count && !options.column_count)
+			{
+				result.totalRecordsFound = search.getResults(0, 1000).length;
+			}
+		}
+		**/
+
+			var search = nlapiCreateSearch(record_type, filters, columns).runSearch();
+			var searchindex = 0;
+			do{
+
+				var searchresults = search.getResults(searchindex, searchindex+1000);
+				result.records = result.records.concat(searchresults);
+				result.totalRecordsFound += searchresults.length;//search.getResults(0, 1000).length;
+				searchindex += 1000;
+			}
+			while(searchresults.length == 1000)
+		return result;
+	}
+
 
 	, getAllSearchResults: function (record_type, filters, columns) {
 		'use strict';

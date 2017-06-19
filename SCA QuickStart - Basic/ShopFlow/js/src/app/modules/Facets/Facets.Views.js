@@ -445,8 +445,6 @@ define('Facets.Views', ['Cart', 'Facets.Helper', 'Categories'], function (Cart, 
 		// Adds the item to the cart
 	,	addToCart: function (e)
 		{
-			console.log('Facets.Views.js>addToCart');
-			
 			e.preventDefault();
 
 			var options = jQuery(e.target).serializeObject()

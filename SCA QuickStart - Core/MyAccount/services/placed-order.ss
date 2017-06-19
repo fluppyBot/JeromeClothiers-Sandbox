@@ -15,10 +15,11 @@ function service (request)
 			,	id = request.getParameter('internalid')
 			,	page = request.getParameter('page') || 1
 			//  custom parameter used for searching.
-			,	clientName = request.getParameter('clientName')
+			,	clientName = request.getParameter('search')
 			//  Order model is defined on ssp library Models.js
 			,	PlacedOrder = Application.getModel('PlacedOrder'),
-			data = JSON.parse(request.getBody() || '{}');
+			data = JSON.parse(request.getBody() || '{}')
+			, sort = request.getParameter('sort');
 
 
 			switch (method)
@@ -26,17 +27,16 @@ function service (request)
 				case 'GET':
 					//If the id exist, sends the response of Order.get(id), else sends the response of (Order.list(page) || [])
 					if (clientName){
-						Application.sendContent(id ? PlacedOrder.get(id) : (PlacedOrder.list(page, clientName) || []));
+						Application.sendContent(id ? PlacedOrder.get(id) : (PlacedOrder.list(page, clientName,sort) || []));
 					} else {
-						Application.sendContent(id ? PlacedOrder.get(id) : (PlacedOrder.list(page) || []));
+						Application.sendContent(id ? PlacedOrder.get(id) : (PlacedOrder.list(page,clientName,sort) || []));
 					}
 
 				break;
 				case 'PUT':
-					//if(data.dateneeded){
-						//PlacedOrder.setDateNeeded(data);
-					//}
-					PlacedOrder.setDateNeeded(data);
+					if(data.dateneeded){
+						PlacedOrder.setDateNeeded(data);
+					}
 					Application.sendContent(PlacedOrder.get(data.solinekey.split('_')[0]));
 					break;
 				default:

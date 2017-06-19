@@ -51,7 +51,7 @@ define('OrderWizard.Router', ['Wizard.Router', 'OrderWizard.Step', 'Order.Model'
 			,	content = ''
 			,	page_header = ''
 			,	last_order_id = options && ~options.indexOf('last_order_id=');
-
+			
 			if (last_order_id || !this.application.getCart().getTotalItemCount())
 			{
 				if(this.application.getUser().get('isGuest') !== 'T' && last_order_id)

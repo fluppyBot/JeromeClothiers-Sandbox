@@ -1,62 +1,28 @@
-
-<% 
-
-var client_collection = view.client_collection;
-console.log('client_collection from order_wizard_showshipments_module.txt',client_collection);
-
-%>
-
-<section class="shipments-shipping-details">
-	<div class="row-fluid shipments-shipping-details-body">
-		<div class="span6 shipments-shipping-address">
-			<h4 class="section-header">
-				<%= _('Shipping Address').translate() %>
-			</h4>
-
-			<%
-				var shipping_address = view.profile.get('addresses').get(view.model.get('shipaddress'));
-			%>
-
-			<% if (shipping_address) { %>
-				<%= address(shipping_address, {
-					hideActions: true
-				,	hideDefaults: true
-				,	manage: 'shipaddress'
-				}) %>
-
-				<% if (view.options.edit_url) { %>
-					<a data-action="edit-module" href="<%- view.options.edit_url %>?force=true" class="btn-edit-address">
-						<%= _('Edit').translate() %>
-					</a>
-				<% } %>
-			<% } else { %>
-				<a data-action="edit-module" href="<%- view.options.edit_url %>?force=true" class="btn-edit-address">
-					<%= _('Please select a valid shipping address').translate() %>
-				</a>
-			<% } %>
-
-		</div>
-	</div>
-</section>
-
-<section class="shipments-cart-details">
-	<div class="shipments-cart-details-header">
-		<h3>
-			<%= _('Items').translate() %>
-
-			<% if (view.options.show_edit_button) { %>
-				<a href="#" class="btn btn-link btn-edit-cart" data-touchpoint="viewcart">
-					<%= _('Edit Order').translate() %>
-				</a>
-			<% } %>
-		</h3>
-		<h3 class="pull-right"><%= _('Total').translate() %></h3>
-	</div>
-	<div class="shipments-cart-details-body">
-		<% view.model.get('lines').each(function (lines, index) { %>
-			<%= shoppingCartItem(lines, view, {
-				showActions:false
+<div class="row-fluid">
+	<div class="span6 wizard-showpayments-billing-address">
+		<h4 class="section-header">
+			<%=_('Billing Address').translate()%>
+		</h4>
+		<%
+			var billing_address = view.model.get('billaddress') ?
+					view.profile.get('addresses').get(view.model.get('billaddress')) :
+					null;
+		%>
+		<% if (billing_address) { %>
+			<%= address(billing_address, {
+				hideActions: true
+			,	hideDefaults: true
+			,	manage: 'billaddress'
 			}) %>
-		<% }) %>
+		<% } else { %>
+			<a data-action="edit-module" href="<%- view.options.edit_url_billing %>?force=true">
+				<%= _('Please select a valid billing address').translate() %>
+			</a>
+		<% } %>
+		<% if (billing_address && view.options.edit_url_address) { %>
+			<a data-action="edit-module" href="<%- view.options.edit_url_address %>?force=true">
+				<%= _('Edit').translate() %>
+			</a>
+		<% } %>
 	</div>
-</section>
+</div>

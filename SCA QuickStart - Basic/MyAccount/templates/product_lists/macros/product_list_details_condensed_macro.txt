@@ -39,7 +39,7 @@
 		</div>
 		<div class="span2 item-commands action-box">
 			<div class="item-commands-crud">
-				<div class="text-right"><a class="btn btn-primary btn-expanded" href="#" data-touchpoint="home" data-hashtag="#/<%= _(item.get("options").custcol_itm_category_url.value).fixUrl() %>?client=<%= window.storedClient || item.get("options").custcol_tailor_client.value %>|<%= view.model.get("internalid") %>|<%= item.get("internalid")%>">Add/Edit</a></div>
+				<div class="text-right"><a class="btn btn-primary btn-expanded" href="#" data-touchpoint="home" data-hashtag="#/<%= _(item.get("options").custcol_itm_category_url.value).fixUrl() %>?client=<%= window.storedClient || item.get("options").custcol_tailor_client.value %>|<%= view.model.get("internalid") %>|<%= item.get("internalid")%>"><%= _('Edit').translate() %></a></div>
 				<div class="text-right"><button class="btn btn-link" data-action="delete-item"><%= _('Delete').translate() %></button></div>
 				<div class="pull-right move" data-type="productlist-control-move"></div>
 			</div>

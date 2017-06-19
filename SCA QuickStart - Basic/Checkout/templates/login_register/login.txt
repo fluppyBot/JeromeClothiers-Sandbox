@@ -1,21 +1,6 @@
 <h3><%= _('Returning user').translate() %></h3>
 <p><%= _('Sign in below with an existing account:').translate() %></p>
 
-<style>
-	/*Hide the header of the login page*/
-	.site-header{
-		display:none;
-	}
-	/*Hide the quick buttons of the login page*/
-	.quick-button-area{
-		display:none;
-	}
-	.spacer{
-		display: none;
-	}
-	/*  /Hide the quick buttons of the login page*/
-</style>
-
 <div data-type="alert-placeholder"></div>
 
 <form class="login-form">

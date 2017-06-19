@@ -44,33 +44,33 @@
                         .attr({type : 'text/css', rel : 'stylesheet'})
                         .attr('href', data.theme_url);
                 }
-              
+
             }
         };
 
-        if (SC.ENVIRONMENT.PROFILE && SC.ENVIRONMENT.PROFILE.internalid) {
-            var companyId = SC.ENVIRONMENT.companyId,
-                customerId = SC.ENVIRONMENT.PROFILE.internalid,
-                scriptId = "customscript_customer_catalog_data",
-                deployId = "customdeploy_catalog_data_deploy",
-                url = "/app/site/hosting/scriptlet.nl?script=" + scriptId + "&deploy=" + deployId + "&compid=" + companyId + "&customerId=" + customerId;
-
-            jQuery.ajax({
-                url: url,
-                type: "GET",
-                timeout: 10000,
-                dataType: "jsonp",
-                async: false,
-                success: function(data) {
-                    console.log('Success');
-                    successCallback(data);
-                },
-                error: function(jqXHR, status, error) {
-                    console.log('Error');
-                    console.log('Error when requesting audiences for the current user: ' + error);
-                }
-            });
-        }
+        // if (SC.ENVIRONMENT.PROFILE && SC.ENVIRONMENT.PROFILE.internalid) {
+        //     var companyId = SC.ENVIRONMENT.companyId,
+        //         customerId = SC.ENVIRONMENT.PROFILE.internalid,
+        //         scriptId = "customscript_customer_catalog_data",
+        //         deployId = "customdeploy_catalog_data_deploy",
+        //         url = "/app/site/hosting/scriptlet.nl?script=" + scriptId + "&deploy=" + deployId + "&compid=" + companyId + "&customerId=" + customerId;
+        //
+        //     jQuery.ajax({
+        //         url: url,
+        //         type: "GET",
+        //         timeout: 10000,
+        //         dataType: "jsonp",
+        //         async: false,
+        //         success: function(data) {
+        //             console.log('Success');
+        //             successCallback(data);
+        //         },
+        //         error: function(jqXHR, status, error) {
+        //             console.log('Error');
+        //             console.log('Error when requesting audiences for the current user: ' + error);
+        //         }
+        //     });
+        // }
 
     });
 

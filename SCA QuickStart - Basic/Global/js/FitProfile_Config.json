@@ -51,7 +51,7 @@
 						,	{"label":"H/Front", "name":"1/2-Front", "type":"select", "min":-2.5, "max":2.5, "very-slim": {"min":-2.5, "max":2.5}, "slim": {"min":-2.5, "max":2.5}, "regular": {"min":-2.5, "max":2.5}}
 						,	{"label":"H/Hip", "name":"1/2-Hip", "type":"select", "min":-4, "max":4, "very-slim": {"min":-4, "max":4}, "slim": {"min":-4, "max":4}, "regular": {"min":-4, "max":4}}
 						,	{"label":"H/Front Skt", "name":"1/2-Front-Skirt", "type":"select", "min":-2, "max":0, "very-slim": {"min":-2, "max":0}, "slim": {"min":-2, "max":0}, "regular": {"min":-2, "max":0}}
-						,	{"label":"H/Upper Arm", "name":"Upper-Arm", "type":"select", "min":-1, "max":2, "very-slim": {"min":-1, "max":2}, "slim": {"min":-1, "max":2}, "regular": {"min":-1, "max":2}}
+						,	{"label":"Upper Arm", "name":"Upper-Arm", "type":"select", "min":-1, "max":2, "very-slim": {"min":-1, "max":2}, "slim": {"min":-1, "max":2}, "regular": {"min":-1, "max":2}}
 						,	{"label":"H/Hand", "name":"1/2-Hand", "type":"select", "min":-1, "max":1, "very-slim": {"min":-1, "max":1}, "slim": {"min":-1, "max":1}, "regular": {"min":-1, "max":1}}
 						]
 					}
@@ -516,27 +516,27 @@
 					,	{"field":"Chest", "value": 8.3}
 					,	{"field":"Waist", "value": 7.25}
 					,	{"field":"Hips", "value": 4.5}
-					,	{"field":"Cuff-Left", "value": 6.25}
-					,	{"field":"Cuff-Right", "value": 6.25}
-					,	{"field":"Upperarm", "value": 3.75}
+					,	{"field":"Cuff-Left", "value": 6.75}
+					,	{"field":"Cuff-Right", "value": 6.75}
+					,	{"field":"Upperarm", "value": 2.25}
 					],
 					"Regular": [
 						{"field":"Neck", "value": 1.0}
 					,	{"field":"Chest", "value": 11.3}
 					,	{"field":"Waist", "value": 10.25}
 					,	{"field":"Hips", "value": 7.5}
-					,	{"field":"Cuff-Left", "value": 6.25}
-					,	{"field":"Cuff-Right", "value": 6.25}
-					,	{"field":"Upperarm", "value": 5.25}
+					,	{"field":"Cuff-Left", "value": 6.75}
+					,	{"field":"Cuff-Right", "value": 6.75}
+					,	{"field":"Upperarm", "value": 3.75}
 					],
 					"Comfortable": [
 						{"field":"Neck", "value": 1.2}
 					,	{"field":"Chest", "value": 14.3}
 					,	{"field":"Waist", "value": 13.25}
 					,	{"field":"Hips", "value": 10.5}
-					,	{"field":"Cuff-Left", "value": 6.25}
-					,	{"field":"Cuff-Right", "value": 6.25}
-					,	{"field":"Upperarm", "value": 6.75}
+					,	{"field":"Cuff-Left", "value": 6.75}
+					,	{"field":"Cuff-Right", "value": 6.75}
+					,	{"field":"Upperarm", "value": 5.25}
 					],
 					"Finished": []
 				}

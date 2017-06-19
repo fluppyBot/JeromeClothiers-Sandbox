@@ -21,7 +21,7 @@
 			//console.log('objDesignOpt: ' + '\n' + JSON.stringify(objDesignOpt, 'key', '\t'))
 		%>
 
-		<h2 class="section-header" style="border-bottom: 1px solid #eee;padding-bottom: 5px;margin-bottom: 10px;"><%= _('Design Options').translate() %></h2>
+		<h2 class="section-header"><%= _('Design Options').translate() %></h2><hr/>
 
 	    <div class="accordion" id="design-option">
 			<% var count = 0; %>
@@ -123,7 +123,7 @@
 	    </div>
 
 		<div class="control-group" data-input="designoption-message">
-			<label class="control-label" for="designoption-message"><%= _('Notes').translate() %></label>
+			<label class="control-label" for="designoption-message"><%= _('Design Options Notes').translate() %></label>
 			<div class="controls">
 				<textarea class="input-xxlarge designoption-message" id="designoption-message" name="designoption-message"></textarea>
 			</div>

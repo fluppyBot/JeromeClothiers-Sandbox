@@ -31,7 +31,7 @@ define('OrderHistory.Router',  ['OrderHistory.Views', 'PlacedOrder.Model','Place
 
 			options.page = options.page || 1;
 			options.search = options.search || "";
-			console.log('OrderHistory.Router.js>options',options);
+
 			var collection = new Collection(options.search)
 			,	view = new Views.List({
 					application: this.application
@@ -39,7 +39,6 @@ define('OrderHistory.Router',  ['OrderHistory.Views', 'PlacedOrder.Model','Place
 				,	search: options.search
 				,	collection: collection
 				});
-			console.log('OrderHistory.Router.js>collection',collection);
 
 			collection
 				.on('reset', view.showContent, view)

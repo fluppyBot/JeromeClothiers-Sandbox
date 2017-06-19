@@ -422,7 +422,7 @@ Application.defineModel('PlacedOrder', {
 		//nlapiRequestURL('https://forms.netsuite.com/app/site/hosting/scriptlet.nl?script=181&deploy=1&compid=3857857&h=bf9b68501c2e0a0da79f&recid=' + recid + '&solinekey=' + options.solinekey + '&dateneeded=' + options.dateneeded);
 	}
 
-	, list: function (page, clientName) {
+	, list: function (page, clientName,sort) {
 		'use strict';
 		// if the store has multiple currencies we add the currency column to the query
 		var isMultiCurrency = context.getFeature('MULTICURRENCY')
@@ -507,9 +507,11 @@ Application.defineModel('PlacedOrder', {
 
 			if (newresult.records.length > 0) {
 				result.records = result.records.concat(newresult.records);
+
 			}
 		}
-
+		result.records = result.records.slice(0, 1000);
+		result.totalRecordsFound = 1000;
 		result.records = _.map(result.records || [], function (record) {
 			var dateneeded = record.getValue('custcol_avt_date_needed');//this
 			var expdeliverydate = record.getValue('custcol_expected_delivery_date');
@@ -523,7 +525,6 @@ Application.defineModel('PlacedOrder', {
 			var cmtstatustext = "";
 
 			if (cmtstatus) {
-
 				cmtstatustext += record.getText('custcol_avt_cmt_status');
 			}
 			if (datesent) {
@@ -617,6 +618,18 @@ Application.defineModel('PlacedOrder', {
 				, solinekey: record.getValue('custcol_avt_saleorder_line_key')
 			};
 		});
+		var results_per_page = SC.Configuration.results_per_page;
+
+		if(sort && sort == 'true'){
+			nlapiLogExecution('debug','sort',sort);
+		result.records.sort(function(a,b){
+			return (a.tranline_status === b.tranline_status)? 0 : a.tranline_status? -1 : 1
+		});
+		}
+
+		var range_start = (page * results_per_page) - results_per_page
+		,	range_end = page * results_per_page;
+		result.records = result.records.slice(range_start, range_end);
 
 		/**
 		var arrObjRecords = [];

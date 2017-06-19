@@ -66,8 +66,8 @@
 	<% if (Error) { %>
 		<script>SC.ENVIRONMENT.contextError = <%= JSON.stringify(Error) %>;</script>
 	<% } %>
-	<script src="<%= session.getAbsoluteUrl('shopping', 'js/Application-015c13b3a69c.js') %>"></script>
-	<script src="<%= session.getAbsoluteUrl('shopping', 'templates/Templates-015c669f3f63.js') %>"></script>
+	<script src="<%= session.getAbsoluteUrl('shopping', 'js/Application-01576d851b83.js') %>"></script>
+	<script src="<%= session.getAbsoluteUrl('shopping', 'templates/Templates-015ae3722046.js') %>"></script>
 	<script>
 
 		var Checkout = SC.Application('Checkout')

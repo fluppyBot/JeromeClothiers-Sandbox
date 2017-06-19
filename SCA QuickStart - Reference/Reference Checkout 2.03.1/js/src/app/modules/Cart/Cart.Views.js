@@ -11,18 +11,18 @@ define('Cart.Views', ['ErrorManagement'], function (ErrorManagement)
 	// Views.Detailed:
 	// This is the Shopping Cart view
 	Views.Detailed = Backbone.View.extend({
-		
+
 		template: 'shopping_cart'
-		
+
 	,	title: _('Shopping Cart').translate()
-		
+
 	,	page_header: _('Shopping Cart').translate()
-		
-	,	attributes: { 
+
+	,	attributes: {
 			'id': 'shopping-cart'
-		,	'class': 'view shopping-cart' 
+		,	'class': 'view shopping-cart'
 		}
-		
+
 	,	events: {
 			'change [name="quantity"]': 'updateItemQuantity'
 		,	'keyup [name="quantity"]': 'updateItemQuantity'
@@ -36,8 +36,27 @@ define('Cart.Views', ['ErrorManagement'], function (ErrorManagement)
 		,	'submit form[data-action="estimate-tax-ship"]': 'estimateTaxShip'
 		,	'click [data-action="remove-shipping-address"]': 'removeShippingAddress'
 		,	'change [data-action="estimate-tax-ship-country"]': 'changeCountry'
+		, 'click [id="btn-proceed-checkout"]': 'validateItems'
 		}
-
+	, validateItems: function(e){
+		e.preventDefault();
+		var indexes = [];
+		var cart = SC.Application('Shopping').getCart();
+		cart.get('lines').each(function (line){
+			var itemoptions = line.get('item').get('options');
+			for(var i=0;i<itemoptions.length;i++){
+				if(itemoptions[i].id == "CUSTCOL_AVT_DATE_NEEDED"){
+					if(indexes.indexOf(itemoptions[i].value) == '1/1/1900'){
+							indexes.push(i);
+					}
+				}
+			}
+		});
+		if(indexes.length > 1){
+			self.submitErrorHandler('Cannot Process Items with Multiple Clients');
+			return ;
+		}
+	}
 	,	initialize: function (options)
 		{
 			this.application = options.application;
@@ -53,22 +72,22 @@ define('Cart.Views', ['ErrorManagement'], function (ErrorManagement)
 
 			return this.application.getLayout().showContent(this, true).done(function (view)
 			{
-				self.renderRelatedAndCorrelatedItemsHelper(view);		
+				self.renderRelatedAndCorrelatedItemsHelper(view);
 			});
 		}
 
-	,	renderRelatedAndCorrelatedItemsHelper: function (view) 
+	,	renderRelatedAndCorrelatedItemsHelper: function (view)
 		{
 			// related items
 			var related_items_placeholder = view.$('[data-type="related-items-placeholder"]')
 			,	application = this.application;
-			
+
 			view.$('[data-toggle="tooltip"]').tooltip({html: true});
 
 			// check if there is a related items placeholders
 			if (related_items_placeholder.length)
 			{
-				application.showRelatedItems && application.showRelatedItems(view.model.getItemsIds(), related_items_placeholder);	
+				application.showRelatedItems && application.showRelatedItems(view.model.getItemsIds(), related_items_placeholder);
 			}
 
 			// correlated items
@@ -76,7 +95,7 @@ define('Cart.Views', ['ErrorManagement'], function (ErrorManagement)
 			// check if there is a related items placeholders
 			if (correlated_items_placeholder.length)
 			{
-				application.showRelatedItems && application.showCorrelatedItems(view.model.getItemsIds(), correlated_items_placeholder);	
+				application.showRelatedItems && application.showCorrelatedItems(view.model.getItemsIds(), correlated_items_placeholder);
 			}
 		}
 
@@ -94,7 +113,7 @@ define('Cart.Views', ['ErrorManagement'], function (ErrorManagement)
 
 			if (line)
 			{
-				// if we detect its a rolled back item, (this i an item that was deleted 
+				// if we detect its a rolled back item, (this i an item that was deleted
 				// but the new options were not valid and was added back to it original state)
 				// We will move all the references to the new line id
 				if (error_details && error_details.status === 'LINE_ROLLBACK')
@@ -112,12 +131,12 @@ define('Cart.Views', ['ErrorManagement'], function (ErrorManagement)
 				placeholder = line.find('[data-type="alert-placeholder"]');
 				this.hideError(line);
 			}
-			else 
+			else
 			{
 				placeholder = this.$('[data-type="alert-placeholder"]');
 				this.hideError();
 			}
-			
+
 			// Finds or create the placeholder for the error message
 			if (!placeholder.length)
 			{
@@ -127,7 +146,7 @@ define('Cart.Views', ['ErrorManagement'], function (ErrorManagement)
 
 			// Renders the error message and into the placeholder
 			placeholder.append(
-				SC.macros.message(message, 'error', true) 
+				SC.macros.message(message, 'error', true)
 			);
 
 			// Re Enables all posible disableded buttons of the line or the entire view
@@ -139,7 +158,7 @@ define('Cart.Views', ['ErrorManagement'], function (ErrorManagement)
 			{
 				this.$(':disabled').attr('disabled', false);
 			}
-		}	
+		}
 
 		// updateItemQuantity:
 		// executes on blur of the quantity input
@@ -160,7 +179,7 @@ define('Cart.Views', ['ErrorManagement'], function (ErrorManagement)
 
 			var	new_quantity = parseInt(options.quantity, 10)
 			,	current_quantity = parseInt(line.get('quantity'), 10)
-			,	$input = jQuery(e.target).closest('form').find('[name="quantity"]');			
+			,	$input = jQuery(e.target).closest('form').find('[name="quantity"]');
 
 			new_quantity = (new_quantity > 0) ? new_quantity : current_quantity;
 
@@ -172,8 +191,8 @@ define('Cart.Views', ['ErrorManagement'], function (ErrorManagement)
 			{
 				line.set('quantity', new_quantity);
 				$line = this.$('#' + options.internalid);
-				$input.val(new_quantity).prop('disabled', true);				
-				
+				$input.val(new_quantity).prop('disabled', true);
+
 				this.model.updateLine(line).success(function ()
 				{
 					self.showContent().done(function (view)
@@ -198,14 +217,14 @@ define('Cart.Views', ['ErrorManagement'], function (ErrorManagement)
 	,	updateItemQuantityFormSubmit: function (e)
 		{
 			e.preventDefault();
-			this.updateItemQuantity(e); 
+			this.updateItemQuantity(e);
 		}
-		
-		// removeItem: 
+
+		// removeItem:
 		// handles the click event of the remove button
 		// removes the item from the cart model and saves it.
 	,	removeItem: function (e)
-		{			
+		{
 			this.storeColapsiblesState();
 
 			var self = this
@@ -226,9 +245,9 @@ define('Cart.Views', ['ErrorManagement'], function (ErrorManagement)
 			return remove_promise;
 		}
 
-		// validates the passed gift cert item and return false and render an error message if invalid. 
+		// validates the passed gift cert item and return false and render an error message if invalid.
 		// TODO: put this logic in a more abstract/utility class.
-	,	validateGiftCertificate: function (item) 
+	,	validateGiftCertificate: function (item)
 		{
 			if (item.itemOptions && item.itemOptions.GIFTCERTRECIPIENTEMAIL)
 			{
@@ -247,9 +266,9 @@ define('Cart.Views', ['ErrorManagement'], function (ErrorManagement)
 	,	applyPromocode: function (e)
 		{
 			e.preventDefault();
-			
+
 			this.$('[data-type=promocode-error-placeholder]').empty();
-			
+
 			var self = this
 			,	$target = jQuery(e.target)
 			,	options = $target.serializeObject();
@@ -267,7 +286,7 @@ define('Cart.Views', ['ErrorManagement'], function (ErrorManagement)
 					self.showContent();
 				}
 			).error(
-				function (jqXhr) 
+				function (jqXhr)
 				{
 					self.model.unset('promocode');
 					jqXhr.preventDefault = true;
@@ -292,14 +311,14 @@ define('Cart.Views', ['ErrorManagement'], function (ErrorManagement)
 
 			var self = this;
 
-			this.model.save({promocode: null}, { 
+			this.model.save({promocode: null}, {
 				success: function ()
 				{
 					self.showContent();
 				}
 			});
 		}
-		
+
 		// estimateTaxShip
 		// Sets a fake address with country and zip code based on the options.
 	,	estimateTaxShip: function (e)
@@ -357,9 +376,9 @@ define('Cart.Views', ['ErrorManagement'], function (ErrorManagement)
 			{
 				view.resetColapsiblesState();
 			});
-			
+
 		}
-		
+
 	,	resetColapsiblesState: function ()
 		{
 			var self = this;
@@ -376,36 +395,36 @@ define('Cart.Views', ['ErrorManagement'], function (ErrorManagement)
 			{
 				colapsibles_states[SC.Utils.getFullPathForElement(element)] = jQuery(element).hasClass('in');
 			});
-		}	
+		}
 	});
 
 	// Views.Confirmation:
 	// Cart Confirmation Modal
 	Views.Confirmation = Backbone.View.extend({
-		
+
 		template: 'shopping_cart_confirmation_modal'
-	
+
 	,	title: _('Added to Cart').translate()
-	
+
 	,	page_header: _('Added to Cart').translate()
-	
+
 	,	attributes: {
 			'id': 'shopping-cart'
 		,	'class': 'cart-confirmation-modal shopping-cart'
 		}
-	
-	,	events: { 
+
+	,	events: {
 			'click [data-trigger=go-to-cart]': 'dismisAndGoToCart'
 		}
-	
+
 	,	initialize: function (options)
 		{
 			this.line = options.model.getLatestAddition();
 		}
-		
-		
+
+
 		// dismisAndGoToCart
-		// Closes the modal and calls the goToCart 
+		// Closes the modal and calls the goToCart
 	,	dismisAndGoToCart: function (e)
 		{
 			e.preventDefault();

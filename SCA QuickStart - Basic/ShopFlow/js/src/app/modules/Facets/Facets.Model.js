@@ -2,35 +2,35 @@
 // ---------------
 // Connects to the search api to get all the items and the facets
 // A Model Contains a Collection of items and the list of facet groups with its values
-define('Facets.Model', ['ItemDetails.Collection', 'Session'], function (ItemDetailsCollection, Session) {
+define('Facets.Model', ['ItemDetails.Collection', 'Session'], function (ItemDetailsCollection, Session)
+{
 	'use strict';
-
+	
 	var original_fetch = Backbone.CachedModel.prototype.fetch;
 
 	return Backbone.CachedModel.extend({
-
-		url: function () {
+		
+		url: function()
+		{
 			var url = _.addParamsToUrl(
 				'/api/items'
-				, _.extend(
+			,	_.extend(
 					{}
-					, this.searchApiMasterOptions
-					, Session.getSearchApiParams()
+				,	this.searchApiMasterOptions
+				,	Session.getSearchApiParams()
 				)
 			);
-
-			console.log('from Facets.Mode.js');
-			console.log('url', url);
-			console.log('attach to url ', '&custitem_applicable_tailor=' + encodeURIComponent(SC.ENVIRONMENT.PROFILE.name));
-			var domainurl = 'http://167.216.129.52';
+			
 			return url + '&custitem_applicable_tailor=' + encodeURIComponent(SC.ENVIRONMENT.PROFILE.name);
-
 		}
 
-		, initialize: function () {
+	,	initialize: function ()
+		{
 			// Listen to the change event of the items and converts it to an ItemDetailsCollection
-			this.on('change:items', function (model, items) {
-				if (!(items instanceof ItemDetailsCollection)) {
+			this.on('change:items', function (model, items)
+			{
+				if (!(items instanceof ItemDetailsCollection))
+				{
 					// NOTE: Compact is used to filter null values from response
 					model.set('items', new ItemDetailsCollection(_.compact(items)));
 				}
@@ -40,19 +40,21 @@ define('Facets.Model', ['ItemDetails.Collection', 'Session'], function (ItemDeta
 		// model.fetch
 		// -----------
 		// We need to make sure that the cache is set to true, so we wrap it
-		, fetch: function (options) {
+	,	fetch: function (options)
+		{
 			options = options || {};
 
 			options.cache = true;
-			console.log('fetch', this);
+
 			return original_fetch.apply(this, arguments);
 		}
 
 
 	}, {
-			mountToApp: function (application) {
-				// sets default options for the search api
-				this.prototype.searchApiMasterOptions = application.getConfig('searchApiMasterOptions.Facets', {});
-			}
-		});
+		mountToApp: function (application) 
+		{
+			// sets default options for the search api
+			this.prototype.searchApiMasterOptions = application.getConfig('searchApiMasterOptions.Facets', {});
+		}
+	});
 });

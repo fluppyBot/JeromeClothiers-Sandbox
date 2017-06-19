@@ -44,7 +44,16 @@
 							<%= _('Returns').translate() %>
 						</a>
 					</li>
-					
+					<li>
+						<a href="#" data-touchpoint="customercenter" data-hashtag="#receiptshistory">
+							<%= _('Receipts').translate() %>
+						</a>
+					</li>
+					<li>
+						<a href="#" data-touchpoint="customercenter" data-hashtag="#reorderItems">
+							<%= _('Reorder Items').translate() %>
+						</a>
+					</li>
 					<li data-permissions="transactions.tranFind.1,transactions.tranEstimate.1">
 						<a href="#" data-touchpoint="customercenter" data-hashtag="#quotes">
 							<%= _('Quotes').translate() %>
@@ -92,8 +101,18 @@
 						</a>
 					</li>
 					<li>
+						<a href="#" data-touchpoint="customercenter" data-hashtag="#emailpreferences">
+							<%= _('Email Preferences').translate() %>
+						</a>
+					</li>
+					<li>
 						<a href="#" data-touchpoint="customercenter" data-hashtag="#addressbook">
 							<%= _('Address Book').translate() %>
+						</a>
+					</li>
+					<li>
+						<a href="#" data-touchpoint="customercenter" data-hashtag="#creditcards">
+							<%= _('Credit Cards').translate() %>
 						</a>
 					</li>
 					<li>

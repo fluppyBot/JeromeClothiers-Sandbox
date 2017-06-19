@@ -1,3 +1,4 @@
+
 var OBJ_CONFLICT = {};
 
 /** #### START CONFLICT CODE - T01020201 #### **/
@@ -755,16 +756,6 @@ OBJ_CONFLICT['T01052002']['CONFLICT']['T010504']= [];
 	
 OBJ_CONFLICT['T01052002']['CONFLICT']['T010504']['Fabric']={};	
 OBJ_CONFLICT['T01052002']['CONFLICT']['T010504']['Fabric']['ERROR'] = 'Fabric smoking color cannot be selected with pocket jetting formal treatment';	
-
-OBJ_CONFLICT['T01052002']['CONFLICT']['T010511']= [];	
-	
-OBJ_CONFLICT['T01052002']['CONFLICT']['T010511']['T01051101']={};	
-OBJ_CONFLICT['T01052002']['CONFLICT']['T010511']['T01051101']['ERROR'] = 'No left back pocket cannot be selected with pocket jetting formal treatment';	
-
-OBJ_CONFLICT['T01052002']['CONFLICT']['T010512']= [];	
-	
-OBJ_CONFLICT['T01052002']['CONFLICT']['T010512']['T01051201']={};	
-OBJ_CONFLICT['T01052002']['CONFLICT']['T010512']['T01051201']['ERROR'] = 'No right back pocket cannot be selected with pocket jetting formal treatment';	
 	
 /** ####  END CONFLICT CODE -  T01052002  #### **/	
 
@@ -2757,6 +2748,90 @@ OBJ_CONFLICT['T01050101']['CONFLICT']['T010503']['T01050303']['ERROR'] = 'Only N
 /**  end conflicts -  T010503  **/	
 	
 /** ####  END CONFLICT CODE -  T01050101  #### **/	
+
+
+/** #### START CONFLICT CODE - T01052001 #### **/	
+	
+OBJ_CONFLICT['T01052001'] = {};	
+OBJ_CONFLICT['T01052001']['CONFLICT'] = [];	
+	
+/** start conflicts -  T010504 **/	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']= [];	
+	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX01']={};	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX01']['ERROR'] = 'Only NA smoking color can be selected with no pocket jetting formal treatment';	
+	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX02']={};	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX02']['ERROR'] = 'Only NA smoking color can be selected with no pocket jetting formal treatment';	
+	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX03']={};	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX03']['ERROR'] = 'Only NA smoking color can be selected with no pocket jetting formal treatment';	
+	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX04']={};	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX04']['ERROR'] = 'Only NA smoking color can be selected with no pocket jetting formal treatment';	
+	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX05']={};	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX05']['ERROR'] = 'Only NA smoking color can be selected with no pocket jetting formal treatment';	
+	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX06']={};	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX06']['ERROR'] = 'Only NA smoking color can be selected with no pocket jetting formal treatment';	
+	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX07']={};	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX07']['ERROR'] = 'Only NA smoking color can be selected with no pocket jetting formal treatment';	
+	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX08']={};	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX08']['ERROR'] = 'Only NA smoking color can be selected with no pocket jetting formal treatment';	
+	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX09']={};	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX09']['ERROR'] = 'Only NA smoking color can be selected with no pocket jetting formal treatment';	
+	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX10']={};	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX10']['ERROR'] = 'Only NA smoking color can be selected with no pocket jetting formal treatment';	
+	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX11']={};	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX11']['ERROR'] = 'Only NA smoking color can be selected with no pocket jetting formal treatment';	
+	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX12']={};	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX12']['ERROR'] = 'Only NA smoking color can be selected with no pocket jetting formal treatment';	
+	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX12']={};	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX12']['ERROR'] = 'Only NA smoking color can be selected with no pocket jetting formal treatment';	
+	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX13']={};	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX13']['ERROR'] = 'Only NA smoking color can be selected with no pocket jetting formal treatment';	
+	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX14']={};	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX14']['ERROR'] = 'Only NA smoking color can be selected with no pocket jetting formal treatment';	
+	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX15']={};	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX15']['ERROR'] = 'Only NA smoking color can be selected with no pocket jetting formal treatment';	
+	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX16']={};	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX16']['ERROR'] = 'Only NA smoking color can be selected with no pocket jetting formal treatment';	
+	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX17']={};	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX17']['ERROR'] = 'Only NA smoking color can be selected with no pocket jetting formal treatment';	
+	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX18']={};	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX18']['ERROR'] = 'Only NA smoking color can be selected with no pocket jetting formal treatment';	
+	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX19']={};	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX19']['ERROR'] = 'Only NA smoking color can be selected with no pocket jetting formal treatment';	
+	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX20']={};	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX20']['ERROR'] = 'Only NA smoking color can be selected with no pocket jetting formal treatment';	
+	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX21']={};	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX21']['ERROR'] = 'Only NA smoking color can be selected with no pocket jetting formal treatment';	
+	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX22']={};	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX22']['ERROR'] = 'Only NA smoking color can be selected with no pocket jetting formal treatment';	
+	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX23']={};	
+OBJ_CONFLICT['T01052001']['CONFLICT']['T010504']['TX23']['ERROR'] = 'Only NA smoking color can be selected with no pocket jetting formal treatment';	
+/**  end conflicts -  T010504  **/	
+	
+/** ####  END CONFLICT CODE -  T01052001  #### **/	
 
 
 /** #### START CONFLICT CODE - T01051801 #### **/	

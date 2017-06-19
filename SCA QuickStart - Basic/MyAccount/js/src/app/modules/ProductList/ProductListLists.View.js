@@ -118,13 +118,11 @@ define('ProductListLists.View'
 		{
 			e.preventDefault();
 
-			
 			var list_id = jQuery(e.target).closest('[data-product-list-id]').data('product-list-id') + ''
 			,	list = this.options.collection.findWhere({
 					internalid: list_id
 				});
 
-			console.log('basic>productionList>addListToCartHandler',list)
 			this.addListToCart(list); 
 		}
 
@@ -174,7 +172,6 @@ define('ProductListLists.View'
 				return;
 			}
 
-			console.log('add_items',add_items);
 			// add the items to the cart and when its done show the confirmation view
 			this.application.getCart().addItems(add_items).done(function ()
 			{

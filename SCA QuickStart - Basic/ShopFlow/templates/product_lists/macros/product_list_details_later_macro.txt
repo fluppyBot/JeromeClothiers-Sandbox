@@ -11,7 +11,7 @@
 	,	internalid = item.get('internalid');
 	
 	var plSku = item_details.get('_sku');
-	console.log('from basic.shopflow>product_list>macros');
+	
 	//console.log('item: ' + '\n' + JSON.stringify(item, 'key', '\t'))
 	
 	//var application = view.application;
@@ -70,9 +70,6 @@
 		{
 			isDisplay = true;	
 		}
-		
-		//console.log('isFiltered');
-		jQuery('#saveForLaterItemsCart').attr("class","in collapse");
 	}
 	
 		

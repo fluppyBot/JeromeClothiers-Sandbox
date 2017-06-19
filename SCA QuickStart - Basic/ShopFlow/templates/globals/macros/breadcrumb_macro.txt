@@ -1,5 +1,5 @@
 <% registerMacro('breadcrumb', function(pages) {
-	
+
 	var clientid = "", clientname = "";
 	if(location.search.split('?client=')[1])
 	clientid = location.search.split('?client=')[1].split('&')[0].split('?')[0];
@@ -40,7 +40,7 @@
 
 			</span>
 		<% } %>
-		<div id="banner-breadcrumb-bottom" class="content-banner banner-breadcrumb-bottom" style="margin-bottom:1.5%;"></div>
+		<div id="banner-breadcrumb-bottom" class="content-banner banner-breadcrumb-bottom"></div>
 
 <% } %>
 <% }) %>

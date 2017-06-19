@@ -11,5 +11,5 @@
 	<% } %>
 <% } %>
 </span>
-<i class="fa fa-fw"></i>
+<i class="fa fa-shopping-cart fa-flip-horizontal"></i>
 <% }) %>

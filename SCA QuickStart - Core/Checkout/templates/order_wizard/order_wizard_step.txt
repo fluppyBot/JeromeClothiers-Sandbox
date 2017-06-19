@@ -2,7 +2,7 @@
     <div data-action="skip-login-message" class="guest-message"></div>
 
 <% if (view.getName()) { %>
-	<header class="page-header step-header" style="margin-bottom: 10px;margin-top: 15px;">
+	<header class="page-header step-header">
 		<h2 data-type="wizard-step-name-container" ><%= view.getName() %></h2>
 	</header>
 <% } %>
@@ -23,20 +23,6 @@
             <div class="span8">
                 <div class="box-cont">
                     <div id="wizard-step-content" class="wizard-step-content row-fluid"></div>
-                    <!--Hide the payment method and billing address-->
-                    <style>
-                        .orderwizard-module.orderwizard-module-paymentmethod-giftcertificates.module-rendered{
-                            display: none;
-                        }
-                        .orderwizard-module.orderwizard-module-paymentmethod-selector.module-rendered{
-                            display: none;
-                        }
-                        .orderwizard-module.orderwizard-module-address-billing.module-rendered{
-                            display: none;
-                        }
-
-                        </style>
-
 
                     <div class="step-navigation-buttons form-actions hide-phone hidden-tablet">
                         <% if (!view.hideContinueButton) { %>

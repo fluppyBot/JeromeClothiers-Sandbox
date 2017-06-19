@@ -10,28 +10,10 @@
 	var objSiteSettings = view.application.getConfig('siteSettings');
 	
 	//console.log('objSiteSettings: ' + '\n' + JSON.stringify(objSiteSettings, 'key', '\t'))
-	console.log('view.application.getLayout().getmenuItems()',view.application.getLayout().getMenuItems());
+	
 %>
 
 
-<style>
-	[data-id="receiptshistory"]{
-		display: none;
-	}
-	[data-id="creditcards"]{
-		display: none;
-	}
-	[data-id="emailpreferences"]{
-		display: none;
-	}
-	[data-id="backinstocknotification"]{
-		display: none;
-	}
-	[data-id="faqs"]{
-		display: none;
-	}
-
-	</style>
 <div class="main-container">
 	<div id="breadcrumb" class="container">
 		<%= breadcrumb() %>

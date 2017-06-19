@@ -1,9 +1,4 @@
 <section class="shipments-shipping-details">
-	<% 
-	console.log('order_wizard_showshipments_module.txt',view.clients) 
-
-	
-	%>
 	<div class="row-fluid shipments-shipping-details-body">
 		<div class="span6 shipments-shipping-address">
 			<h4 class="section-header">
@@ -51,7 +46,9 @@
 	</div>
 	<div class="shipments-cart-details-body">
 		<% view.model.get('lines').each(function (lines, index) { %>
-			<%= shoppingCartItem(lines, view, {showActions:false} ) %>
+			<%= shoppingCartItem(lines, view, {
+				showActions:false
+			}) %>
 		<% }) %>
 	</div>
 </section>

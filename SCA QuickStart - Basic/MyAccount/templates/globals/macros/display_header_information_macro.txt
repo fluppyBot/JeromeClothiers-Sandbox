@@ -9,12 +9,10 @@
 				</div>
 				<div class="row-fluid">
 			<% } %>
-			<% if(element.value.substr(0,6)!=="Status"){ %>
-				<div class="header-information-element span<%= span  + ' ' + (element.addClass || '') %>">
+			<% console.log(element); %>
+			<div class="header-information-element span<%= span  + ' ' + (element.addClass || '') %>">
 				<%= element.value %>
-				</div>
-			<%} %>
-			
+			</div>
 		<% }) %>
 		</div>
 	</div>

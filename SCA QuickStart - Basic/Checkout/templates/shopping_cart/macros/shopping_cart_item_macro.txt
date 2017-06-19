@@ -3,18 +3,9 @@
 var item = line.get('item');
 options = _.extend({ showActions: true}, options || {});
 
-
-
 var url = _(item.get('_url') + item.getQueryStringWithQuantity(1)).fixUrl();
 var application = view.options.application;
-
 var stock_info = item.getStockInfo();
-//console.log('shopping_cart_item_macro.txt from basic>item',item);
-
-//console.log('pass client collections',view.clients);
-
-var clientDetails = _.findWhere(view.clients,{ internalid: item.itemOptions.custcol_tailor_client.internalid});
-//console.log('clientDetails',clientDetails);
 
 if (url && SC.ENVIRONMENT.siteType === 'ADVANCED')
 {
@@ -70,8 +61,6 @@ if(line.get("options")){
 					<% } else { %>
 						<%= item.get('_sku') %>
 					<% } %>
-					<br>
-					<%= clientDetails.custrecord_tc_first_name+" "+clientDetails.custrecord_tc_last_name %>
 				</div>
 			</div>
 
@@ -79,7 +68,6 @@ if(line.get("options")){
 				<%= _.formatCurrency(customPrice) %>
 			</div>
 			<div class="clearfix"></div>
-
 			<% if (options.showActions) { %>
 				<div class="cart-item-actions">
 					<% if (SC.ENVIRONMENT.siteType !== "STANDARD") { %>

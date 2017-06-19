@@ -24,7 +24,7 @@ define('ModalGallery.Views',  ['Client.Model'], function (ClientModel)
 			var self = this
 			,	imageArray = new Array()
 			,	key = this.key
-			,	baseUrl = "http://store.jeromeclothiers.com/assets/images/item_options_images/";
+			,	baseUrl = "http://jerome.production.netsuitestaging.com/assets/images/item_options_images/";
 
 			jQuery.get(_.getAbsoluteUrl('js/DesignOptionsImages_Config.json?nocache=T')).done(function(data){
 					

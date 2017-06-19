@@ -4,7 +4,7 @@
 (function (application)
 {
 	'use strict';
-	
+
 	application.Configuration = {};
 
 	_.extend(application.Configuration, {
@@ -56,8 +56,8 @@
 		// Default url for the item list
 	,	defaultSearchUrl: 'search'
 
-		// Search preferences
-	,	searchPrefs: 
+			// Search preferences
+	,	searchPrefs:
 		{
 			// keyword maximum string length - user won't be able to write more than 'maxLength' chars in the search box
 			maxLength: 40
@@ -74,7 +74,7 @@
 				,	beginingRegex = /^[\*\-\+]{1}/g // characters that cannot appear at the begining
 				,	replaceWith = ''; // replacement for invalid chars
 
-				return keywords.replace(anyLocationRegex, replaceWith).replace(beginingRegex, replaceWith); 
+				return keywords.replace(anyLocationRegex, replaceWith).replace(beginingRegex, replaceWith);
 			}
 		}
 
@@ -88,7 +88,7 @@
 
 		,	itemOptions: {
 				// each apply to specific item option types
-				selectorByType: 
+				selectorByType:
 				{
 					select: 'itemDetailsOptionTile'
 				,	'default': 'itemDetailsOptionText'
@@ -204,15 +204,15 @@
 
 	,	homeTemplate: 'home'
 
-		// settings on how each facet should display in the "narrow your results" section. Properties: 
-		// * name: internationalized facet name, 
+		// settings on how each facet should display in the "narrow your results" section. Properties:
+		// * name: internationalized facet name,
 		// * url: hash fragment that identified the facet in the url
-		// * priority: an integer grater than zero indicating for ordering facets editors. Facets with greater priority numbers will appear above others. 
+		// * priority: an integer grater than zero indicating for ordering facets editors. Facets with greater priority numbers will appear above others.
 		// * macro: name of installed macro that renders the facet editor. Some available macros are facetRange, facetColor
 		// * uncollapsible: if true the user won't be able to collapse the facet editor
 		// * behavior: can be one of "range", "multi". If "range", a double slider will be showed as the editor. If "multi", multiple facet value selection will be available
-		// * titleToken: format for the facet on the document title's when it is selected. Can be a string like "from $(0) to $(1)" for range behaviour or "foo $(0) bar" for others. Also it can be a function that accept the facet object as the one parameter.  
-		// * titleSeparator: a string separator between facets in the document's title. 
+		// * titleToken: format for the facet on the document title's when it is selected. Can be a string like "from $(0) to $(1)" for range behaviour or "foo $(0) bar" for others. Also it can be a function that accept the facet object as the one parameter.
+		// * titleSeparator: a string separator between facets in the document's title.
 	,	facets: [
 			{
 				id: 'category'
@@ -247,7 +247,7 @@
             ,    priority: 1
             ,    url: 'custitem_clothing_type'
             ,    behavior: 'single'
-            //,    macro: 'itemCellGrid'   
+            //,    macro: 'itemCellGrid'
             ,    uncollapsible: true
 			,	 titleToken: '$(0)'
             ,    collapsed: false
@@ -263,11 +263,11 @@
 		// Limits for the SEO generated links in the facets browser
 		// Once the limits are hitted the url is replaced with # in the links
 	,	facetsSeoLimits: {
-			// how many facets groups will be indexed 
+			// how many facets groups will be indexed
 			numberOfFacetsGroups: 2
 			// for multi value facet groups how many facets values together
 		,	numberOfFacetsValues: 2
-			// Which options will be indexed, 
+			// Which options will be indexed,
 			// if you omit one here, and it's present in the url it will not be indexed
 		,	options: ['page', 'keywords'] // order, page, show, display, keywords
 		}
@@ -344,13 +344,13 @@
 		// Be aware that some marcos may require you to configure some exrta options in order to work properly:
 		// * colors: an map of the label of the color as they key and hexa or an object as the value is required by the itemDetailsOptionColor
 		// We have provided some macros for you to use but you are encouraged to create your own:
-		// For the selector we have created: 
+		// For the selector we have created:
 		// * itemDetailsOptionColor
 		// * itemDetailsOptionDropdown
 		// * itemDetailsOptionRadio
 		// * itemDetailsOptionText
 		// * itemDetailsOptionTile
-		// and for the selected we have created: 
+		// and for the selected we have created:
 		// * shoppingCartOptionDefault
 		// * shoppingCartOptionColor
 	,	itemOptions: [
@@ -449,20 +449,20 @@
 			// application cache for content pages - value in seconds and must be between 5 minutes and 2 hours
 		,	contentPageTtl: 2 * 60 * 0
 		}
-		
+
 	});
 
 	// Device Specific Settings
 	// ------------------------
 	// Calculates the width of the device, it will try to use the real screen size.
 	var screen_width = window.screen ? window.screen.availWidth : window.outerWidth || window.innerWidth;
-	SC.ENVIRONMENT.screenWidth = screen_width; 
+	SC.ENVIRONMENT.screenWidth = screen_width;
 
 	// Phone Specific
 	if (screen_width < 768)
 	{
 		_.extend(application.Configuration, {
-			
+
 			itemsDisplayOptions: [{
 				id: 'table'
 			,	name: _('Table').translate()
@@ -471,7 +471,7 @@
 			,	icon: 'icon-th-large'
 			,	isDefault: true
 			}]
-			
+
 		,	sortOptions: [{
 				id: 'relevance:asc'
 			,	name: _('Relevance').translate()
@@ -488,12 +488,12 @@
 	else if (screen_width >= 768 && screen_width < 980)
 	{
 		_.extend(application.Configuration, {
-			
+
 			itemsDisplayOptions: [
 				{id: 'list', name: _('List').translate(), macro: 'itemCellList', columns: 1, icon: 'icon-th-list' , isDefault: true}
 			,	{id: 'table', name: _('Table').translate(), macro: 'itemCellTable', columns: 2, icon: 'icon-th-large'}
 			]
-			
+
 		,	sortOptions: [
 				{id: 'relevance:asc', name: _('Relevance').translate(), isDefault: true}
 			,	{id: 'onlinecustomerprice:asc', name: _('Price, Low to High').translate()}
@@ -522,9 +522,9 @@
 	,	seo_url = function ()
 		{
 			return window.location.protocol + '//' + window.location.hostname + '/' + Backbone.history.fragment;
-		} 
+		}
 
-	,	seo_domain = function (layout) 
+	,	seo_domain = function (layout)
 		{
 			return layout.application.getConfig('siteSettings.touchpoints.home'); // TODO Review this
 		}
@@ -557,7 +557,7 @@
 	,	seo_twitter_description = function (layout)
 		{
 			var description = seo_description(layout);
-			
+
 			// Twitter cards requires a description less than 200 characters
 			return description && description.length ? description.substring(0, 200) : '';
 		}
@@ -585,7 +585,7 @@
 		{
 			var price_currency = layout.$('[itemprop="priceCurrency"]').attr('content');
 			price_currency = jQuery.trim( price_currency );
-			
+
 			return price_currency && price_currency.length ? price_currency : '';
 		}
 
@@ -594,7 +594,7 @@
 			var $availability_href = layout.$('[itemprop="availability"]')
 			,	result = ''
 			,	param = '';
-			
+
 			$availability_href = jQuery.trim( $availability_href.attr('href') );
 
 			result= $availability_href.split('/');
@@ -621,22 +621,22 @@
 			return rating_count && rating_count.length ? jQuery.trim(rating_count) : '';
 		}
 
-	,	seo_twitter_site = function () 
+	,	seo_twitter_site = function ()
 		{
 			return '@YourAthleticSho';
 		}
 
-	,	seo_twitter_creator = function () 
+	,	seo_twitter_creator = function ()
 		{
 			return '@fedmun';
 		}
 
-	,	seo_twitter_lavel_one = function () 
+	,	seo_twitter_lavel_one = function ()
 		{
 			return 'PRICE';
 		}
 
-	,	seo_twitter_price = function (layout) 
+	,	seo_twitter_price = function (layout)
 		{
 			return jQuery.trim( seo_price(layout) + ' ' + seo_price_currency(layout) );
 		}
@@ -665,15 +665,15 @@
 		{
 			return seo_image(layout, 3);
 		}
-	;	
+	;
 
 	_.extend(application.Configuration, {
-		
+
 		metaTagMappingOg: {
 			// [Open Graph](http://ogp.me/)
 			'og:title': seo_title
 
-		,	'og:type': function () 
+		,	'og:type': function ()
 			{
 				return 'product';
 			}
@@ -685,9 +685,9 @@
 		,	'og:site_name': seo_site_name
 
 		,	'og:description': seo_description
-			
+
 		,	'og:provider_name': seo_provider_name
-			
+
 		,	'og:price:standard_amount': seo_price_standard_amount
 
 		,	'og:price:currency': seo_price_currency
@@ -701,9 +701,9 @@
 		,	'og:rating_count': seo_rating_count
 		}
 
-	,	metaTagMappingTwitterProductCard: {			
+	,	metaTagMappingTwitterProductCard: {
 			// [Twitter Product Card](https://dev.twitter.com/docs/cards/types/product-card)
-			'twitter:card': function () 
+			'twitter:card': function ()
 			{
 				return 'product';
 			}
@@ -711,9 +711,9 @@
 		,	'twitter:site': seo_twitter_site
 
 		,	'twitter:creator': seo_twitter_creator
-		
+
 		,	'twitter:title': seo_title
-		
+
 		,	'twitter:description': seo_twitter_description
 
 		,	'twitter:image:src': seo_image
@@ -729,15 +729,15 @@
 		,	'twitter:label2': seo_twitter_lavel_two
 		}
 
-	,	metaTagMappingTwitterGalleryCard: {			
+	,	metaTagMappingTwitterGalleryCard: {
 			// [Twitter Gallery Card](https://dev.twitter.com/docs/cards/types/gallery-card)
-			'twitter:card': function () 
+			'twitter:card': function ()
 			{
 				return 'gallery';
 			}
-		
+
 		,	'twitter:title': seo_title
-		
+
 		,	'twitter:description': seo_twitter_description
 
 		,	'twitter:image0:src': seo_twitter_image_cero
@@ -874,6 +874,7 @@
 			// ,	data_track_clickback: '',
 			// ,	data_ga_tracker: '',
 			}
-		}		
+		}
 	});
+
 })(SC.Application('Shopping'));
