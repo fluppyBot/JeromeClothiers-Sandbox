@@ -480,7 +480,7 @@ Application.defineModel('PlacedOrder', {
 		if (context.getFeature('MULTISITE') && session.getSiteSettings(['siteid']).siteid) {
 			filters.push(new nlobjSearchFilter('website', null, 'anyof', [session.getSiteSettings(['siteid']).siteid, '@NONE@']));
 		}
-		var result = Application.getAllSalesOrderPaginatedSearchResults({
+		var result = Application.getSalesOrderPaginatedSearchResults({
 			record_type: 'salesorder'
 			, filters: filters
 			, columns: columns
@@ -498,7 +498,7 @@ Application.defineModel('PlacedOrder', {
 			if (context.getFeature('MULTISITE') && session.getSiteSettings(['siteid']).siteid) {
 				filters.push(new nlobjSearchFilter('website', null, 'anyof', [session.getSiteSettings(['siteid']).siteid, '@NONE@']));
 			}
-			var newresult = Application.getAllSalesOrderPaginatedSearchResults({
+			var newresult = Application.getSalesOrderPaginatedSearchResults({
 				record_type: 'salesorder'
 				, filters: filters
 				, columns: columns
@@ -507,10 +507,11 @@ Application.defineModel('PlacedOrder', {
 
 			if (newresult.records.length > 0) {
 				result.records = result.records.concat(newresult.records);
-				result.totalRecordsFound += newresult.totalRecordsFound;
+
 			}
 		}
-
+		result.records = result.records.slice(0, 1000);
+		result.totalRecordsFound = 1000;
 		result.records = _.map(result.records || [], function (record) {
 			var dateneeded = record.getValue('custcol_avt_date_needed');//this
 			var expdeliverydate = record.getValue('custcol_expected_delivery_date');
@@ -625,9 +626,11 @@ Application.defineModel('PlacedOrder', {
 			return (a.tranline_status === b.tranline_status)? 0 : a.tranline_status? -1 : 1
 		});
 		}
+
 		var range_start = (page * results_per_page) - results_per_page
 		,	range_end = page * results_per_page;
 		result.records = result.records.slice(range_start, range_end);
+
 		/**
 		var arrObjRecords = [];
 		var stRecords = JSON.stringify(result.records);
