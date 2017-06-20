@@ -38,7 +38,7 @@ define('Cart.SaveForLater.View', ['ErrorManagement', 'ProductListDetails.View', 
 				
 				var objSFL = json;
 				objSFL['swx_filter_save_for_later_client'] = stFilterSaveForLaterClientName;
-				
+				console.log('Cart.saveForLater.View.js>objSFL',objSFL);
 				self.renderSaveForLaterSectionHelper(new ProductListModel(objSFL));
 				
 			});		
@@ -49,6 +49,7 @@ define('Cart.SaveForLater.View', ['ErrorManagement', 'ProductListDetails.View', 
 			var self = this
 			,	application = this.model.application;
 			
+			console.log('Cart.SaveForLater.View.js>current>this.model',this.model);
 			this.product_list_details_view = new application.ProductListModule.Views.Details({ application: application, model: pl_model, sflMode:true, addToCartCallback:function() {self.addToCart(); } } );
 			this.product_list_details_view.template = 'product_list_details_later';
 			this.$('[data-type=saved-for-later-placeholder]').empty();

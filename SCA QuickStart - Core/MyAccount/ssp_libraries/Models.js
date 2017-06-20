@@ -4311,32 +4311,39 @@ Application.defineModel('ProductList', {
 		}
 	}
 
-	// Returns the user's saved for later product list
-	, getSavedForLaterProductList: function () {
+	// Returns the user's saved for later product list	
+,	getSavedForLaterProductList: function (paramStFilterClientName)
+	{
 		'use strict';
 
 		this.verifySession();
 
 		var filters = [new nlobjSearchFilter('custrecord_ns_pl_pl_type', null, 'is', this.later_type_id)
-			, new nlobjSearchFilter('custrecord_ns_pl_pl_owner', null, 'is', nlapiGetUser())
-			, new nlobjSearchFilter('isinactive', null, 'is', 'F')]
-			, product_lists = this.searchHelper(filters, this.getColumns(), true);
+			,	new nlobjSearchFilter('custrecord_ns_pl_pl_owner', null, 'is', nlapiGetUser())
+			,	new nlobjSearchFilter('isinactive', null, 'is', 'F')]
+		,	product_lists = this.searchHelper(filters, this.getColumns(), true);
 
-		if (product_lists.length >= 1) {
+		if (product_lists.length >= 1)
+		{
 			return product_lists[0];
 		}
-		else {
+		else
+		{
 			var self = this
-				, sfl_template = _(_(this.configuration.list_templates).filter(function (pl) {
-					return pl.type && pl.type.id && pl.type.id === self.later_type_id;
-				})).first();
+			,	sfl_template = _(_(this.configuration.list_templates).filter(function (pl) 
+			{
+				return pl.type && pl.type.id && pl.type.id === self.later_type_id;
+			})).first();
 
-			if (sfl_template) {
-				if (!sfl_template.scope) {
+			if (sfl_template)
+			{
+				if (!sfl_template.scope)
+				{
 					sfl_template.scope = { id: '2', name: 'private' };
 				}
 
-				if (!sfl_template.description) {
+				if (!sfl_template.description)
+				{
 					sfl_template.description = '';
 				}
 
@@ -4344,7 +4351,7 @@ Application.defineModel('ProductList', {
 			}
 
 			throw notFoundError;
-		}
+		}	
 	}
 
 	// Sanitize html input
