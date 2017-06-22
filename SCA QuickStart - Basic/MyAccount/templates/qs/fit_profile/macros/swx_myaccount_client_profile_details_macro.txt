@@ -28,6 +28,7 @@
 
 				if (isRefClientInternalIdEqualToClientInternalId)
 				{
+					console.log('swxMyAccountClientProfileDetails>arrObjRef[dx]',arrObjRef[dx]);
 					clientAddress = '';
 					var refClientFirstName = arrObjRef[dx]['custrecord_tc_first_name'];
 					var refClientFirstLastName = arrObjRef[dx]['custrecord_tc_last_name'];
@@ -39,13 +40,13 @@
 					var refClientZip = arrObjRef[dx]['custrecord_tc_zip'];
 
 					var hasRefClientAddr1 = (!_.isNullOrEmpty(refClientAddr1)) ? true : false;
-					var hasRefClientAddr2 = (!_.isNullOrEmpty(refClientAddr1)) ? true : false;
+					var hasRefClientAddr2 = (!_.isNullOrEmpty(refClientAddr2)) ? true : false;
 					var hasRefClientState = (!_.isNullOrEmpty(refClientState)) ? true : false;
 					var hasRefClientCountry = (!_.isNullOrEmpty(refClientCountry)) ? true : false;
 					var hasRefClientZip = (!_.isNullOrEmpty(refClientZip)) ? true : false;
 
 					clientAddress += (hasRefClientAddr1) ? refClientAddr1 + ', ' : '';
-					clientAddress += (hasRefClientAddr2) ? refClientAddr1 + ', ' : '';
+					clientAddress += (hasRefClientAddr2) ? refClientAddr2 + ', ' : '';
 					clientAddress += (hasRefClientState) ? refClientState + ', ' : '';
 					clientAddress += (hasRefClientCountry) ? refClientCountry  : '';
 					clientAddress += (hasRefClientZip) ? ', ' + refClientZip  : '';
