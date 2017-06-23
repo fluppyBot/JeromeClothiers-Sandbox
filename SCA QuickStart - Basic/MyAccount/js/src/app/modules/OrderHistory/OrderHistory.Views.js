@@ -243,7 +243,8 @@
 				item_to_cart.setOption('custcol_avt_date_needed', '1/1/1900');
 				item_to_cart.setOption('custcol_avt_hold_fabric', 'F');
 				item_to_cart.setOption('custcol_avt_hold_production', 'F');
-
+				item_to_cart.setOption('custcol_avt_wbs_copy_key', item_to_cart.get('internalid').toString() + '_' + new Date().getTime());
+				//console.log('OrderHistory.Views.js>item_to_cart',item_to_cart);
 
 				application.getCart().addItem(item_to_cart, {
 					success: function ()
