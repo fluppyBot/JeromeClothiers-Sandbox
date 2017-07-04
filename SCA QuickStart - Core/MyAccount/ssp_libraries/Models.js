@@ -417,7 +417,7 @@ Application.defineModel('PlacedOrder', {
 	setDateNeeded: function (options) {
 		var recid = options.solinekey.split('_')[0];
 		//NOTE: This is for sandbox
-		nlapiRequestURL('https://forms.sandbox.netsuite.com/app/site/hosting/scriptlet.nl?script=189&deploy=1&compid=3857857&h=8ae0b4c46639c406c38a&recid=' + recid + '&solinekey=' + options.solinekey + '&dateneeded=' + options.dateneeded);
+		nlapiRequestURL('https://forms.sandbox.netsuite.com/app/site/hosting/scriptlet.nl?script=181&deploy=1&compid=3857857&h=bf9b68501c2e0a0da79f=' + recid + '&solinekey=' + options.solinekey + '&dateneeded=' + options.dateneeded);
 		//NOTE: This is for production
 		//nlapiRequestURL('https://forms.netsuite.com/app/site/hosting/scriptlet.nl?script=181&deploy=1&compid=3857857&h=bf9b68501c2e0a0da79f&recid=' + recid + '&solinekey=' + options.solinekey + '&dateneeded=' + options.dateneeded);
 	}
