@@ -6,7 +6,7 @@
 </style>
 <div class="myaccount-search-container pull-right">
 	<div id="site-search-container" class="site-search-container">
-		<form class="form-search site-search">
+		<form class="form-search site-search" style="float:left;">
 		<div class="input-append">
 			<input class="input-medium search-query" placeholder="Search" type="search" name="keywords" autocomplete="off" maxlength="40" rel='search' value="<%= view.options.search %>">
 			<button type="submit" class="btn" rel='search'>
@@ -14,7 +14,7 @@
 			</button>
 		</div>
 		</form>
-		<button id="sortred" class="btn" >	Sort Red			</button>
+		<button id="sortred" class="btn" style="height:43px;margin-left:5px;">Sort Red</button>
 	</div>
 </div>
 
