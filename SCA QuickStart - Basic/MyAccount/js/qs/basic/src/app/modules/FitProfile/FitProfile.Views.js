@@ -755,14 +755,17 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 				, itemType = jQuery("#custrecord_fp_product_type").val()
 				, self = this
 				, fieldsForm = null;
-
+			
+			console.log('rebuildMeasureForm>fitType',fittype);
+			console.log('rebuildMeasureForm>')
+			
 			if (measureType && itemType && fitType) {
 				fieldsForm = _.where(self.fitprofile.measurement_config, { item_type: itemType })[0];
 				fieldsForm = _.where(fieldsForm.measurement, { type: measureType })[0];
 				self.processBlockFields(fieldsForm, fitType)
 				self.fitprofile.selected_measurement = fieldsForm;
 
-				jQuery("#measure-form").html(SC.macros.measureForm(fieldsForm, [{ "name": "fit", "value": fitType }]));
+				//jQuery("#measure-form").html(SC.macros.measureForm(fieldsForm, [{ "name": "fit", "value": fitType }]));
 
 				jQuery("[id='butt-modal-submit']").show();
 
