@@ -22,7 +22,7 @@
 	
 %>
 
-<section>
+<section style="display:inline;">
 	<!--
     <div class="span4" data-cms-area="home_banner_1" data-cms-area-filters="global"></div>
     <div class="span4" data-cms-area="home_banner_2" data-cms-area-filters="path"></div>
