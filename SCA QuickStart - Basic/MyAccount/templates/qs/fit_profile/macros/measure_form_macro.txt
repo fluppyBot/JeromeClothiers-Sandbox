@@ -13,12 +13,14 @@
 			<% if(fieldset.name == 'main'){ %>
 				<div class="main-section">
 					<% if(fields.type == 'Body'){ %>
+						
 						<% _.each(fieldset.fields, function(field){ 
 							var mainBodyValue = null
 							,	fieldValue = _.where(values, {name: field.name})
 							if(fieldValue.length){
 								mainBodyValue = fieldValue[0].value;
 							}
+
 						%>
 							<%= SC.macros.bodyMeasureField(field, mainBodyValue, fieldset.name) %>
 						<% }) %>
@@ -71,6 +73,12 @@
 								baseAllowance = baseAllowance && baseAllowance.value ? baseAllowance.value : 0;
 							}
 						%>
+							<% 
+								if(bodyValue !== null && bodyValue!== '' && bodyValue!== undefined){
+									bodyValue = bodyValue.replace('+',' ');
+								}
+							
+							 %>
 							<%= SC.macros.bodyMeasureField(field, bodyValue, fieldset.name, baseAllowance, allowance) %>
 						<% }) %>
 					<% } else { %>	

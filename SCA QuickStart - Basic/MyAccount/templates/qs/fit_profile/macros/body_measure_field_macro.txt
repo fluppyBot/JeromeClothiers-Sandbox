@@ -22,6 +22,7 @@
 		inputHtml = '<select class="input input-small" id="' + name + '" name="' + name + '">';
 		if(field.options && field.options.length){
 			_.each(field.options, function(option){
+				console.log('body_measure_field_macro>field.option',option);
 				if(value == option){
 					inputHtml = inputHtml + '<option value="' + option + '" selected>' + option + '</option>'
 				} else {
@@ -53,9 +54,16 @@
 %>
 	<div class="row-fluid">
 		<div class="span2"><%= label %></div>
-		<div class="span3-profile">
-			<%= inputHtml %>
-		</div>
+		<% if(type==='select'){%>
+			<div class="span4">
+				<%= inputHtml %>
+			</div>
+		<% }else{ %>
+			<div class="span3-profile">
+				<%= inputHtml %>
+			</div>
+		<%} %>
+		
 		<% if(fieldset == "body-measurement"){ %>
 			<div class="span3-profile">
 				<input class="input input-small allowance-fld" type="number" step="any" id="allowance_<%= name %>" name="allowance-<%= name %>" value="<%= baseAllowance ? baseAllowance : 0 %>"/>
