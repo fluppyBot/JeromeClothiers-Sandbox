@@ -58,7 +58,9 @@ define('Cart.Views', ['ErrorManagement', 'FitProfile.Model', 'ItemDetails.Model'
 			cart.get('lines').each(function (line){
 				var itemoptions = line.get('item').get('options');
 				var itemid = line.get('item').id;
+				console.log('validateItems>line>item',line.get('item'));
 				for(var i=0;i<itemoptions.length;i++){
+					//console.log('validateItems>itemoptions',itemoptions[i]);
 					if(itemoptions[i].id == "CUSTCOL_AVT_DATE_NEEDED"){
 						if(itemoptions[i].value == '1/1/1900'){
 								hasError = true;
