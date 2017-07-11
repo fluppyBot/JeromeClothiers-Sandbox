@@ -59,6 +59,10 @@ define('Cart.Views', ['ErrorManagement', 'FitProfile.Model', 'ItemDetails.Model'
 				var itemoptions = line.get('item').get('options');
 				var itemid = line.get('item').id;
 				console.log('validateItems>line>item',line.get('item'));
+				
+			    //NOTE: Attributes to compare are _sku and _name, Display error message if different code inside the ()
+
+
 				for(var i=0;i<itemoptions.length;i++){
 					//console.log('validateItems>itemoptions',itemoptions[i]);
 					if(itemoptions[i].id == "CUSTCOL_AVT_DATE_NEEDED"){
