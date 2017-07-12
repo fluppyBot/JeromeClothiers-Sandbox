@@ -454,6 +454,7 @@ Application.defineModel('PlacedOrder', {
 		columns.push(new nlobjSearchColumn('custcol_avt_cmt_date_sent'))//This
 		columns.push(new nlobjSearchColumn('custcol_avt_fabric_text'))
 		columns.push(new nlobjSearchColumn('custcol_avt_cmt_status_text'))
+		columns.push(new nlobjSearchColumn('custcol_cmt_production_time'))
 		columns.push(new nlobjSearchColumn('custcol_avt_tracking'))
 		columns.push(new nlobjSearchColumn('custcol_avt_solinestatus'))
 		columns.push(new nlobjSearchColumn('custcol_avt_saleorder_line_key'))
@@ -480,13 +481,13 @@ Application.defineModel('PlacedOrder', {
 		if (context.getFeature('MULTISITE') && session.getSiteSettings(['siteid']).siteid) {
 			filters.push(new nlobjSearchFilter('website', null, 'anyof', [session.getSiteSettings(['siteid']).siteid, '@NONE@']));
 		}
-		var result = Application.getSalesOrderPaginatedSearchResults({
+		var result = Application.getAllSalesOrderPaginatedSearchResults({
 			record_type: 'salesorder'
 			, filters: filters
 			, columns: columns
 			, page: page
 		});
-
+		
 		if (clientName) {
 			filters = [
 				new nlobjSearchFilter('entity', null, 'is', nlapiGetUser())
@@ -498,7 +499,7 @@ Application.defineModel('PlacedOrder', {
 			if (context.getFeature('MULTISITE') && session.getSiteSettings(['siteid']).siteid) {
 				filters.push(new nlobjSearchFilter('website', null, 'anyof', [session.getSiteSettings(['siteid']).siteid, '@NONE@']));
 			}
-			var newresult = Application.getSalesOrderPaginatedSearchResults({
+			var newresult = Application.getAllSalesOrderPaginatedSearchResults({
 				record_type: 'salesorder'
 				, filters: filters
 				, columns: columns
@@ -507,7 +508,7 @@ Application.defineModel('PlacedOrder', {
 
 			if (newresult.records.length > 0) {
 				result.records = result.records.concat(newresult.records);
-
+				
 			}
 		}
 		result.records = result.records.slice(0, 1000);
@@ -539,12 +540,16 @@ Application.defineModel('PlacedOrder', {
 				if (cmtstatustext != "") cmtstatustext += '-';
 				cmtstatustext += record.getValue('custcol_avt_cmt_tracking');
 			}
-
-			if ((cmtstatus == '1') && fabricstatus != '1') {
+			//nlapiLogExecution('debug','CMT STATUS', cmtstatus);
+			nlapiLogExecution('debug','CMT fabricstatus', fabricstatus);
+			if ((cmtstatus == 7 || cmtstatus == 8) && fabricstatus != '1') {
 				//check the dates of the fabric should be sent vs today
+				//nlapiLogExecution('debug','CMT custcol_expected_production_date', custcol_expected_production_date);
 				if (custcol_expected_production_date) {
 					expFabDateNeeded = nlapiStringToDate(custcol_expected_production_date);
-					expFabDateNeeded.setDate(expFabDateNeeded.getDate() + 1 - parseFloat(record.getValue('custcol_fabric_delivery_days')))
+					expFabDateNeeded.setDate(expFabDateNeeded.getDate() - parseFloat(record.getValue('custcol_cmt_production_time')))
+					//nlapiLogExecution('debug','CMT expFabDateNeeded', expFabDateNeeded);
+					//nlapiLogExecution('debug','CMT custcol_cmt_production_time', record.getValue('custcol_tailor_delivery_days'));
 					if (expFabDateNeeded < today)
 						fabstatuscheck = true;
 					else
@@ -626,11 +631,11 @@ Application.defineModel('PlacedOrder', {
 			return (a.tranline_status === b.tranline_status)? 0 : a.tranline_status? -1 : 1
 		});
 		}
-
+		
 		var range_start = (page * results_per_page) - results_per_page
 		,	range_end = page * results_per_page;
 		result.records = result.records.slice(range_start, range_end);
-
+		
 		/**
 		var arrObjRecords = [];
 		var stRecords = JSON.stringify(result.records);
