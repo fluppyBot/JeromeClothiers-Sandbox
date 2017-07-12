@@ -444,7 +444,7 @@ Application.defineModel('PlacedOrder', {
 
 		// columns.push(new nlobjSearchColumn('custcol_expected_delivery_date'))//This
 		columns.push(new nlobjSearchColumn('custcol_expected_production_date'))
-		// columns.push(new nlobjSearchColumn('custcol_tailor_delivery_days'))
+		columns.push(new nlobjSearchColumn('custcol_tailor_delivery_days'))
 		columns.push(new nlobjSearchColumn('custcol_so_id'))
 		columns.push(new nlobjSearchColumn('item'))
 		columns.push(new nlobjSearchColumn('custcol_avt_date_needed'))//This
@@ -542,7 +542,7 @@ Application.defineModel('PlacedOrder', {
 			}
 			//nlapiLogExecution('debug','CMT STATUS', cmtstatus);
 			nlapiLogExecution('debug','CMT fabricstatus', fabricstatus);
-			if ((cmtstatus == 7 || cmtstatus == 8) && fabricstatus != '1') {
+			if ((cmtstatus == 7 || cmtstatus == 8) && fabricstatus != 1) {
 				//check the dates of the fabric should be sent vs today
 				//nlapiLogExecution('debug','CMT custcol_expected_production_date', custcol_expected_production_date);
 				if (custcol_expected_production_date) {
@@ -559,7 +559,7 @@ Application.defineModel('PlacedOrder', {
 					fabstatuscheck = false;
 				}
 			}
-			else if (fabricstatus == '1') {
+			else if (fabricstatus == 1) {
 				fabstatuscheck = true;
 			}
 			else {
@@ -568,18 +568,24 @@ Application.defineModel('PlacedOrder', {
 			if (cmtstatus == 4) {
 				cmtstatuscheck = true;
 			} else if (dateneeded) {
+				nlapiLogExecution('debug','CMT dateneeded', dateneeded);
 				dateNeeded = nlapiStringToDate(dateneeded)
 				if (datesent) {
 					confirmedDate = nlapiStringToDate(datesent);
 					confirmedDate.setDate(confirmedDate.getDate() + parseFloat(custcol_tailor_delivery_days ? custcol_tailor_delivery_days : 0));
+					nlapiLogExecution('debug','CMT confirmedDate has datesent', confirmedDate);
+					nlapiLogExecution('debug','CMT custcol_tailor_delivery_days', custcol_tailor_delivery_days);
 				}
 				else if (custcol_expected_production_date) {
-					confirmedDate = nlapiStringToDate(expdeliverydate);
+					confirmedDate = nlapiStringToDate(custcol_expected_production_date);
+					confirmedDate.setDate(confirmedDate.getDate() + parseFloat(custcol_tailor_delivery_days ? custcol_tailor_delivery_days : 0));
+					nlapiLogExecution('debug','CMT confirmedDate productiondate', confirmedDate);
 				}
-
+				
 				if (confirmedDate) {
-					if (confirmedDate > dateNeeded)
+					if (confirmedDate > dateNeeded){						
 						cmtstatuscheck = true;
+					}
 					else
 						cmtstatuscheck = false;
 				} else {
