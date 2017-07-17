@@ -58,17 +58,50 @@ define('Cart.Views', ['ErrorManagement', 'FitProfile.Model', 'ItemDetails.Model'
 			cart.get('lines').each(function (line){
 				var itemoptions = line.get('item').get('options');
 				var itemid = line.get('item').id;
+				var item = line.get('item');
+				console.log('validateItems>line>item',item.line_id);
+				
+				
+			    //NOTE: Attributes to compare are _sku and _name, Display error message if different code inside the ()
+				var orderItemCode = item.get('_name');
+				var itemCode = item.get('_sku');
+
+				var index1 = orderItemCode.indexOf('(');
+				var index2 = orderItemCode.indexOf(')');
+				orderItemCode = orderItemCode.substring(index1-1,index2);
+
+				var index3 = itemCode.indexOf('(');
+				var index4 = itemCode.indexOf(')');
+				itemCode = itemCode.substring(index3-1,index4);
+
+				var errorMessages = [];
+
+				if(orderItemCode!==itemCode){
+					hasError = true;
+					//errorMessages.push('Order Item Code is not the same with the SKU Item Code');
+
+					console.log('selector',jQuery("#"+line.get('internalid')+"").find('[data-type="alert-placeholder"]'));
+					//jQuery("[data-id='"+itemid+"']").find('[class="alert-placeholder"]').append(SC.macros.message('Item name is different to SKU', 'error', true));
+					jQuery("#"+line.get('internalid')+" .item .alert-placeholder").append(SC.macros.message('Item name is different to SKU', 'error', true));
+				}
+
+				console.log('orderItemCode',orderItemCode);
+				console.log('itmeCode',itemCode);	
+
 				for(var i=0;i<itemoptions.length;i++){
+					//console.log('validateItems>itemoptions',itemoptions[i]);
 					if(itemoptions[i].id == "CUSTCOL_AVT_DATE_NEEDED"){
 						if(itemoptions[i].value == '1/1/1900'){
 								hasError = true;
-								jQuery("[data-id='"+itemid+"']").find('[data-type="alert-placeholder"]').append(
-									SC.macros.message('Date Needed is Required', 'error', true));							
-							}
+								//errorMessages.push('Date Needed is Required');
+								//jQuery("[data-id='"+itemid+"']").find('[data-type="alert-placeholder"]')[0].append(SC.macros.message('Date Needed is Required', 'error', true));							
+								jQuery("#"+line.get('internalid')+" .item .alert-placeholder").append(SC.macros.message('Date Needed is Required', 'error', true));
+						}
 					}
 				}
 			});
 			if(hasError){
+				//jQuery("[data-id='"+itemid+"']").find('[data-type="alert-placeholder"]').append(SC.macros.message(errorMessages, 'error', true));
 				return ;
 			}
 			else{
