@@ -268,23 +268,35 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 		}
 
 		, buildMesureForm: function (e) {
+			console.log('buildMeasureForm');
 			var measureType = jQuery(e.target).val()
 				, itemType = jQuery("#in-modal-custrecord_fp_product_type").val()
 				, self = this
 				, fieldsForm = null;
 
-			if (measureType && itemType) {
-				fieldsForm = _.where(self.fitprofile.measurement_config, { item_type: itemType })[0];
-				fieldsForm = _.where(fieldsForm.measurement, { type: measureType })[0];
-				self.processBlockFields(fieldsForm, 'Regular');
-				self.fitprofile.selected_measurement = fieldsForm;
+			var config = [];
 
-				jQuery("#in-modal-measure-form").html(SC.macros.measureForm(fieldsForm));
-			} else {
-				jQuery("#in-modal-measure-form").html("");
-			}
+			jQuery.get(_.getAbsoluteUrl('js/itemRangeConfig.json')).done(function (data) {
+				config = data;
+				if (measureType && itemType) {
+					fieldsForm = _.where(self.fitprofile.measurement_config, { item_type: itemType })[0];
+					fieldsForm = _.where(fieldsForm.measurement, { type: measureType })[0];
+					self.processBlockFields(fieldsForm, 'Regular');
+					self.fitprofile.selected_measurement = fieldsForm;
+					window.itemRangeConfig = data;
+					//console.log(config);
+					jQuery("#in-modal-measure-form").html(SC.macros.measureForm(fieldsForm));
+				} else {
+					jQuery("#in-modal-measure-form").html("");
+				}
+			});
+
+			
+
+
 		}
 		, rebuildMeasureForm: function (e) {
+			console.log('rebuildMeasureForm');
 			var fitType = jQuery(e.target).val()
 				, measureType = jQuery("#custrecord_fp_measure_type").val()
 				, itemType = jQuery("#in-modal-custrecord_fp_product_type").val()
@@ -344,18 +356,23 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 				, idPrefix = isModal ? "#in-modal-" : "#"
 				, idFinishPrefix = isModal ? "#in-modal-finish_" : "#finish_"
 				, id = isModal && !isAllowance ? field.prop("id").split("-modal-")[1] : id;
+			console.log('-------------------------------',field);
+			
 			if (jQuery(idAllowancePrefix + id) && !jQuery(idAllowancePrefix + id).length) {
 				idAllowancePrefix = idAllowancePrefix.replace("in-modal-", "");
 			}
 			if (isAllowance) {
 				if (_.isNaN(jQuery(idAllowancePrefix + id).val()) || jQuery(idAllowancePrefix + id).val() === "") {
 					finalMeasure = 0 + parseFloat(field.val());
+					console.log('finalMeasure>0 + parseFloat(field.val())',finalMeasure);
 				} else {
 					finalMeasure = parseFloat(jQuery(idPrefix + id).val()) + parseFloat(field.val());
+					console.log('finalMeasure>parseFloat(jQuery(idPrefix + id).val()) + parseFloat(field.val())',finalMeasure);
 				}
 			} else {
 				if (_.isNaN(jQuery(idAllowancePrefix + id).val()) || jQuery(idAllowancePrefix + id).val() === "") {
 					finalMeasure = 0 + parseFloat(field.val());
+					console.log('finalMeasure>not allowance>0 + parseFloat(field.val())',finalMeasure);
 				} else if (jQuery(idAllowancePrefix + id).val() == 0) {
 					var value = jQuery("#in-modal-fit").length ? jQuery("#in-modal-fit").val() : jQuery("#fit").val()
 						, self = this
@@ -368,14 +385,25 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 					if (lookUpValue && lookUpValue.length) { // Update allowance field if there is a lookup value provided that allowance is 0
 						jQuery(idAllowancePrefix + id).val(lookUpValue[0].value);
 						allowance = jQuery(idAllowancePrefix + id).val();
+						console.log('allowance>jQuery(idAllowancePrefix + id).val()',allowance);
 					}
 					finalMeasure = parseFloat(allowance) + parseFloat(jQuery(idPrefix + id).val());
+					console.log('finalMeasure>parseFloat(allowance) + parseFloat(jQuery(idPrefix + id).val())',allowance);
 				} else {
-					finalMeasure = parseFloat(jQuery(idAllowancePrefix + id).val()) + parseFloat(jQuery(idPrefix + id).val());
+					//finalMeasure = parseFloat(jQuery(idAllowancePrefix + id).val()) + parseFloat(jQuery(idPrefix + id).val());
+					console.log(jQuery("[id='"+idAllowancePrefix.replace('#','') + id+"']"));
+					console.log(jQuery("[id='"+idPrefix.replace('#','') + id+"']"));
+					finalMeasure = parseFloat(jQuery("[id='"+idAllowancePrefix.replace('#','') + id+"']").val()) + parseFloat(jQuery("[id='"+idPrefix.replace('#','') + id+"']").val());
+					console.log('idAllowancePrefix + id',idAllowancePrefix + id);
+					console.log('idPrefix + id',idPrefix + id)
+					console.log('finalMeasure>parseFloat(jQuery(idAllowancePrefix + id).val()) + parseFloat(jQuery(idPrefix + id).val())',allowance);
 				}
 			}
+
+			console.log('finalMeasure',finalMeasure);
 			if (!finalMeasure) finalMeasure = 0;
-			jQuery(idFinishPrefix + id).html(Math.round(finalMeasure * 100) / 100);
+			//jQuery(idFinishPrefix + id).html(Math.round(finalMeasure * 100) / 100);
+			jQuery("[id='"+idFinishPrefix.replace('#','')+id).html(Math.round(finalMeasure * 100) / 100);
 		}
 		, updateAllowanceLookup: function (e) {
 			var value = jQuery(e.target).val()
@@ -422,8 +450,11 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 				"Back-Length": { min: 67, max: 95 }
 			};
 			var finishMeasurements = jQuery('#in-modal-profile-form span[id*="finish_"]');
+			console.log('finishMeasurements',finishMeasurements);
+
 			var hasErrors = false;
 			for (var i = 0; i < finishMeasurements.length; i++) {
+				console.log(finishMeasurements[i]);
 				if (finishMeasurements[i].attributes['min-value'] && finishMeasurements[i].attributes['max-value']) {
 					var min = parseFloat(finishMeasurements[i].attributes['min-value'].value),
 						max = parseFloat(finishMeasurements[i].attributes['max-value'].value),

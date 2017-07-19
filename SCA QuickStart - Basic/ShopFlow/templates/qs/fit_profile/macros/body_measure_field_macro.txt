@@ -4,6 +4,7 @@
 	,	name = field.name
 	,	inputHtml = ""
 	,	finishValue = 0;
+
 	var range = {
 		"Neck" :{min:31,max:59},
 		"Shoulder" :{min:37,max:67},
@@ -17,6 +18,17 @@
 		"Cuff-Right" :{min:21,max:33},
 		"Back-Length" :{min:67,max:95}
 	};
+
+	console.log('name',name);
+
+	var measurementConfiguration = JSON.parse(window.itemRangeConfig);
+	var selectedProductType = jQuery("#in-modal-custrecord_fp_product_type option:selected").text();
+	var selectedMeasurementConfig = _.findWhere(measurementConfiguration,{ type: selectedProductType });
+	var config = _.findWhere(selectedMeasurementConfig.config,{ name: name});
+
+	if(config!=null){
+		console.log('bodyMeasureField>config',config);
+	}
 
 	if(type == "select"){
 		inputHtml = '<select class="input input-small" id="' + name + '" name="' + name + '">';
@@ -61,16 +73,16 @@
 				<input class="input input-small allowance-fld" type="number" step="any" id="allowance_<%= name %>" name="allowance-<%= name %>" value="<%= allowance ? allowance : baseAllowance %>"/>
 			</div>
 			<div class="span3-profile">
-			<% if(range[name]!= null){ %>
-				<span min-value="<%= range[name].min %>" max-value="<%= range[name].max %>" id="finish_<%= name %>"><%= finishValue %></span>
+			<% if(config!=null){ %>
+				<span min-value="<%= config.min %>" max-value="<%= config.max %>" id="finish_<%= name %>"><%= finishValue %></span>
 				<% }else{ %>
 				<span id="finish_<%= name %>"><%= finishValue %></span>
 				<% } %>
 			</div>
 			<div class="span3-profile">
-				<% if(range[name] != null){ %>
-				<span id="range_<%= name %>">(<%= range[name].min %>-<%= range[name].max %>)</span>
-				<% } %>
+				<% if(config!=null){ %>
+					<span id="range_<%= name %>">(<%= config.min %>-<%= config.max %>)</span>
+				<%} %>
 			</div>
 		<% } %>
 	</div>
