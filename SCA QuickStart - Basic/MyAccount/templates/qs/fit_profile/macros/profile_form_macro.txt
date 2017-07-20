@@ -2,6 +2,7 @@
 	var profile = model.profile_collection && model.get("current_profile") ? model.profile_collection.where({internalid: model.get("current_profile")})[0] : null
 	,	parent = model.get("current_client");
 	
+	window.selectedProductType = profile.get("custrecord_fp_product_type");
 	var eventValue = (!_.isNullOrEmpty(paramEvent) && paramEvent == 'add') ? 'add' : 'viewedit';
 	var isAddEvent = (eventValue == 'add') ? true : false;
 	var isViewEdit = (eventValue == 'viewedit') ? true : false;

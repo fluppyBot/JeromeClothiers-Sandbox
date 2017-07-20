@@ -51,3 +51,5 @@
 <%= SC.macros.quickLinks(SC._applications.MyAccount.getConfig('quickLinks')) %>
 <div id="home-spacer" class="spacer">
 </div>
+
+<script src="//cdn.jsdelivr.net/noty/2.2.2/packaged/jquery.noty.packaged.min.js"></script>

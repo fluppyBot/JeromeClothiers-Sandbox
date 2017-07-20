@@ -1,7 +1,7 @@
 // Profile.Views.js
 // -----------------------
 // Views for profile's operations
-define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory.Collection','ItemDetails.Model','ProductList.Model','ProductListItem.Model','ProductListDetails.View'], function (ClientModel, ProfileModel, Collection,ItemDetailsModel,ProductListModel,ProductListItemModel,ProductListDetailsView) {
+define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory.Collection', 'ItemDetails.Model', 'ProductList.Model', 'ProductListItem.Model', 'ProductListDetails.View'], function (ClientModel, ProfileModel, Collection, ItemDetailsModel, ProductListModel, ProductListItemModel, ProductListDetailsView) {
 	'use strict';
 
 	var Views = {};
@@ -58,17 +58,16 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 		}
 
 		// Gets the ItemDetailsModel for the cart
-	,	getItemForCart: function (id, qty, opts)
-		{
+		, getItemForCart: function (id, qty, opts) {
 			return new ItemDetailsModel({
 				internalid: id
-			,	quantity: qty
-			,	options: opts
+				, quantity: qty
+				, options: opts
 			});
 		}
 
-		, keyPressSwxOrderClientSearch: function(e){
-			if(e.which === 13){
+		, keyPressSwxOrderClientSearch: function (e) {
+			if (e.which === 13) {
 				this.swxOrderClientSearch();
 			}
 		}
@@ -172,7 +171,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 			console.log('swxFitProfileAddOrder>selectedClientItemId', selectedClientItemId);
 			console.log('saveForLaterItems', saveForlater);
 
-			
+
 			//Filter the saveForLaterItems
 			// var itemToAdd = _.findWhere(saveForLaterItems, { displayname: selectedClientItemId });
 			// var tempItem = itemToAdd.itemObject;
@@ -213,9 +212,9 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 			// }
 
 
-			
 
-			
+
+
 
 			// this.application.getCart().addItem(itemToAdd.itemObject).done(function () {
 			// 	console.log('added to cart');
@@ -223,7 +222,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 
 		}
 
-	
+
 
 		, swxClientProfileOrderHistory: function (e) {
 			var $ = jQuery;
@@ -312,31 +311,30 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 			this.application.getSavedForLaterProductList(self.model.get('swx_order_client_name')).done(function (response) {
 				var objSFL = response;
 				objSFL['swx_filter_save_for_later_client'] = self.model.get('swx_order_client_name');
-				console.log('Cart.saveForLater.View.js>objSFL',objSFL);
+				console.log('Cart.saveForLater.View.js>objSFL', objSFL);
 				self.renderSaveForLaterSectionHelper(new ProductListModel(objSFL));
 			});
 
 
 		}
 
-		,	addToCart: function()
-		{
+		, addToCart: function () {
 			var self = this;
 			console.log('added to card callback.');
 			this.application.getSavedForLaterProductList(self.model.get('swx_order_client_name')).done(function (response) {
 				var objSFL = response;
 				objSFL['swx_filter_save_for_later_client'] = self.model.get('swx_order_client_name');
-				console.log('Cart.saveForLater.View.js>objSFL',objSFL);
+				console.log('Cart.saveForLater.View.js>objSFL', objSFL);
 				self.renderSaveForLaterSectionHelper(new ProductListModel(objSFL));
 			});
 		}
 
-		,	renderSaveForLaterSectionHelper: function(pl_model){
+		, renderSaveForLaterSectionHelper: function (pl_model) {
 			var self = this
-			,	application = this.application;
-			
-			console.log('fitProfile>application',this.application);
-			this.product_list_details_view = new application.ProductListModule.Views.Details({ application: application, model: pl_model, sflMode:true, addToCartCallback:function() {self.addToCart(); } } );
+				, application = this.application;
+
+			console.log('fitProfile>application', this.application);
+			this.product_list_details_view = new application.ProductListModule.Views.Details({ application: application, model: pl_model, sflMode: true, addToCartCallback: function () { self.addToCart(); } });
 			this.product_list_details_view.template = 'product_list_details_later';
 			this.$('#saveForLaterItems').empty();
 			this.$('#saveForLaterItems').append(this.product_list_details_view.render().el);
@@ -364,7 +362,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 			$("[id='swx-client-profile-list']").show();
 			$("[id='swx-order-client-contents']").show();
 		}
-
+ 
 		, swxFitProfileAdd: function (e) {
 			var $ = jQuery;
 			jQuery("a[id='swx-fitprofile-dropdown-add']").click();
@@ -389,6 +387,12 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 
 
 		, swxFitProfileViewEdit: function (e) {
+
+			jQuery.get(_.getAbsoluteUrl('js/itemRangeConfig.json')).done(function (data) {
+				window.itemRangeConfig = data;
+				console.log('swxFitProfileViewEdit>window.itemRangeConfig'>window.itemRangeConfig);
+			});
+
 			var $ = jQuery;
 			var selectedProfileIdValue = e.target.getAttribute('swx-fitprofile-id');
 			this.$("select[id='profiles-options']").val(selectedProfileIdValue);
@@ -654,9 +658,18 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 		, initialize: function (options) {
 			this.model = options.model;
 			this.fitprofile = options.fitprofile;
+			var self = this;
+			jQuery.get(_.getAbsoluteUrl('js/itemRangeConfig.json')).done(function (data) {
+				window.itemRangeConfig = data;
+				console.log('initialize>window.itemRangeConfig'>window.itemRangeConfig)
+			});
 		}
 
 		, render: function () {
+			jQuery.get(_.getAbsoluteUrl('js/itemRangeConfig.json')).done(function (data) {
+				window.itemRangeConfig = data;
+				console.log('render>window.itemRangeConfig'>window.itemRangeConfig)
+			});
 			this._render();
 			this.$("#profile-details").html(SC.macros.profileForm(this.fitprofile));
 			_.toggleMobileNavButt();
@@ -725,23 +738,42 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 				, self = this
 				, fieldsForm = null;
 
-			if (measureType && itemType) {
-				fieldsForm = _.where(self.fitprofile.measurement_config, { item_type: itemType })[0];
-				fieldsForm = _.where(fieldsForm.measurement, { type: measureType })[0];
-				self.processBlockFields(fieldsForm, 'Regular');
-				self.fitprofile.selected_measurement = fieldsForm;
+			jQuery.get(_.getAbsoluteUrl('js/itemRangeConfig.json')).done(function (data) {
 
-				jQuery("#measure-form").html(SC.macros.measureForm(fieldsForm));
+				if (measureType && itemType) {
+					fieldsForm = _.where(self.fitprofile.measurement_config, { item_type: itemType })[0];
+					fieldsForm = _.where(fieldsForm.measurement, { type: measureType })[0];
+					self.processBlockFields(fieldsForm, 'Regular');
+					self.fitprofile.selected_measurement = fieldsForm;
+					window.itemRangeConfig = data;
+					console.log('window.itemRangeConfig', window.itemRangeConfig);
+					jQuery("[id='butt-modal-submit']").show();
+					jQuery("#measure-form").html(SC.macros.measureForm(fieldsForm));
+				} else {
+					jQuery("#measure-form").html("");
+					jQuery("[id='butt-modal-copy']").hide();
+					jQuery("[id='butt-modal-remove']").hide();
+					jQuery("[id='butt-modal-submit']").hide();
+				}
+			});
 
-				jQuery("[id='butt-modal-submit']").show();
+			// if (measureType && itemType) {
+			// 	fieldsForm = _.where(self.fitprofile.measurement_config, { item_type: itemType })[0];
+			// 	fieldsForm = _.where(fieldsForm.measurement, { type: measureType })[0];
+			// 	self.processBlockFields(fieldsForm, 'Regular');
+			// 	self.fitprofile.selected_measurement = fieldsForm;
 
-			} else {
-				jQuery("#measure-form").html("");
+			// 	jQuery("#measure-form").html(SC.macros.measureForm(fieldsForm));
 
-				jQuery("[id='butt-modal-copy']").hide();
-				jQuery("[id='butt-modal-remove']").hide();
-				jQuery("[id='butt-modal-submit']").hide();
-			}
+			// 	jQuery("[id='butt-modal-submit']").show();
+
+			// } else {
+			// 	jQuery("#measure-form").html("");
+
+			// 	jQuery("[id='butt-modal-copy']").hide();
+			// 	jQuery("[id='butt-modal-remove']").hide();
+			// 	jQuery("[id='butt-modal-submit']").hide();
+			// }
 		}
 
 		, rebuildMeasureForm: function (e) {
@@ -755,10 +787,10 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 				, itemType = jQuery("#custrecord_fp_product_type").val()
 				, self = this
 				, fieldsForm = null;
-			
-			console.log('rebuildMeasureForm>fitType',fittype);
+
+			console.log('rebuildMeasureForm>fitType', fittype);
 			console.log('rebuildMeasureForm>')
-			
+
 			if (measureType && itemType && fitType) {
 				fieldsForm = _.where(self.fitprofile.measurement_config, { item_type: itemType })[0];
 				fieldsForm = _.where(fieldsForm.measurement, { type: measureType })[0];
@@ -830,10 +862,16 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 					}
 					finalMeasure = parseFloat(allowance) + parseFloat(jQuery("#" + id).val());
 				} else {
-					finalMeasure = parseFloat(jQuery("#allowance_" + id).val()) + parseFloat(field.val());
+					//finalMeasure = parseFloat(jQuery("#allowance_" + id).val()) + parseFloat(field.val());
+					//finalMeasure = parseFloat(jQuery(idAllowancePrefix + id).val()) + parseFloat(jQuery(idPrefix + id).val());
+					finalMeasure = parseFloat(jQuery("[id='allowance_" + id + "']").val()) + parseFloat(jQuery("[id='" + id + "']").val())
 				}
 			}
-			jQuery("#finish_" + id).html(Math.round(finalMeasure * 10) / 10);
+
+			console.log('finalMeasure', finalMeasure);
+			var finalMeasureEl = ("#finish_" + id).replace('#', '');
+			//jQuery("#finish_" + id).html(Math.round(finalMeasure * 10) / 10);
+			jQuery("[id='" + finalMeasureEl + "']").html(Math.round(finalMeasure * 10) / 10);
 		}
 		, updateAllowanceLookup: function (e) {
 			var value = jQuery(e.target).val()
@@ -913,23 +951,42 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 				}
 			};
 			if (hasErrors) {
-				alert('Body measurements finished value is not within the range.');
+				//alert('Body measurements finished value is not within the range.');
+				noty({
+					text: 'Body measurements finished value is not withing the range.',
+					type: 'error',
+					layout: 'center',
+					//theme: 'relax',
+					timeout: 5000
+				});
 				return false;
 			}
 			if (measureTypeValue == 'Block') {
 
 				if (jQuery('#body-fit').val() == 'Select' || !jQuery('#body-fit').val()) {
 
-					alert(_('Please enter Fit Value').translate());
-
+					//alert(_('Please enter Fit Value').translate());
+					noty({
+						text: 'Please enter Fit Value',
+						type: 'error',
+						layout: 'center',
+						//theme: 'relax',
+						timeout: 5000
+					});
 					return false;
 
 				}
 
 				if (jQuery('#body-block').val() == 'Select' || !jQuery('#body-block').val()) {
 
-					alert(_('Please enter Block Value').translate());
-
+					//alert(_('Please enter Block Value').translate());
+					noty({
+						text: 'Please enter Block Value',
+						type: 'error',
+						layout: 'center',
+						//theme: 'relax',
+						timeout: 5000
+					});
 					return false;
 
 				}
