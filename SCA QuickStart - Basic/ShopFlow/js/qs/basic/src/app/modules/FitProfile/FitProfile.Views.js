@@ -358,22 +358,22 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 				, id = isModal && !isAllowance ? field.prop("id").split("-modal-")[1] : id;
 			console.log('-------------------------------',field);
 			
-			if (jQuery(idAllowancePrefix + id) && !jQuery(idAllowancePrefix + id).length) {
+			if (jQuery("[id='"+idAllowancePrefix.replace('#','') + id+"']").val() && !jQuery("[id='"+idAllowancePrefix.replace('#','') + id+"']").val().length) {
 				idAllowancePrefix = idAllowancePrefix.replace("in-modal-", "");
 			}
 			if (isAllowance) {
-				if (_.isNaN(jQuery(idAllowancePrefix + id).val()) || jQuery(idAllowancePrefix + id).val() === "") {
+				if (_.isNaN(jQuery("[id='"+idAllowancePrefix.replace('#','') + id+"']").val()) || jQuery("[id='"+idAllowancePrefix.replace('#','') + id+"']").val() === "") {
 					finalMeasure = 0 + parseFloat(field.val());
 					console.log('finalMeasure>0 + parseFloat(field.val())',finalMeasure);
 				} else {
-					finalMeasure = parseFloat(jQuery(idPrefix + id).val()) + parseFloat(field.val());
+					finalMeasure = parseFloat(jQuery("[id='"+idPrefix.replace('#','') + id+"']").val()) + parseFloat(field.val());
 					console.log('finalMeasure>parseFloat(jQuery(idPrefix + id).val()) + parseFloat(field.val())',finalMeasure);
 				}
 			} else {
-				if (_.isNaN(jQuery(idAllowancePrefix + id).val()) || jQuery(idAllowancePrefix + id).val() === "") {
+				if (_.isNaN(jQuery("[id='"+idAllowancePrefix.replace('#','') + id+"']").val()) || jQuery("[id='"+idAllowancePrefix.replace('#','') + id+"']").val() === "") {
 					finalMeasure = 0 + parseFloat(field.val());
 					console.log('finalMeasure>not allowance>0 + parseFloat(field.val())',finalMeasure);
-				} else if (jQuery(idAllowancePrefix + id).val() == 0) {
+				} else if (jQuery("[id='"+idAllowancePrefix.replace('#','') + id+"']").val() == 0) {
 					var value = jQuery("#in-modal-fit").length ? jQuery("#in-modal-fit").val() : jQuery("#fit").val()
 						, self = this
 						, lookUpTable = self.fitprofile.selected_measurement["lookup-value"][value]
@@ -383,11 +383,13 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 						, allowance = 0;
 
 					if (lookUpValue && lookUpValue.length) { // Update allowance field if there is a lookup value provided that allowance is 0
-						jQuery(idAllowancePrefix + id).val(lookUpValue[0].value);
-						allowance = jQuery(idAllowancePrefix + id).val();
+						//jQuery(idAllowancePrefix + id).val(lookUpValue[0].value);
+						jQuery("[id='"+idAllowancePrefix.replace('#','') + id+"']").val(lookUpValue[0].value);
+						//allowance = jQuery(idAllowancePrefix + id).val();
+						allowance = jQuery("[id='"+idAllowancePrefix.replace('#','') + id+"']").val();
 						console.log('allowance>jQuery(idAllowancePrefix + id).val()',allowance);
 					}
-					finalMeasure = parseFloat(allowance) + parseFloat(jQuery(idPrefix + id).val());
+					finalMeasure = parseFloat(allowance) + parseFloat(jQuery("[id='"+idPrefix.replace('#','') + id+"']").val());
 					console.log('finalMeasure>parseFloat(allowance) + parseFloat(jQuery(idPrefix + id).val())',allowance);
 				} else {
 					//finalMeasure = parseFloat(jQuery(idAllowancePrefix + id).val()) + parseFloat(jQuery(idPrefix + id).val());

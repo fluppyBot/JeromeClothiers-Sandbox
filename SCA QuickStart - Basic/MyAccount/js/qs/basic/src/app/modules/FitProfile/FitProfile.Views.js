@@ -837,17 +837,19 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 				, finalMeasure = 0;
 
 			if (isAllowance) {
-				if (_.isNaN(jQuery("#allowance_" + id).val()) || jQuery("#allowance_" + id).val() === "") {
+				if (_.isNaN(jQuery("[id='allowance_" + id + "']").val()) || jQuery("[id='allowance_" + id + "']").val() === "") {
 					// finalMeasure =  (parseFloat(jQuery("#" + id).val()) * (parseFloat(field.data("baseval")) / 100)) + parseFloat(jQuery("#" + id).val());
 					finalMeasure = 0 + parseFloat(field.val());
 				} else {
-					finalMeasure = parseFloat(jQuery("#" + id).val()) + parseFloat(field.val());
+					//finalMeasure = parseFloat(jQuery("#" + id).val()) + parseFloat(field.val());
+					finalMeasure = parseFloat(jQuery("[id='" + id + "']").val())+ parseFloat(field.val());
 				}
 			} else {
-				if (_.isNaN(jQuery("#allowance_" + id).val()) || jQuery("#allowance_" + id).val() === "") {
+				if (_.isNaN(jQuery("[id='allowance_" + id + "']").val()) || jQuery("[id='allowance_" + id + "']").val() === "") {
 					// finalMeasure = (parseFloat(field.val()) * (parseFloat(jQuery("#allowance_" + id).data("baseval")) / 100)) + parseFloat(field.val());
+					console.log('isAllowance>else>if.isNan',parseFloat(field.val()));
 					finalMeasure = 0 + parseFloat(field.val());
-				} else if (jQuery("#allowance_" + id).val() == 0) {
+				} else if (jQuery("[id='allowance_" + id + "']").val() == 0) {
 					var value = jQuery("#fit").val()
 						, self = this
 						, lookUpTable = self.fitprofile.selected_measurement["lookup-value"][value]
@@ -857,10 +859,11 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 						, allowance = 0;
 
 					if (lookUpValue && lookUpValue.length) { // Update allowance field if there is a lookup value provided that allowance is 0
-						jQuery("#allowance_" + id).val(lookUpValue[0].value);
-						allowance = jQuery("#allowance_" + id).val();
+						//jQuery("#allowance_" + id).val(lookUpValue[0].value);
+						jQuery("[id='allowance_" + id + "']").val(lookUpValue[0].value)
+						allowance = jQuery("[id='allowance_" + id + "']").val();
 					}
-					finalMeasure = parseFloat(allowance) + parseFloat(jQuery("#" + id).val());
+					finalMeasure = parseFloat(allowance) + parseFloat(jQuery("[id='" + id + "']").val());
 				} else {
 					//finalMeasure = parseFloat(jQuery("#allowance_" + id).val()) + parseFloat(field.val());
 					//finalMeasure = parseFloat(jQuery(idAllowancePrefix + id).val()) + parseFloat(jQuery(idPrefix + id).val());
@@ -868,6 +871,9 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 				}
 			}
 
+			if(_.isNaN(finalMeasure)){
+				finalMeasure = 0;
+			}
 			console.log('finalMeasure', finalMeasure);
 			var finalMeasureEl = ("#finish_" + id).replace('#', '');
 			//jQuery("#finish_" + id).html(Math.round(finalMeasure * 10) / 10);

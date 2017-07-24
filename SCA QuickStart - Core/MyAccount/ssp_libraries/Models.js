@@ -459,6 +459,7 @@ Application.defineModel('PlacedOrder', {
 		columns.push(new nlobjSearchColumn('custcol_avt_saleorder_line_key'))
 		columns.push(new nlobjSearchColumn('custcol_avt_cmt_tracking'))
 		columns.push(new nlobjSearchColumn('custcol_fabric_delivery_days'))
+		columns.push(new nlobjSearchColumn('custcol_fabric_quantity'))
 		if (isMultiCurrency) {
 			columns.push(new nlobjSearchColumn('currency'));
 		}
@@ -480,12 +481,25 @@ Application.defineModel('PlacedOrder', {
 		if (context.getFeature('MULTISITE') && session.getSiteSettings(['siteid']).siteid) {
 			filters.push(new nlobjSearchFilter('website', null, 'anyof', [session.getSiteSettings(['siteid']).siteid, '@NONE@']));
 		}
+
+		//console.log('clientName',clientName);
+		
 		var result = Application.getSalesOrderPaginatedSearchResults({
 			record_type: 'salesorder'
 			, filters: filters
 			, columns: columns
 			, page: page
 		});
+
+
+		//NOTE : For checking data only ----------------
+		//console.log('For Checking data only ------------------------------');
+		//nlapiLogExecution('debug','result',result);
+		//console.log('filters',filters);
+		//nlapiLogExecution('debug', 'filters', JSON.stringify(filters));
+		//console.log('columns',columns);
+		//nlapiLogExecution('debug', 'columns', JSON.stringify(columns));
+		//console.log('End Checking data only ------------------------------');
 
 		if (clientName) {
 			filters = [
@@ -513,6 +527,7 @@ Application.defineModel('PlacedOrder', {
 		result.records = result.records.slice(0, 1000);
 		result.totalRecordsFound = 1000;
 		result.records = _.map(result.records || [], function (record) {
+			
 			var dateneeded = record.getValue('custcol_avt_date_needed');//this
 			var expdeliverydate = record.getValue('custcol_expected_delivery_date');
 			var fabricstatus = record.getValue('custcol_avt_fabric_status');
@@ -521,6 +536,7 @@ Application.defineModel('PlacedOrder', {
 			var custcol_expected_production_date = record.getValue('custcol_expected_production_date');//this
 			var cmtstatuscheck = false, fabstatuscheck = false, expFabDateNeeded, dateNeeded, confirmedDate;
 			var custcol_tailor_delivery_days = record.getValue('custcol_tailor_delivery_days');
+			console.log('record',JSON.stringify(record));
 			var today = new Date();
 			var cmtstatustext = "";
 

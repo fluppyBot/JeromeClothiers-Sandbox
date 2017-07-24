@@ -1,9 +1,10 @@
-<% registerMacro('measureForm', function (fields, values, paramEvent) { %>
+<% registerMacro('measureForm', function (fields, values, paramEvent,selectedItemType) { %>
 	
 	<%
 		var eventValue = (!_.isNullOrEmpty(paramEvent) && paramEvent == 'add') ? 'add' : 'viewedit';
 		var isAddEvent = (eventValue == 'add') ? true : false;
 		var isViewEdit = (eventValue == 'viewedit') ? true : false;
+		console.log('measureForm>selectedItemType',selectedItemType);
 	%>
 	
 	<% if(fields && fields.fieldset && fields.fieldset.length){ %>
@@ -22,7 +23,7 @@
 							}
 
 						%>
-							<%= SC.macros.bodyMeasureField(field, mainBodyValue, fieldset.name) %>
+							<%= SC.macros.bodyMeasureField(field, mainBodyValue, fieldset.name,0,0,selectedItemType) %>
 						<% }) %>
 					<% } else { %>
 						<% _.each(fieldset.fields, function(field){ 
@@ -79,7 +80,7 @@
 								}
 							
 							 %>
-							<%= SC.macros.bodyMeasureField(field, bodyValue, fieldset.name, baseAllowance, allowance) %>
+							<%= SC.macros.bodyMeasureField(field, bodyValue, fieldset.name, baseAllowance, allowance,selectedItemType) %>
 						<% }) %>
 					<% } else { %>	
 						<div class="row-fluid">
