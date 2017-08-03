@@ -55,6 +55,12 @@ define('Cart.Views', ['ErrorManagement', 'FitProfile.Model', 'ItemDetails.Model'
 			var self = this;
 			var hasError = false;
 			var cart = SC.Application('Shopping').getCart();
+
+			var clientName = '';
+			var previousLineInternalId = '';
+			var previousClientId = '';
+			var differentClientIdError = false;
+
 			cart.get('lines').each(function (line){
 				var itemoptions = line.get('item').get('options');
 				var itemid = line.get('item').id;
@@ -83,13 +89,41 @@ define('Cart.Views', ['ErrorManagement', 'FitProfile.Model', 'ItemDetails.Model'
 					console.log('selector',jQuery("#"+line.get('internalid')+"").find('[data-type="alert-placeholder"]'));
 					//jQuery("[data-id='"+itemid+"']").find('[class="alert-placeholder"]').append(SC.macros.message('Item name is different to SKU', 'error', true));
 					jQuery("#"+line.get('internalid')+" .item .alert-placeholder").append(SC.macros.message('Item name is different to SKU', 'error', true));
+					
 				}
 
 				console.log('orderItemCode',orderItemCode);
 				console.log('itmeCode',itemCode);	
 
+				var forCheckClientId = _.where(line.get("options"), {id: "CUSTCOL_TAILOR_CLIENT"})[0].value;
+				
+				if(forCheckClientId!=previousClientId && previousClientId!=''){
+					hasError = true;
+					if(!differentClientIdError){
+						differentClientIdError = true;
+						jQuery("#"+previousLineInternalId+" .item .alert-placeholder").append(SC.macros.message('Items with different client names is not allowed.', 'error', true));
+					}
+				}else{
+					previousClientId = forCheckClientId;
+				}
+				
+
 				for(var i=0;i<itemoptions.length;i++){
 					//console.log('validateItems>itemoptions',itemoptions[i]);
+					// console.log('itemoptions[i].id',itemoptions[i].id);
+					// if(itemoptions[i].id =='CUSTCOL_TAILOR_CLIENT_NAME'){
+					// 	console.log('clientName',itemoptions[i].value);
+					// 	if(clientName===''){
+					// 		clientName = itemoptions[i].value;
+					// 	}else{
+					// 		if(clientName!=itemoptions[i].value){
+					// 			hasError = true;
+					// 			//jQuery("#"+line.get('internalid')+" .item .alert-placeholder").append(SC.macros.message('Items with different client names is not allowed', 'error', true));
+					// 			jQuery("#"+previousLineInternalId+" .item .alert-placeholder").append(SC.macros.message('Items with different client names is not allowed.', 'error', true));
+					// 		}
+					// 	}
+					// }
+
 					if(itemoptions[i].id == "CUSTCOL_AVT_DATE_NEEDED"){
 						if(itemoptions[i].value == '1/1/1900'){
 								hasError = true;
@@ -99,6 +133,9 @@ define('Cart.Views', ['ErrorManagement', 'FitProfile.Model', 'ItemDetails.Model'
 						}
 					}
 				}
+
+				previousLineInternalId = line.get('internalid');
+				console.log('previousLineInternalId',previousLineInternalId);
 			});
 			if(hasError){
 				//jQuery("[data-id='"+itemid+"']").find('[data-type="alert-placeholder"]').append(SC.macros.message(errorMessages, 'error', true));
