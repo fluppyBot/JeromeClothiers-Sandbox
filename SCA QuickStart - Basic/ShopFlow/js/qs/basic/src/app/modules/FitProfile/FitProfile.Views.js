@@ -35,6 +35,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 			this.application.getLayout().showContent(this, 'tailorclient', []);
 
 			if (this.model.get("current_client")) {
+				console.log('self.model',self.model);
 				jQuery("#profile-options").html(SC.macros.fitProfileOptionDropdown(self.model.profile_collection, this.model.get("current_client")));
 			}
 
