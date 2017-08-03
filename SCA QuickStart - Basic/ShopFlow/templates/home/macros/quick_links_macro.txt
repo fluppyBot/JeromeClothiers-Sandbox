@@ -1,11 +1,11 @@
 <% registerMacro('quickLinks', function(model) { %>
 	
 	<%
-		console.log('ShopFlow > templates > home > macros > quick_links_macro')
+		console.log('ShopFlow > templates > home > macros > quick_links_macro update!')
 	%>
 		
-	<div id="quick-button-overlay" class="quick-button-area"></div>
-	<div id="quick-button-content" class="quick-button-area">
+	
+	<div id="quick-button-content" class="quick-button-area" style="margin:0px;background-color: #ebebeb">
 		<div class="container">
 			<div class="row">
 				<% _.each(model, function (quickLink) { %>			
