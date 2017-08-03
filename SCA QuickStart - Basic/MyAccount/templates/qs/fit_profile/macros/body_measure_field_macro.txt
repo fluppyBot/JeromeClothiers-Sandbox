@@ -27,8 +27,10 @@ console.log('name',name);
 	console.log('measurementConfiguration',measurementConfiguration);
 	
 	var selectedProductType = selectedItemType;
-	if(selectedProductType===''){
-		selectedProductType = window.selectedProductType;
+	if(selectedProductType==='' || selectedProductType === null || selectedProductType === undefined){
+		//selectedProductType = window.selectedProductType;
+		selectedProductType = jQuery( "#custrecord_fp_product_type option:selected").val();
+		console.log('from null>selectedProductType',selectedProductType);
 	}
 	console.log('selectedProductType',selectedProductType);
 	var selectedMeasurementConfig = _.findWhere(measurementConfiguration,{ type: selectedProductType });
