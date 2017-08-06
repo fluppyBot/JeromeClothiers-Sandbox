@@ -80,9 +80,8 @@
 					</td>
 					<td style="text-align:center;">
 					<% if(order.get('status') == 'Cancelled' || order.get('status') == 'Billed' || order.get('status') == 'Closed'){ %>
-						<img src="https://checkout.na2.netsuite.com/c.3857857/myaccount/img/clear.png">
-					<% } %>
-					<% else if(order.get('tranline_status') == true){ %>
+						<img src="https://checkout.na2.netsuite.com/c.3857857/myaccount/img/clear.png">					
+					<% }else if(order.get('tranline_status') == true){ %>
 						<img src="https://checkout.na2.netsuite.com/c.3857857/myaccount/img/red.png">
 						<% }else{ %>
 						<img src="https://checkout.na2.netsuite.com/c.3857857/myaccount/img/green.png">
