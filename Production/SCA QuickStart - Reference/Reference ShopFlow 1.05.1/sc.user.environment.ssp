@@ -1,0 +1,56 @@
+<% 
+var	Environment
+,	SiteSettings
+,	Profile
+,	Error
+,	ProductList
+,	productlist_bundle_present = recordTypeExists('customrecord_ns_pl_productlist');
+try 
+{
+	Environment = Application.getEnvironment(session, request);
+	SiteSettings = session.getSiteSettings(['touchpoints']);
+	Profile = Application.getModel('Profile').get();
+}
+catch (e)
+{
+	Error = Application.processError(e); 
+}
+
+if (!productlist_bundle_present)
+{
+	console.warn('Product Lists Data not present in Shopping SSP');
+}
+
+response.setContentType('JAVASCRIPT');
+%>
+
+// The Profile
+SC.ENVIRONMENT.PROFILE = <%= JSON.stringify(Profile) %>; 
+
+SC.SESSION = {
+	currency: <%= JSON.stringify(Environment.currentCurrency) %>
+,	language: <%= JSON.stringify(Environment.currentLanguage) %>
+,	priceLevel: <%= JSON.stringify(Environment.currentPriceLevel) %>
+,	touchpoints: <%= JSON.stringify(SiteSettings.touchpoints) %>
+};
+
+
+<% if (productlist_bundle_present) { %>
+// The Product Lists and its configuration. 
+SC.ENVIRONMENT.PRODUCTLISTS_CONFIG = <%= JSON.stringify(SC.Configuration.product_lists) %>;
+<% } %>
+
+if (SC.PROFILE_PROMISE)
+{
+	SC.PROFILE_PROMISE.resolve(SC.ENVIRONMENT.PROFILE); 
+}
+
+// Loads the application files, if you need to have a less agresive cacheing you can move them 
+// to the sc.environment.ssp (Moderate cacheing) or to the sc.user.environment.ssp (No cache but less performant). Commented here by default.
+/*
+loadScript([
+	'<%= session.getAbsoluteUrl("shopping", 'js/libs/Libraries-0159082576a2.js') %>'
+,	'<%= session.getAbsoluteUrl("shopping", 'templates/Templates-015b81a854f1.js') %>'
+,	'<%= session.getAbsoluteUrl("shopping", 'js/Application-015b8e5cdde1.js') %>'
+]);
+*/

@@ -1,0 +1,19 @@
+<div class="alert alert-block alert-success fade in thanks-panel-info">
+	<h4 class="alert-heading"><%= _('Thank you for shopping with us!').translate() %></h4>
+	<p><%= _('We received your order and will process it right away.').translate() %></p>
+	<p><%= _('Your order number is').translate(view.confirmationNumber) %>
+		<big><strong>
+		<% if(view.wizard.application.getUser().get('isGuest') === 'F' && SC.ENVIRONMENT.siteSettings.touchpoints.customercenter){ %>
+			<a class="view-order-details" href="#" data-touchpoint="customercenter" data-hashtag="#/ordershistory/view/<%= view.orderId %>"><%= view.confirmationNumber %></a>.
+		<% } else { %>
+			<%= view.confirmationNumber %>
+		<% } %>
+		</strong></big>
+	</p>
+	<% if (view.options.additional_confirmation_message) { %>
+		<p class="additional_confirmation_message"><%= view.options.additional_confirmation_message %></p>
+	<% } %>
+	<p>
+		<a class="btn btn-success" href="/" data-touchpoint="home" data-hashtag="#/"><%= _('Continue shopping').translate() %></a>
+	</p>
+</div>

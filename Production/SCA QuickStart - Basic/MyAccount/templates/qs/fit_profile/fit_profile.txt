@@ -1,0 +1,69 @@
+<%
+	var clientCollection = view.model.client_collection;
+	var stClientCollection = JSON.stringify(clientCollection, 'key', '\t');
+	var arrObjClientCollection = (!_.isNullOrEmpty(stClientCollection)) ? JSON.parse(stClientCollection) : [];
+
+	var isDisplayClientDetailsValue = view.model.get('swx_is_display_client_details');
+	var isDisplayClientProfileSearchForm = (isDisplayClientDetailsValue != 'T') ? true : false;
+
+
+	var selectedClientIdValue = view.model.get('swx_selected_client_id');
+
+	var filterClientName = view.model.get('swx_order_client_name');
+	var filterClientEmail = view.model.get('swx_order_client_email');
+	var filterClientPhone = view.model.get('swx_order_client_phone');
+
+	var objFilters = {};
+	objFilters['name'] = filterClientName;
+	objFilters['email'] = filterClientEmail;
+	objFilters['phone'] = filterClientPhone;
+	
+	var arrObjClient = _.getArrObjOrderClientList(arrObjClientCollection, objFilters)
+
+
+	console.log('isDisplayClientProfileSearchForm: ' + isDisplayClientProfileSearchForm)
+	
+	jQuery("div[data-type='alert-placeholder']").empty();
+
+	//console.log('stClientCollection: ' + '\n' + stClientCollection)
+%>
+<div data-type="alert-placeholder"></div>
+<h3>Client Profiles</h3>
+
+<div id="swx-client-profile-list">
+<% if(view.model.client_collection){ %>
+	<div style="display: none;">
+		<%= clientsOptionDropdown(view.model.client_collection, view.options.application.getUser().get("internalid")) %>
+	</div>
+	
+	<%=swxMyAccountClientProfileSearchForm(objFilters, view.options.application.getUser().get("internalid"), isDisplayClientProfileSearchForm)%>
+	
+	<div id="swx-order-client-list">
+		<% if (isDisplayClientProfileSearchForm) { %>	
+			<%=swxOrderClientList(arrObjClient)%>
+		<% } %>
+	</div>
+
+<% } %>
+</div>
+
+<% if (!isDisplayClientProfileSearchForm) { %>
+	<div id="swx-client-profile-view">
+<% } else { %>
+	<div id="swx-client-profile-view" style="display: none;">	
+<% } %>
+
+		<div id="swx-client-profile-details">
+			<% if (!isDisplayClientProfileSearchForm) { %>
+				<%=swxMyAccountClientProfileDetails(arrObjClientCollection, selectedClientIdValue, view.options.application.getUser().get("internalid"))%>
+			<% } %>
+		</div>
+		<div id="fit-profile"></div>
+		<div id="profile-section"></div>
+		<div id="order-history"></div>
+		<div id="saveForLaterItems"></div>
+
+	</div>
+
+
+

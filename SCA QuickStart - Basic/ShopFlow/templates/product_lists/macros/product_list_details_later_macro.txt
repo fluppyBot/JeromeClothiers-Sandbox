@@ -1,0 +1,143 @@
+<% registerMacro('productListDisplayLater', function(item, view, options, paramFilteredItems, paramIsFiltered) { 
+	
+	console.log('/SSP Applications/SCA QuickStart - Basic/ShopFlow/templates/product_lists/macros/product_list_details_later_macro.txt')
+	
+	var product = item.get('item')
+	,	quantity = item.get('quantity')
+	,	description = item.get('description')
+	,	item_details = item.get('itemDetails')
+	,	thumbnail = item_details.get('_thumbnail')
+	,	stock_info = item_details.getStockInfo()
+	,	internalid = item.get('internalid');
+	
+	var plSku = item_details.get('_sku');
+	
+	//console.log('item: ' + '\n' + JSON.stringify(item, 'key', '\t'))
+	
+	//var application = view.application;
+	//var model = view.model;
+	//console.log('test: ' + '\n' + JSON.stringify(model, 'key', '\t'))
+	
+	
+	//var stItem = JSON.stringify(item);
+	//var objItem = JSON.parse(stItem);
+	
+	//console.log('objItem: ' + '\n' + JSON.stringify(objItem, 'key', '\t'))
+	
+	var clientFullName = '';
+	var objClient = item.get('client');
+	var clientFirstName = objClient.firstname;
+	var clientLastName = objClient.lastname;
+	
+	var hasClientFirstName = (clientFirstName != '' && clientFirstName != null) ? true : false;
+	var hasClientLastName = (clientLastName != '' && clientLastName != null) ? true : false;
+	
+	if (hasClientFirstName || hasClientLastName)
+	{
+		if (hasClientFirstName)
+		{
+			clientFullName += clientFirstName + ' ';	
+		}
+
+		if (hasClientLastName)
+		{
+			clientFullName += clientLastName;	
+		}
+
+	}
+	
+	var hasClientFullName = (clientFullName != '' && clientFullName != null) ? true : false;
+
+	//console.log('clientFirstName: ' + clientFirstName + '\n' + 'clientLastName: ' + clientLastName)
+
+	var isDisplay = true;
+	
+	var arrFilteredItems = paramFilteredItems;
+	var arrFilteredItemsTotal = (!_.isNullOrEmpty(arrFilteredItems)) ? arrFilteredItems.length : 0;
+	var hasFilteredItems = (arrFilteredItemsTotal != 0) ? true : false;
+	var isFiltered = (paramIsFiltered == 'T') ? true : false;
+	
+	if (isFiltered) 
+	{
+		isDisplay = false;
+		
+		var arrObjSaveForLaterInternalidsMapping = _.getArrFilteredSaveForLaterInternalIdMapping(arrFilteredItems);
+		var stSaveForLaterInternalId = internalid.toString();
+		
+		var isStSaveForLaterInternalIdExistInMapping = (_.isObjectExist(arrObjSaveForLaterInternalidsMapping['' + stSaveForLaterInternalId + ''])) ? true : false;
+		
+		if (isStSaveForLaterInternalIdExistInMapping)
+		{
+			isDisplay = true;	
+		}
+	}
+	
+		
+%>
+
+<% if (isDisplay) { %>
+<article data-id=<%= item.get('internalid') %> data-item-id=<%= item_details.get('internalid') %> >
+	<div class="row-fluid">
+		<div class="span2 thumbnail cart-item-thumbnail" data-type="product-list-item" >
+			<img src="<%= view.application.resizeImage(thumbnail.url, 'thumbnail') %>" alt="<%=thumbnail.altimagetext %>">
+		</div>
+		
+		<div class="span9 details" data-type="item-details">
+			<div class="name">
+				<a href="#" data-touchpoint="home" data-hashtag="#<%= _(item.get('itemDetails').get('_url')).fixUrl() %>"> <%=  item.getProductName() || item.get('name') %></a>
+			</div>
+
+			<div class="lead lead-small price">
+				<%
+					var options = item.get("options")
+					,	tailorPricing = "0.00";
+
+					if(!_.isUndefined(options) && !_.isEmpty(options)){
+						tailorPricing = options.custcol_tailor_cust_pricing.value;
+					}
+				%>
+				<%= _.formatCurrency(tailorPricing)%>
+
+			</div>	
+
+			<div>
+				<div class="sku">SKU: <%= plSku %></div>
+				
+				<% if (hasClientFullName) { %>
+					<div class="sku">Client Name: <%= clientFullName %></div>
+				<% } %>
+			</div>
+
+
+			<div class="item-details-stock">
+				<%= SC.macros.itemDetailsStock(stock_info) %>
+			</div>
+
+
+			<div class="item-details-options">
+				<div class="options-container" data-type="all-options" data-exclude-options="">					
+				</div>		
+				<!--		
+				<form action="#" data-action="update-quantity-item-list">
+					<% if (product.itemtype !== 'GiftCert') { %>
+						<input type="number" name="item_quantity" id="item_quantity-<%= internalid %>" class="input-mini quantity-<%= internalid %>" value="<%- quantity %>" min="1">
+					<% } else { %>
+						<input type="hidden" name="item_quantity" id="item_quantity-<%= quantity %>" value="1">
+					<% } %>
+				</form>
+				-->
+			</div>
+
+			<div class="cart-item-actions" data-type="item-commands">
+				<% if(!options || !options.hide_actions) { %>
+				<button data-action="add-to-cart" class="btn btn-primary btn-expanded add-to-cart <%= !product.ispurchasable ? 'disabled' : ''%>" <%= !product.ispurchasable ? 'disabled' : ''%>><%= _('Add to cart').translate() %></button>
+				<button class="btn btn-expanded remove" data-action="delete-item"><%= _('Remove').translate() %></button>				
+				<% } %>
+			</div>
+		</div>
+	</div>
+</article>
+
+<% } %>
+
+<% }) %>

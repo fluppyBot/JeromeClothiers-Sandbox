@@ -1,0 +1,40 @@
+<%
+	var	lines_not_shippable = view.getLinesNotShippable()
+	,	application = view.wizard.application;
+%>
+<% if (lines_not_shippable && lines_not_shippable.length) { %>
+	<div class="accordion" data-type="nonshippable-items-accordion" >
+		<div class="accordion-group">
+			<div class="accordion-heading" >
+				 <div class="accordion-toggle collapsed" data-action="items-expander" data-toggle="collapse" data-target="#accordion-body-nonshipable-items">
+					<%= _('Items that don\'t require shipping <span class="items-count">($(0))</span>').translate(lines_not_shippable.length) %>
+						<i class="icon-plus-sign pull-right"></i>
+						<i class="icon-minus-sign pull-right"></i>
+				</div>
+			</div>
+
+			<div id="accordion-body-nonshipable-items" class="accordion-body collapse">
+
+				<div class="accordion-inner" data-content="items-body" >
+					<div class="row-fluid nav-tabs hide-phone">
+						<div class="span4 offset2"><%= _('Item').translate() %></div>
+						<div class="span1"><%= _('Qty').translate() %></div>
+						<div class="span2"><%= _('Unit Price').translate() %></div>
+						<div class="span3 text-right"><%= _('Amount').translate() %></div>
+					</div>
+
+					<% _.each(lines_not_shippable, function (line) { %>
+						<%= itemDetailsRow({
+								line: line
+							,	application: application
+							,	itemClass: 'multishipto-item-table-row'
+							,	showSelectable: false
+							,	showActions: false
+							}) %>
+					<% }) %>
+				</div>
+			</div>
+
+		</div>
+	</div>
+<% } %>

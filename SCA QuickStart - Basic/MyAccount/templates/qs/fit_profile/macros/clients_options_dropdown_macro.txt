@@ -1,0 +1,33 @@
+<% registerMacro('clientsOptionDropdown', function (clients, parent) { %>
+	<label for="clients-options"><%= _('Client: ').translate() %></label>
+	<% if(clients){ %>
+		<div class="row-fluid">
+			<div class="span3">
+				<select class="clients-options" id="clients-options">
+					<% 
+						var selected = false;
+						var selectedID = "";
+					%>
+					<option value=""><%= _('Select a client').translate() %></option>
+					<% clients.sort() %>
+					<% clients.each(function(client){ %>
+						<% 
+							if(client.get("internalid") == SC._applications.MyAccount.getLayout().currentView.model.get("current_client")){
+								selected = true;
+								selectedID = client.get("internalid");
+							}
+						%>
+						<option value="<%= client.get("internalid")%>" <%= client.get("internalid") == SC._applications.MyAccount.getLayout().currentView.model.get("current_client") ? 'selected' : ''%>><%= client.get("custrecord_tc_last_name")%>, <%= client.get("custrecord_tc_first_name")%></option>
+					<% }) %>
+				</select>
+			</div>
+			<div class="span3" id="client-actions">
+				<a id="swx-clients-add-href" data-toggle="show-in-modal" href="/fitprofile/new|client|<%= parent %>">Add</a>
+				<% if(selected){ %>
+					<a id="swx-clients-view-edit-href" data-toggle="show-in-modal" href="/fitprofile/<%= selectedID %>|client|<%= parent %>">| View & Edit | </a>
+					<a id="swx-clients-remove-href" data-toggle="show-in-modal" data-action="remove-rec" data-type="client" data-id="<%= selectedID %>">Remove</a>
+				<% } %>
+			</div>
+		</div>			
+	<% } %>
+<% }) %>

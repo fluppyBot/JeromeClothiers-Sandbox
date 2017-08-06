@@ -1,0 +1,11 @@
+<%= view.html %>
+
+<p class="actions">
+	<a class="btn btn-link save-action">
+		<%= _('Save').translate() %>
+	</a>
+
+	<a class="btn btn-link cancel-action" data-dismiss="modal">
+		<%= _('Cancel').translate() %>
+	</a>
+</p>

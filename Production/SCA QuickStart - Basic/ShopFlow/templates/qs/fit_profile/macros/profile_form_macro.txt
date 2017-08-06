@@ -1,0 +1,64 @@
+<% registerMacro('profileForm', function (model) { 
+	var profile = model.profile_collection && model.get("current_profile") ? model.profile_collection.where({internalid: model.get("current_profile")})[0] : null
+	,	parent = model.get("current_client");
+%>
+
+<form id="profile-form">
+	<fieldset>
+		
+		<input type="hidden" value="<%= parent %>" name="custrecord_fp_client" data-rectype="field">
+		<div class="control-group" data-input="name">
+			<label class="control-label" for="name">
+				<%= _('Profile Name').translate() %>
+				<small>
+					<%= _('(required)').translate() %>
+				</small>
+			</label>
+			<div class="controls">
+				<input type="text" class="input-xlarge" id="name" name="name" value="<%- profile ? profile.get("name") : null %>" data-rectype="field">
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="control-group"  data-input="custrecord_fp_product_type">
+				<label class="control-label" for="custrecord_fp_product_type">
+					<%= _('Product Type').translate() %>
+					<small>
+						<%= _('(required)').translate() %>
+					</small>
+				</label>
+				<div class="controls">
+					<%= SC.macros.itemTypeDropdown(_.pluck(model.measurement_config, "item_type"), profile ? profile.get("custrecord_fp_product_type") : null) %>
+				</div>
+			</div>
+
+			<div id="measure-type">
+				<% if(profile){ 
+					var selectedItemType = _.where(model.measurement_config, {item_type: profile.get("custrecord_fp_product_type")})[0]
+					,	measurementType = _.pluck(selectedItemType.measurement, "type");
+				%>
+					<%= SC.macros.measureTypeDropdown(measurementType, profile ? profile.get("custrecord_fp_measure_type") : null) %>
+				<% } %>
+			</div>
+		</div>
+		<div id="measure-form">
+			<% if(profile){ 
+				var selectedItemTypeMeasure = profile.get("custrecord_fp_product_type")
+				,	measurementTypeMeasure = profile.get("custrecord_fp_measure_type")
+				,	fieldsForm = null;
+
+				if(measurementTypeMeasure && selectedItemTypeMeasure){
+					fieldsForm = _.where(model.measurement_config, {item_type: selectedItemTypeMeasure})[0];
+					fieldsForm = _.where(fieldsForm.measurement, {type: measurementTypeMeasure})[0];
+					
+					model.selected_measurement = fieldsForm;			
+			%>
+				<%= SC.macros.measureForm(fieldsForm, profile ? JSON.parse(profile.get("custrecord_fp_measure_value")) : null) %>
+			<% 
+				}
+			} 
+			%>			
+		</div>
+		<div data-type="alert-placeholder"></div>
+	</fieldset>
+</form>
+<% }) %>

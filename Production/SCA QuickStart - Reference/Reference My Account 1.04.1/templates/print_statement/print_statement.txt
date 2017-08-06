@@ -1,0 +1,48 @@
+<section class="print-statement">
+	<h3>
+		<%= view.page_header %>
+	</h3>
+	<a href="/" class="back-btn">
+		<%= _('&lt; Back to Account').translate() %>
+	</a>
+	<hr class="divider-small">
+	<div data-type="alert-placeholder"></div>
+
+	<form>
+		<div class="control-group">
+			<label for="statementDate">
+				<%= _('Statement date').translate() %><br />
+				<input type="date" id="statementDate" class="input-date" name="statementDate" value="<%= _.dateToString(view.initialStatementDate)%>" />
+			</label>
+		</div>
+		<div class="control-group">
+			<label for="startDate">
+				<%= _('Start date (Optional)').translate() %><br />
+				<input type="date" id="startDate" class="input-date" name="startDate" value="<%= _.dateToString(view.initialStartDate)%>" />
+			</label>
+		</div>
+		<div>
+			<div class="control-group">
+					<label class="checkbox">
+						<input type="checkbox" name="inCustomerLocale" /> <%= _('Print in customer\'s locale').translate() %><br />
+					</label>
+			</div>
+			<div class="control-group">
+					<label class="checkbox">
+						<input type="checkbox" name="openOnly" /> <%= _('Show only Open Transactions').translate() %><br />
+					</label>
+			</div>
+			<div class="control-group">
+					<label class="checkbox">
+						<input type="checkbox" name="consolidatedStatement" /> <%= _('Consolidated Statement').translate() %>
+					</label>
+			</div>
+		</div>
+
+		<div class="form-actions">
+			<button type="submit" class="btn btn-expanded balance-actions-margin pull-right btn-primary print-statement-print-btn"><%= _('Print').translate() %></button>
+			<button type="button" class="btn btn-expanded balance-actions-margin pull-right print-statement-email-btn" data-action="email"><%= _('Email').translate() %></button>
+		</div>
+		
+	</form>
+</section>

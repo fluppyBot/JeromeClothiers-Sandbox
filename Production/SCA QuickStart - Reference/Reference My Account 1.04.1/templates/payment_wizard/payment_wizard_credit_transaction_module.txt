@@ -1,0 +1,38 @@
+<div class="payment-table <%= view.transaction_type === 'credit' ? 'credits-table' : 'deposits-table' %>">
+	<h5 class="payment-table-header">
+		<%= view.transaction_type === 'credit' ? _('Credits').translate() : _('Deposits').translate() %>
+	</h5>
+	
+	<div class="list-sub-header hidden-phone">
+		<div class="row-fluid">
+			<div class="span3 offset1">
+				<span><%= _('Number').translate() %></span>
+			</div>
+			<div class="span5">
+				<span><%= _('Remaining amount').translate() %></span>
+			</div>
+			<div class="span3 text-right">
+				<span><%= _('Amount').translate() %></span>
+			</div>
+		</div>
+	</div>
+
+	<% view.collection.each(function (transaction){ %>
+		<%= paymentWizardCreditTransaction({
+			transaction: transaction
+		,	type: view.transaction_type
+		,	total: view.wizard.model.calculeTotal(true)
+		}) %>
+	<% }); %>
+	
+	<div class="payment-table-footer-alt">
+		<div class="row-fluid">
+			<div class="span8 offset4">
+				<p class="strong">
+					<%= view.transaction_type === 'credit' ? _('Credits Subtotal').translate() : _('Deposits Subtotal').translate() %>
+					<span class="pull-right"><%= view.wizard.model.get(view.transaction_type === 'credit' ? 'credits_total_formatted' : 'deposits_total_formatted') %></span>
+				</p>
+			</div>
+		</div>
+	</div>
+</div>

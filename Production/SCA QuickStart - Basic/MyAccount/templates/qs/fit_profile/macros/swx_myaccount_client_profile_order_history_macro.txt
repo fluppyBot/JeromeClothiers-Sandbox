@@ -1,0 +1,147 @@
+<% registerMacro('swxMyAccountClientProfileOrderHistory', function (paramArrObjOrder) { %>
+	<%
+		var arrObjOrder = paramArrObjOrder;
+		var arrObjOrderTotal = (!_.isNullOrEmpty(arrObjOrder)) ? arrObjOrder.length : 0;
+		var hasArrObjOrder = (arrObjOrderTotal != 0) ? true : false;
+		
+		console.log('arrObjOrderTotal: ' + arrObjOrderTotal)
+	%>
+	<% if (hasArrObjOrder) { %>
+	
+		<h3>Order History</h3>
+		<div style="border-bottom: solid 1px #e5e5e5; margin-bottom: 20px"></div>
+		
+		<div style="margin-bottom: 20px;">Showing 1 - <%=arrObjOrderTotal%> of <%=arrObjOrderTotal%></div>
+		
+		<div id="desktop-only" class="row-fluid" style="border-bottom: solid 1px #e5e5e5; margin-bottom: 8px;">
+			<div class="span12" style="padding-bottom: 10px;">
+				
+				<div class="row-fluid">
+					<div class="span1"><span style="font-size: 12px; font-weight: 600;">Order Date</span></div>
+					<div class="span1"><span style="font-size: 12px; font-weight: 600;">Order Number</span></div>
+					<div class="span2"><span style="font-size: 12px; font-weight: 600;">Client Name</span></div>
+					<div class="span3"><span style="font-size: 12px; font-weight: 600;">Item</span></div>
+					<div class="span1"><span style="font-size: 12px; font-weight: 600;">Fabric Status</span></div>
+					<div class="span1"><span style="font-size: 12px; font-weight: 600;">CMT Status</span></div>
+					<div class="span1"><span style="font-size: 12px; font-weight: 600;">Date Needed</span></div>
+					<div class="span1"><span style="font-size: 12px; font-weight: 600;">Status</span></div>
+					<div class="span1"><span style="font-size: 12px; font-weight: 600;">&nbsp;</span></div>
+				</div>
+			
+			</div>
+		</div>
+		
+		
+		<% for (var dx = 0; dx < arrObjOrderTotal; dx++) { %>
+		
+			<%
+				var orderInternalId = arrObjOrder[dx]['internalid'];
+				var orderDate = arrObjOrder[dx]['orderdate'];
+				var orderNumber = arrObjOrder[dx]['ordernumber'];
+				var orderClientName = arrObjOrder[dx]['clientname'];
+				var orderTotal = arrObjOrder[dx]['ordertotal'];
+				var orderStatus = arrObjOrder[dx]['status'];
+
+				var orderSOId = arrObjOrder[dx]['so_id'];
+				var orderItem = arrObjOrder[dx]['item'];
+				var orderFabricStatus = arrObjOrder[dx]['fabricstatus'] || '&nbsp;';
+				var orderCmtStatus = arrObjOrder[dx]['cmtstatus'] || '&nbsp;';
+				var orderDateNeeded = arrObjOrder[dx]['dateneeded'] || '&nbsp;';
+				var orderTranLineStatus = arrObjOrder[dx]['tranline_status'] || '&nbsp;';
+
+
+			%>
+				
+			<!-- start row contents -->
+			
+			<div class="row-fluid" style="border-bottom: solid 1px #e5e5e5; margin-bottom: 8px;">
+			
+				<div class="span12" style="padding-bottom: 10px;">
+					<div class="row-fluid">
+						<div class="span1">
+							<div id="mobile-only" style="float: left; font-size: 12px; font-weight: 600; padding-right: 8px; white-space: nowrap;">Order Date:</div>
+							<div style="float: left; font-size: 12px;"><%= orderDate %></div>
+							<div style="clear: both;"></div>
+						</div>
+	
+						<div class="span1">
+							<div id="mobile-only" style="float: left; font-size: 12px; font-weight: 600; padding-right: 8px; white-space: nowrap;">Order Number:</div>
+							<div style="float: left; font-size: 12px;"><%= orderSOId %></div>
+							<div style="clear: both;"></div>
+						</div>
+	
+						<div class="span2">
+							<div id="mobile-only" style="float: left; font-size: 12px; font-weight: 600; padding-right: 8px; white-space: nowrap;">Client Name:</div>
+							<div style="float: left; font-size: 12px;"><%= orderClientName %></div>
+							<div style="clear: both;"></div>
+						</div>
+	
+						<div class="span3">
+							<div id="mobile-only" style="float: left; font-size: 12px; font-weight: 600; padding-right: 8px; white-space: nowrap;">Item:</div>
+							<div style="float: left; font-size: 12px;"><%= orderItem %></div>
+							<div style="clear: both;"></div>
+						</div>
+
+						<!--
+						<div class="span2">
+							<div id="mobile-only" style="float: left; font-size: 12px; font-weight: 600; padding-right: 8px; white-space: nowrap;">Order Total:</div>
+							<div style="float: left; font-size: 12px;"><%= _.formatCurrency(orderTotal) %></div>
+							<div style="clear: both;"></div>
+						</div>
+						-->
+
+
+						<div class="span1">
+							<div id="mobile-only" style="float: left; font-size: 12px; font-weight: 600; padding-right: 8px; white-space: nowrap;">Fabric Status:</div>
+							<div style="float: left; font-size: 12px;"><%= orderFabricStatus %></div>
+							<div style="clear: both;"></div>
+						</div>
+
+						<div class="span1">
+							<div id="mobile-only" style="float: left; font-size: 12px; font-weight: 600; padding-right: 8px; white-space: nowrap;">CMT Status:</div>
+							<div style="float: left; font-size: 12px;"><%= orderCmtStatus %></div>
+							<div style="clear: both;"></div>
+						</div>
+	
+						<div class="span1">
+							<div id="mobile-only" style="float: left; font-size: 12px; font-weight: 600; padding-right: 8px; white-space: nowrap;">Date Needed:</div>
+							<div style="float: left; font-size: 12px;"><%= orderDateNeeded %></div>
+							<div style="clear: both;"></div>
+						</div>
+
+
+						<!--
+						<div class="span2">
+							<div id="mobile-only" style="float: left; font-size: 12px; font-weight: 600; padding-right: 8px; white-space: nowrap;">Status:</div>
+							<div style="float: left; font-size: 12px;"><%= orderStatus %></div>
+							<div style="clear: both;"></div>
+						</div>
+						-->
+
+						<div class="span1">
+							<div id="mobile-only" style="float: left; font-size: 12px; font-weight: 600; padding-right: 8px; white-space: nowrap;">Status:</div>
+							<div style="float: left; font-size: 12px;"><%= orderTranLineStatus %></div>
+							<div style="clear: both;"></div>
+						</div>
+
+	
+						<div class="span1">
+							<div style="font-size: 12px;"><a href="/ordershistory/view/<%= orderInternalId %>"><%= _('View Order Details').translate() %></a></div>
+						</div>
+	
+					</div>
+				</div>
+			
+			</div>
+		
+			<!-- end row contents -->	
+	
+		<% } %>
+		
+		<% _.toggleMobileNavButt() %>
+	
+	<% } %>
+	
+
+
+<% }) %>

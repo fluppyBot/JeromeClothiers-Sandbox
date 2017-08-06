@@ -1,0 +1,105 @@
+// Gradient Bar Colors for buttons and alerts
+.gradientBar(@primaryColor, @secondaryColor, @textColor: #fff, @textShadow: 0 -1px 0 rgba(0,0,0,.25)) {
+  color: @textColor;
+  text-shadow: @textShadow;
+  #gradient > .vertical(@primaryColor, @secondaryColor);
+  border-color: @secondaryColor @secondaryColor darken(@secondaryColor, 15%);
+  border-color: rgba(0,0,0,.1) rgba(0,0,0,.1) fadein(rgba(0,0,0,.1), 15%);
+}
+
+// Gradients
+#gradient {
+  .vertical(@startColor: #555, @endColor: #333) {
+    background-color: mix(@startColor, @endColor, 60%);
+    background-image: -moz-linear-gradient(top, @startColor, @endColor); // FF 3.6+
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@startColor), to(@endColor)); // Safari 4+, Chrome 2+
+    background-image: -webkit-linear-gradient(top, @startColor, @endColor); // Safari 5.1+, Chrome 10+
+    background-image: -o-linear-gradient(top, @startColor, @endColor); // Opera 11.10
+    background-image: linear-gradient(to bottom, @startColor, @endColor); // Standard, IE10
+    background-repeat: repeat-x;
+    filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=0)",argb(@startColor),argb(@endColor))); // IE9 and down
+  }
+}
+.gradient-background (@startColor: #1e5799, @endColor: #2989d8, @size: 180px) {
+  background: @startColor; /* Old browsers */
+  background: -moz-linear-gradient(top,  @startColor 0%, @endColor 50%, @endColor 50%, @endColor 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,@startColor), color-stop(50%,@endColor), color-stop(50%,@endColor), color-stop(100%,@endColor)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  @startColor 0%,@endColor 50%,@endColor 50%,@endColor 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  @startColor 0%,@endColor 50%,@endColor 50%,@endColor 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  @startColor 0%,@endColor 50%,@endColor 50%,@endColor 100%); /* IE10+ */
+  background: linear-gradient(to bottom,  @startColor 0%,@endColor 50%,@endColor 50%,@endColor 100%); /* W3C */
+  filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=0)",argb(@startColor),argb(@endColor))); // IE9 and down
+  background-size: auto @size;
+  background-repeat: repeat-x;
+}
+
+// Reset filters for IE
+.reset-filter() {
+  filter: e(%("progid:DXImageTransform.Microsoft.gradient(enabled = false)"));
+}
+
+// Border Radius
+.border-radius(@rtl, @rtr, @rbr, @rbl) {
+  -webkit-border-radius: @rtl @rtr @rbr @rbl;
+  -moz-border-radius: @rtl @rtr @rbr @rbl;
+  border-radius: @rtl @rtr @rbr @rbl;
+}
+
+// Border Radius simple
+.border-radius-simple(@radius-simple) {
+  -webkit-border-radius: @radius-simple;
+  -moz-border-radius: @radius-simple;
+  border-radius: @radius-simple;
+}
+
+// Button backgrounds
+// ------------------
+.buttonBackground(@startColor: #333, @endColor: #444, @textColor: #fff, @textShadow: 0 -1px 0 rgba(0,0,0,.25), @radius-simple: 0) {
+  // gradientBar will set the background to a pleasing blend of these, to support IE<=9
+  .gradientBar(@startColor, @endColor, @textColor, @textShadow);
+  *background-color: @endColor; /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+  .reset-filter();
+  .border-radius-simple(@radius-simple);
+  // in these cases the gradient won't cover the background, so we override
+  &:hover, &:focus, &:active, &.active, &.disabled, &[disabled] {
+    color: @textColor;
+    background-color: @endColor;
+    *background-color: darken(@endColor, 5%);
+  }
+
+  // IE 7 + 8 can't handle box-shadow to show active, so we darken a bit ourselves
+  &:active,
+  &.active {
+    background-color: darken(@endColor, 10%) e("\9");
+  }
+}
+
+//Wells basics ------
+//-------------------
+//General Box
+.well-style (@font-c: #6A7177, @bk-general: transparent, @borders: none){
+  color: @font-c;
+  background-color: @bk-general;
+  border: @borders;
+}
+
+//cool stuff
+.scale-hover(@ms: 100ms){
+  /* Webkit for Chrome and Safari */
+  -webkit-transform: scale(1, 1); // This is the scale for the normal size of the image.
+  -webkit-transition-duration: @ms;
+  -webkit-transition-timing-function: ease-out;
+  /* Webkit for Mozila Firefox */
+  -moz-transform: scale(1, 1);
+  -moz-transition-duration: @ms;
+  -moz-transition-timing-function: ease-out;
+  /* Webkit for IE( Version: 11, 10 ) */
+  -ms-transform: scale(1, 1);
+  -ms-transition-duration: @ms;
+  -ms-transition-timing-function: ease-out;
+  &:hover {
+    -webkit-transform: scale(1.1, 1.1);
+    -moz-transform: scale(1.1, 1.1);
+    -ms-transform: scale(1.10, 1.10);
+  }
+}

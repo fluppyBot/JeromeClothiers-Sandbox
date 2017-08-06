@@ -1,0 +1,30 @@
+<% registerMacro('paymentWizardBreadcrumb', function (step_groups) { %>
+<% var inactive = false; %>
+
+<div>
+	<ul class="breadcrumb text-right">
+	<% _.each(_.initial(_.values(step_groups)), function (group, index) { %>
+		<% if (group.state === 'present') { %>
+			<% inactive = true; %>
+			<li class="active">
+				<% if (index > 0) { %>
+					<span class="divider">|</span>
+				<% } %>
+				<%= _('Step $(0)').translate(index + 1) %>
+			</li>
+		<% } else { %>
+			<li>
+				<% if (index > 0) { %>
+					<span class="divider">|</span>
+				<% } %>
+				<% if (!inactive) { %>
+					<a href="<%= group.url %>"><%= _('Step $(0)').translate(index + 1) %></a>
+				<% } else { %>
+					<%= _('Step $(0)').translate(index + 1) %>
+				<% } %>
+			</li>
+		<% } %>
+	<% }) %>
+	</ul>
+</div>
+<% }) %>

@@ -1,0 +1,26 @@
+<% registerMacro('message', function (message, type, closable) { %>
+<%
+	switch(message) {
+		case "Record was updated" :
+		case "Record was created" :
+		case "Record was deleted" :
+		case "Field was updated" :
+			type = 'success';
+			break;
+	}
+%>
+<div class="alert <%= type ? 'alert-' + type : '' %>">
+	<% if (closable) { %>
+		<button class="close" data-dismiss="alert">&times;</button>
+	<% } %>
+	<% if (_.isObject(message)) { %>
+		<ul>
+		<% _.each(message, function(item, index) { %>
+			<li><%= item %></li>
+		<% }) %>
+		<ul>
+	<% } else { %>
+		<%= message %>
+	<% } %>
+</div>
+<% }) %>

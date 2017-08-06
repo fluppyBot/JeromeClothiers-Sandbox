@@ -1,0 +1,54 @@
+<section class="shipments-shipping-details">
+	<div class="row-fluid shipments-shipping-details-body">
+		<div class="span6 shipments-shipping-address">
+			<h4 class="section-header">
+				<%= _('Shipping Address').translate() %>
+			</h4>
+
+			<%
+				var shipping_address = view.profile.get('addresses').get(view.model.get('shipaddress'));
+			%>
+
+			<% if (shipping_address) { %>
+				<%= address(shipping_address, {
+					hideActions: true
+				,	hideDefaults: true
+				,	manage: 'shipaddress'
+				}) %>
+
+				<% if (view.options.edit_url) { %>
+					<a data-action="edit-module" href="<%- view.options.edit_url %>?force=true" class="btn-edit-address">
+						<%= _('Edit').translate() %>
+					</a>
+				<% } %>
+			<% } else { %>
+				<a data-action="edit-module" href="<%- view.options.edit_url %>?force=true" class="btn-edit-address">
+					<%= _('Please select a valid shipping address').translate() %>
+				</a>
+			<% } %>
+
+		</div>
+	</div>
+</section>
+
+<section class="shipments-cart-details">
+	<div class="shipments-cart-details-header">
+		<h3>
+			<%= _('Items').translate() %>
+
+			<% if (view.options.show_edit_button) { %>
+				<a href="#" class="btn btn-link btn-edit-cart" data-touchpoint="viewcart">
+					<%= _('Edit Order').translate() %>
+				</a>
+			<% } %>
+		</h3>
+		<h3 class="pull-right"><%= _('Total').translate() %></h3>
+	</div>
+	<div class="shipments-cart-details-body">
+		<% view.model.get('lines').each(function (lines, index) { %>
+			<%= shoppingCartItem(lines, view, {
+				showActions:false
+			}) %>
+		<% }) %>
+	</div>
+</section>

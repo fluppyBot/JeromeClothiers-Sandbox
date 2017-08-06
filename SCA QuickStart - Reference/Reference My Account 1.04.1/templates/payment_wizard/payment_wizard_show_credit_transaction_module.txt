@@ -1,0 +1,44 @@
+<div class="payment-table">
+	<h5 class="payment-table-header">
+		<%= view.transaction_type === 'credit' ? _('Credits').translate() : _('Deposits').translate() %>
+	</h5>
+
+	<div class="list-sub-header hidden-phone">
+		<div class="row-fluid">
+			<div class="span6 offset1">
+				<span><%= _('Number').translate() %></span>
+			</div>
+			<div class="span5 text-right">
+				<span><%= _('Amount').translate() %></span>
+			</div>
+		</div>
+	</div>
+
+	<% view.collection.each(function (transaction) { %>
+		<div class="list-row" data-id="<%= transaction.get('internalid') %>">
+			<div class="row-fluid payment-table-row-main">
+				<div class="span7 offset1 underlined transaction-number">
+					<b><%= _('$(0) #$(1)').translate(transaction.get('type'), transaction.get('tranid') || transaction.get('refnum')) %></b>
+				</div>
+
+				<div class="span4 offset-xs-1 underlined text-right transaction-amount">
+					<%= transaction.get('amount_formatted') %>
+				</div>
+			</div>
+		</div>
+	<% }) %>
+	<div class="payment-table-footer-alt">
+		<div class="row-fluid">
+			<div class="span8 offset4">
+				<p class="strong">
+					<%= view.transaction_type === 'credit' ? _('Credits Subtotal').translate() : _('Deposits Subtotal').translate() %>
+
+					<% var total_field = view.transaction_type === 'credit' ? 'credits_total_formatted' : 'deposits_total_formatted' %>
+					<span class="pull-right">
+						<%= view.wizard.model.get('confirmation') ? view.wizard.model.get('confirmation')[total_field] : view.wizard.model.get(total_field) %>
+					</span>
+				</p>
+			</div>
+		</div>
+	</div>
+</div>

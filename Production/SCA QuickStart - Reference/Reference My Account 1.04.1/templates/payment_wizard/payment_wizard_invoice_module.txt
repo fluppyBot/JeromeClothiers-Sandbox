@@ -1,0 +1,28 @@
+<% var invoices = view.invoices; %>
+
+<div class="row-fluid payment-table">
+<% if (invoices.length) { %>
+	<div class="list-sub-header hidden-phone">
+		<div class="row-fluid">
+			<div class="span1">
+				&nbsp;
+			</div>
+			<div class="span3 invoice-number">
+				<span><%= _('Invoice No.').translate() %></span>
+			</div>
+			<div class="span5 invoice-due-date">
+				<span><%= _('Due date').translate() %></span>
+			</div>
+			<div class="span3 responsive-align invoice-amount">
+				<span><%= _('Amount').translate() %></span>
+			</div>
+		</div>
+	</div>
+
+	<% invoices.each(function (invoice) { %>
+		<%= paymentWizardInvoice(invoice) %>
+	<% }); %>
+<% } else { %>
+	<p class="list-empty"><%= _('You don\'t have any Open Invoices at the moment,</br>see <a href="/paid-invoices" class="InvoicePaidInFull">Invoices Paid In Full</a>').translate() %></p>
+<% } %>
+</div>

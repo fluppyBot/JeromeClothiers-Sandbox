@@ -1,0 +1,46 @@
+<form id="editAmountToPayForm" class="edit-amount-to-pay" data-action="edit-amount-form">
+<div>
+	<div class="row-fluid">
+		<span class="span8"><%= view.original_amount_label %></span>
+		<span class="span4 text-right"><%= view.model.get(view.original_amount_attribute + '_formatted') %></span>
+	</div>
+	
+	<% if (view.amount_due_label) { %>
+		<div class="row-fluid">
+			<span class="span8"><%= view.amount_due_label %></span>
+			<span class="span4 text-right"><%= view.model.get(view.amount_due_attribute + '_formatted') %></span>
+		</div>
+	<% } %>
+	
+	<hr/>
+	
+	<div class="row-fluid control-group control-group-name">
+		<span class="span8"><%= view.input_label %></span>
+		<span class="span4 text-right controls">
+			<% var value = view.model.get('discountapplies') && view.model.isPayFull() ? view.model.get('due') : view.model.get('amount') %>
+			$<input name="amount" autofocus type="text" class="input-small text-right amountToPayInput" value="<%= value %>" />
+		</span>
+	</div>
+
+	<% if (view.model.get('discountapplies')){ %>
+		<div class="discountSection<%= view.model.isPayFull() ? '' : ' hide' %>">
+			<div class="row-fluid control-group control-group-name">
+				<span class="span8"><%= _('Applicable discount $(0)').translate(view.model.get('discount_formatted')) %></span>
+				<span class="span4 text-right controls">- <%= view.model.get('discamt_formatted') %></span>
+			</div>
+			<hr />
+			<div class="row-fluid control-group control-group-name">
+				<span class="span8"><%= _('Your payment:').translate() %></span>
+				<span class="span4 text-right controls payment-due-with-discount" ><%= view.model.get('duewithdiscount_formatted') %></span>
+			</div>
+		</div>
+		<div class="discountWarning text-right<%= view.model.isPayFull()  ? ' hide' : '' %>">
+			<p><%= _('(!) Discount is only available for full payments.').translate() %></p>
+		</div>
+	<% } %>
+	
+	<div class="text-right">
+		<input type="submit" value="<%= _('Save').translate() %>" class="btn btn-primary btn-large btn-continue AmountToPaySaveButton" data-action="save-amount" />
+	</div>
+</div>
+</form>

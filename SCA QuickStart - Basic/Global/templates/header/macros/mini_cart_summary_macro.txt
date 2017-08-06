@@ -1,0 +1,15 @@
+<% registerMacro('miniCartSummary', function (total_items, loading) { %>
+<span class="item-count<%= loading ? ' loading' : '' %>">
+<% if (loading) { %>
+	<%= _('Loading cart...').translate() %>
+    <i class="fa fa-spinner fa-spin fa-lg"></i>
+<% } else { %>
+	<% if (total_items !== 1) { %>
+		<%= _('$(0) items').translate(total_items) %>
+	<% } else { %>
+		<%= _('1 item').translate() %>
+	<% } %>
+<% } %>
+</span>
+<i class="fa fa-fw"></i>
+<% }) %>

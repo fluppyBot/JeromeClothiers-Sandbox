@@ -1,0 +1,169 @@
+<% registerMacro('showItemOptions', function ( options , lineid){
+	
+	var DesignOptions = {name:"Design Options", value: []},
+			FitProfileOptions = {name:"Fit Profile", value: []},
+			FabricQuantity = {name:"Fabric Quantity", value: null},
+			ClientName = {name:"Client Name", value:null},
+			HoldFabric = {name:"Hold Fabric", value:null},
+			HoldProduction = {name:"Hold Production", value: null};
+	_.each(options, function (option)
+	{
+		var type = "",
+			type_option = "",
+			option_values = "",
+			formatted_values = [];
+
+		switch(option.id){
+			case "custcol_designoptions_jacket":
+				type = "Jacket";
+				break;
+			case "custcol_designoptions_overcoat":
+				type = "Overcoat";
+				break;
+			case "custcol_designoptions_shirt":
+				type = "Shirt";
+				break;
+			case "custcol_designoptions_trouser":
+				type = "Trouser";
+				break;
+			case "custcol_designoptions_waistcoat":
+				type = "Waistcoat";
+				break;
+		}
+
+		if(type){
+			type_option = _.where(window.design_options, {item_type: type})[0];
+			option_values = JSON.parse(option.value);
+
+			_.each(option_values, function(option_value){
+				var fields = _.pluck(type_option.options, "fields")
+				_.each(fields, function(field){
+					var selectedField = _.where(field, {name: option_value.name})
+
+					if(selectedField && selectedField.length){
+						selectedField = selectedField[0]
+						for(var i = 0;i < selectedField.values.length; i++){
+							if(selectedField.values[i] == option_value.value){
+								var value = new Object();
+								value.label = selectedField.label;
+								value.value = selectedField.texts[i];
+								formatted_values.push(value);
+							}
+						}
+					}
+
+				});
+			});
+		}
+
+		if(option.name.indexOf('Design Options') != -1){
+				if(option.id == 'custcol_designoption_message'){
+					DesignOptions.value.push({
+					name: option.name.split(' - ')[1],
+					value: option.value
+				});
+				}
+				else{
+					DesignOptions.value.push({
+						name: option.name.split(' - ')[1],
+						value: formatted_values
+					});
+				}
+		}else if(option.name == 'Fit Profile Summary' && option.id == "custcol_fitprofile_summary"){
+			var fit_profiles = JSON.parse(option.value);
+			FitProfileOptions.value.push({
+				name: "Fit Profile Options",
+				value: fit_profiles
+			});
+		}else if(option.name == 'Client Name'){
+			ClientName.value = option.value;
+		}else if(option.name == 'Fabric Quantity'){
+			FabricQuantity.value = option.value;
+		}else if(option.name == 'Hold Fabric'){
+			if(option.value == 'F')
+			HoldFabric.value = 'No';
+			else
+			HoldFabric.value = 'Yes';
+		}else if(option.name == 'Hold Production'){
+			if(option.value == 'F')
+			HoldProduction.value = 'No';
+			else
+			HoldProduction.value = 'Yes';
+		}
+		});
+%>
+<div class="clientname">
+	<%= ClientName.name + ': '+ ClientName.value %>
+</div>
+<div class="holdfabric">
+	<%= HoldFabric.name + ': '+ HoldFabric.value %>
+</div>
+<div class="holdproduction">
+	<%= HoldProduction.name + ': '+ HoldProduction.value %>
+</div>
+<div id="design-option">
+	<div class="accordion" id="design-options-<%=lineid%>">
+
+
+			<div class="accordion-group">
+					<div class="accordion-heading">
+						<a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#design-option-<%= lineid%>" data-parent="#design-option-<%= lineid%>">
+							<%= DesignOptions.name %>
+						</a>
+					</div>
+					<div id="design-option-<%=lineid%>" class="accordion-body collapse" style="padding-left: 50px; height: 0px;">
+
+					<% _.each(DesignOptions.value, function(option_value){ %>
+					<% if(option_value.name == 'Message'){ %>
+						<div><%= option_value.name + ': '+ option_value.value %></div>
+					<% }else{ %>
+						<div><b><%= option_value.name %></b></div>
+						<div>
+							<ul>
+							<% _.each(option_value.value, function(characteristics){ %>
+									<li><%= characteristics.label + ': '+ characteristics.value %></li>
+							<% }); %>
+							</ul>
+						</div>
+						<% } %>
+					<% }); %>
+										</div>
+		</div>
+	</div>
+
+	<div class="accordion" id="fitprofile-options-<%=lineid%>">
+		<div class="accordion-group">
+				<div class="accordion-heading">
+					<a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#fitprofile-option-<%=lineid%>" data-parent="#fitprofile-options-<%=lineid%>">
+						Fit Profile
+					</a>
+				</div>
+				<% _.each(FitProfileOptions.value, function(option_value){ %>
+				<div id="fitprofile-option-<%=lineid%>" class="accordion-body collapse" style="padding-left: 50px; height: 0px;">
+					<div><b><%= option_value.name %></b></div>
+					<div>
+						<ul>
+							<% _.each(option_value.value, function(characteristics){ %>
+									<li><%= characteristics.name + ': '+ characteristics.value %></li>
+							<% }); %>
+						</ul>
+					</div>
+				</div>
+				<% }); %>
+			</div>
+		</div>
+		<div class="accordion" id="quantity-options-<%=lineid%>">
+			<div class="accordion-group">
+					<div class="accordion-heading">
+						<a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#quantity-option-<%=lineid%>" data-parent="#quantity-options-<%=lineid%>">
+						Fabric 	Quantity
+						</a>
+					</div>
+					<div id="quantity-option-<%=lineid%>" class="accordion-body collapse" style="padding-left: 50px; height: 0px;">
+						<div><b>Fabric Quantity</b></div>
+						<p><%= FabricQuantity.value %></p>
+					</div>
+				</div>
+			</div>
+</div>
+<% }) %>

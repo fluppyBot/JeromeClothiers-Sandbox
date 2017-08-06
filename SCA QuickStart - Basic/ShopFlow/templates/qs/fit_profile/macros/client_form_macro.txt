@@ -1,0 +1,127 @@
+<% registerMacro('clientForm', function (client, parent) { %>
+<% 
+	var clientRec = client
+	,	site_settings = SC.ENVIRONMENT.siteSettings
+	,	countries = SC.ENVIRONMENT.siteSettings.countries
+	,	quantity_countries = _.size(countries)
+	,	selected_country = clientRec.get("custrecord_tc_country") || site_settings.defaultshipcountry;
+%>
+<form id="client_form">
+<fieldset>
+	<div data-type="alert-placeholder"></div>
+	<input type="hidden" value="<%= parent %>" name="custrecord_tc_tailor" data-rectype="field">
+	<div class="control-group" data-input="firstname">
+		<label class="control-label" for="firstname">
+			<%= _('Firstname').translate() %>
+			<small>
+				<%= _('(required)').translate() %>
+			</small>
+		</label>
+		<div class="controls">
+			<input type="text" class="input-xlarge" id="firstname" name="custrecord_tc_first_name" value="<%- clientRec.get("custrecord_tc_first_name") %>" data-rectype="field">
+		</div>
+	</div>
+	<div class="control-group" data-input="lastname">
+		<label class="control-label" for="lastname">
+			<%= _('Lastname').translate() %>
+			<small>
+				<%= _('(required)').translate() %>
+			</small>
+		</label>
+		<div class="controls">
+			<input type="text" class="input-xlarge" id="lastname" name="custrecord_tc_last_name" value="<%- clientRec.get("custrecord_tc_last_name") %>" data-rectype="field">
+		</div>
+	</div>
+
+	<div class="control-group" data-input="email">
+		<label class="control-label" for="email">
+			<%= _('Email').translate() %>
+			<small>
+				<%= _('(required)').translate() %>
+			</small>
+		</label>
+		<div class="controls">
+			<input type="email" class="input-xlarge" id="email" name="custrecord_tc_email" value="<%- clientRec.get("custrecord_tc_email") %>" data-rectype="field">
+		</div>
+	</div>
+	
+	<div class="control-group"  data-input="phone">
+		<label class="control-label" for="phone">
+			<%= _('Phone Number').translate() %>
+			<small>
+				<%= _('(required)').translate() %>
+			</small>
+		</label>
+		<div class="controls">
+			<input type="tel" class="input-xlarge" id="phone" name="custrecord_tc_phone" value="<%- clientRec.get("custrecord_tc_phone") %>" data-type="phone" data-rectype="field">
+		</div>
+		<span class="help-block">
+			<%= _('Example: 555-123-1234').translate() %>
+		</span>
+	</div>
+
+	<div class="control-group" data-input="address1">
+		<label class="control-label" for="address1">
+			<%= _('Address 1').translate() %>
+		</label>
+		<div class="controls">
+			<input type="text" class="input-xlarge" id="custrecord_tc_addr1" name="custrecord_tc_addr1" value="<%- clientRec.get("custrecord_tc_addr1") %>" data-rectype="field">
+		</div>
+		<span class="help-block">
+			<%= _('Example: 1234 Main Street').translate() %>
+		</span>
+	</div>
+
+	<div class="control-group control-group-big" data-input="address2">
+		<label class="control-label" for="address2">
+			<%= _('Address 2').translate() %>
+		</label>
+		<div class="controls">
+			<input type="text" class="input-xlarge" id="address2" name="custrecord_tc_addr2" value="<%- clientRec.get("custrecord_tc_addr2") %>" placeholder="<%= _('(optional)').translate() %>" data-rectype="field">
+		</div>
+		<span class="help-block">
+			<%= _('Example: Apt. 3 or Suite #1516').translate() %>
+		</span>
+	</div>
+	
+	<div class="control-group" data-input="city">
+		<label class="control-label" for="city">
+			<%= _('City').translate() %>
+		</label>
+		<div class="controls">
+			<input type="text" class="input-xlarge" id="city" name="custrecord_tc_city" value="<%- clientRec.get("custrecord_tc_city") %>" data-rectype="field">
+		</div>
+	</div>
+
+	<div class="control-group<%= quantity_countries <= 1 ? ' hide' : '' %>" data-input="country">
+		<label class="control-label" for="country">
+			<%= _('Country').translate() %>
+		</label>
+		<div class="controls">
+			<%= SC.macros.countriesDropdown(countries, selected_country, "") %>
+		</div>
+	</div>
+
+	<div class="control-group" data-input="state">
+		<%= SC.macros.statesDropdown({
+			countries: countries
+		,	selectedCountry: selected_country
+		,	selectedState: clientRec.get("custrecord_tc_state")
+		,	manage: ""
+		}) %>
+	</div>
+
+	<div class="control-group"  data-input="zip">
+		<label class="control-label" for="zipcode">
+			<%= _('Zip Code').translate() %>
+		</label>
+		<div class="controls">
+			<input type="text" class="input-medium" id="zipcode" name="custrecord_tc_zip" value="<%- clientRec.get("custrecord_tc_zip") %>" data-type="zip" data-rectype="field">
+		</div>
+		<span class="help-block">
+			<%= _('Example: 94117').translate() %>
+		</span>
+	</div>
+</fieldset>
+</form>
+<% }) %>

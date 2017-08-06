@@ -1,0 +1,37 @@
+<% registerMacro('siteLogo', function (application, remove_home_link) { %>
+<%
+	var logoUrl = application.getConfig('logoUrl')
+	,	siteName = application.getConfig('siteSettings.displayname');
+
+	var filePath = '/SCA QuickStart - Basic/Global/templates/header/macros/logo_macro.txt';
+	//console.log('filePath: ' + '\n' + filePath)
+
+	var user = application.getUser();
+	var logoUrl = user.get('LogoUrl');
+	var bannerUrl = user.get('BannerUrl');
+
+	//console.log('logoUrl: ' + logoUrl)
+
+%>
+<div id="site-logo" class="site-logo content-banner">
+<% if (remove_home_link){ %>
+	<a>
+<% } else { %>
+	<a href="/" data-touchpoint="home" data-hashtag="">
+<% } %>
+
+<%
+//if (SC.ENVIRONMENT.LOGOBRAND && SC.ENVIRONMENT.LOGOBRAND.url) {
+%>
+	<%
+	  //<img src="<!--%- SC.ENVIRONMENT.LOGOBRAND.url %-->" alt="<!--%- siteName %-->">
+	%>
+<%
+//}
+%>
+
+	<img src="<%=logoUrl%>" alt="<%- siteName %>">
+
+	</a>
+</div>
+<% }) %>

@@ -1,0 +1,15 @@
+<% registerMacro('homeProfile', function(view) { %>
+	<article class="box-wells home-profile">
+		<div class="box-wells-header">
+            <h3><%= _('Profile').translate() %>
+                <a class="box-btn editProfileInformation btn btn-mini pull-right" href="/profileinformation"><i class="fa fa-pencil pull-left"></i><%= _('Edit').translate() %></a>
+            </h3>
+        </div>
+		<div class="box-wells-body">
+			<p><%= view.model.get('firstname') || '' %> <%= view.model.get('middlename') || '' %> <%= view.model.get('lastname') || '' %></p>
+			<p><%= view.model.get('companyname') || '' %></p>
+			<p><%= view.model.get('email') %></p>
+			<p><%= _.formatPhone(view.model.get('phone') || '', view.application.getConfig('siteSettings.phoneformat')) %></p>
+		</div>
+	</article>
+<%})%>

@@ -1,0 +1,54 @@
+<div class="view-header container" itemscope itemtype="http://schema.org/WebPage">
+	<%= breadcrumb(view.getBreadcrumb()) %>
+	<%
+		if (Backbone.history.fragment.split("?").length > 1) {
+			var fragmentArray = Backbone.history.fragment.split("?")
+			,	clientId = Backbone.history.fragment.split("?")[1].split("=")[1].split("&")[0] || "";
+		 
+			for(var i = fragmentArray.length -1; i >= 0; i--){
+				if(fragmentArray[i].match('client')){
+					clientId = fragmentArray[i].split("=")[1].split("&")[0];
+					break;
+				}
+			}
+		} else {
+			clientId = null
+		}
+	%>
+</div>
+<div class="gradient-content">
+    <div class="container">
+	    <div class="row-fluid view-body">
+			<section id="category-list-container" class="span12 category-list-container">
+				<div id="banner-section-top" class="content-banner banner-section-top"></div>
+				<% _.each(view.facets, function(facet){ %>
+					<% if (view.facets.length > 1) { %>
+					<div class="category-list-header">
+						<span class="category-list-heading">
+							<%= facet.configuration.name %>
+						</span>
+						<a href="/<%= facet.configuration.url %>" class="pull-right">
+							<%= _('Shop All &gt;').translate() %>
+						</a>
+					</div>
+					<% } %>
+					<%= displayInRows(facet.values.values, categoryCell, 4) %>
+				<% }) %>
+				<div id="banner-section-bottom" class="content-banner banner-section-bottom"></div>
+			</section>
+		</div>
+		<%if (view.category.itemid != "Inventory"){ %>
+			<div class="row-fluid view-body">
+				<div class="span3">
+					<div class="category-cell">
+						<div class="category-cell-name">
+							<a data-hashtag="#productlists/?id=<%=clientId%>" data-touchpoint="customercenter" href="#" class="btn">
+								<%= _('My Product List').translate() %>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		<% } %>
+    </div>
+</div>

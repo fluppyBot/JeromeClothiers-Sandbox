@@ -1,0 +1,87 @@
+<% registerMacro('invoiceListLine', function (invoice, options) { %>
+<%
+	var is_checked = invoice.get('checked')
+	,	invoice_id = invoice.get('internalid')
+	,	invoice_number = invoice.get('tranid')
+	,	is_overdue = invoice.get('isOverdue')
+	,	is_open = invoice.get('status').internalid === 'open'
+	,	selectable = options.selectable
+	,	is_link = !selectable && options.navigateDetails
+	,	navigation_options = options.referer ? '/' + options.referer : ''
+	,	amount_paid = invoice.get('summary').total - invoice.get('amountremaining');
+
+	options = options || {};
+%>
+
+<% if (is_link) { %>
+	<a href="invoices/<%= invoice_id %><%= navigation_options %>" data-touchpoint="customercenter" data-hashtag="#invoices/<%= invoice_id %><%= navigation_options %>"  class="list-row <%= is_checked ? 'active' : '' %>" data-type="invoice" data-id="<%= invoice_id %>">
+<% } else { %>
+	<div class="list-row <%= is_checked ? 'active' : '' %> <%= selectable ? 'selectable' : '' %>" data-type="invoice" data-id="<%= invoice_id %>">
+<% } %>
+	<div class="row-fluid">
+		<% if (selectable) { %>
+			<div class="span1">
+				<input type="checkbox" value="<%= invoice_id %>" data-action="select" <%= is_checked ? 'checked' : '' %>>
+			</div>
+		<% } %>
+		<div class="<%= selectable ? 'span2' : 'span3' %>">
+			<span class="list-row-text id-record">
+				<% if (is_link) { %>
+					<span class="list-row-text-bigger id-record invoice-number"><%= _('Invoice #$(0)').translate(invoice_number) %></span>
+				<% } else { %>
+					<a href="#/invoices/<%= invoice_id %><%= navigation_options %>">
+						<span class="list-row-text-bigger id-record input-margin invoice-number"><%= _('Invoice #$(0)').translate(invoice_number) %></span>
+					</a>
+				<% } %>
+			</span>
+		</div>
+		<div class="span2 <%= is_link ? '' : 'offset-xs-1' %>">
+			<span class="list-row-text invoice-date">
+				<span class="visible-phone list-row-text-info"><%= _('Date:').translate() %> </span>
+				<%= _('$(0)').translate(invoice.get('trandate') || '&nbsp;') %>
+			</span>
+		</div>
+		<div class="span2 <%= is_link ? '' : 'offset-xs-1' %>">
+			<span class="list-row-text <%= is_open ? 'invoice-due-date' : 'invoice-close-date' %>">
+				<% if (is_open) { %>
+					<span class="visible-phone list-row-text-info"><%= _('Due date:').translate() %> </span>
+					<%= is_overdue ? '<span class="date-overdue">' + _('$(0)').translate(invoice.get('duedate')) + '</span> <i class="icon-flag"></i>' : _('$(0)').translate(invoice.get('duedate') || '&nbsp;') %>
+				<% } else { %>
+					<span class="visible-phone list-row-text-info"><%= _('Close date:').translate() %> </span>
+					<%= _('$(0)').translate(invoice.get('closedate') || '&nbsp;') %>
+				<% } %>
+
+				<% if (is_open && amount_paid) { %>
+					<br>
+					<span class="list-line-legend"><%= _('Partially paid').translate()%></span>
+				<% } %>
+			</span>
+		</div>
+		<div class="span3 <%= is_link ? '' : 'offset-xs-1' %>">
+			<span class="list-row-text invoice-amount">
+				<span class="visible-phone list-row-text-info"><%= _('Amount:').translate() %> </span>
+				<span class="amount"><%= _('$(0)').translate(invoice.get('summary').total_formatted) %></span>
+			</span>
+		</div>
+		<div class="span2 responsive-align <%= is_link ? '' : 'offset-xs-1' %>">
+			<span class="list-row-text invoice-currency">
+				<span class="visible-phone list-row-text-info invoice-currency"><%= _('Currency:').translate() %> </span>
+				<span class="currency"><%= _('$(0)').translate(invoice.get('currency').name) %></span>
+			</span>
+		</div>		
+		<% if (options.navigateDetails) { %>
+			<div class="visible-phone span1 pull-right text-right">
+				<% if (is_link) { %>
+					<i class="icon-chevron-right"></i>
+				<% } else { %>
+					<a href="invoices/<%= invoice_id %><%= navigation_options %>" class="icon-chevron-right InvoiceArrow<%= invoice_id %>"></a>
+				<% } %>
+			</div>
+		<% } %>
+	</div>
+<% if (is_link) { %>
+	</a>
+<% } else { %>
+	</div>
+<% } %>
+<% }) %>

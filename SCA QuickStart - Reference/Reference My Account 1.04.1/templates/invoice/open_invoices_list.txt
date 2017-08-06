@@ -1,0 +1,68 @@
+<%
+	var invoices = view.collection
+	,	selected_invoices_length = view.getSelectedInvoicesLength()
+	,	invoice_display_options = {
+			navigateDetails: true
+		,	selectable: true	
+		};
+%>
+<section>
+	<header>
+		<h3><%= view.page_header %></h3>
+		<a href="/" class="back-btn"><%= _('&lt; Back to Account').translate() %></a>
+		<hr class="divider-small">
+	</header>
+
+	<div class="header-information">
+		<div class="header-information-element clearfix">
+			<span><%= _('Open').translate() %></span>
+			<span>|</span> 
+			<a href="/paid-invoices" class="InvoicePaidInFull"><%= _('Paid in Full').translate() %></a>
+			<% if (invoices.length) { %>
+				<a data-permissions="transactions.tranCustPymt.2, transactions.tranCustInvc.1" data-type="make-a-payment" class="btn btn-expanded btn-primary pull-right" <%= selected_invoices_length > 0 ? 'href="/make-a-payment"' : 'disabled' %> >
+					<% if (selected_invoices_length > 0 ) { %>
+						<%= _('Make a Payment').translate() %>
+					<%	} else {%>
+						<%= _('$(0) Invoices selected').translate(selected_invoices_length)%>
+						
+					<%	} %>
+				</a>
+			<% } %>
+		</div>
+	</div>
+
+	<div data-type="list-header-placeholder"></div>
+
+	<div class="row-fluid">		
+		<% if (invoices.length) { %>
+			<div class="list-sub-header hidden-phone">
+				<div class="row-fluid">
+					<div class="span1">
+						&nbsp;
+					</div>
+					<div class="span2">
+						<span><%= _('Invoice No.').translate() %></span>
+					</div>
+					<div class="span2">
+						<span><%= _('Date').translate() %></span>
+					</div>
+					<div class="span2">
+						<span><%= _('Due date').translate() %></span>
+					</div>
+					<div class="span3">
+						<span><%= _('Amount').translate() %></span>
+					</div>
+					<div class="span2 responsive-align">
+						<span><%= _('Currency').translate() %></span>
+					</div>
+				</div>
+			</div>
+
+			<% invoices.each(function (invoice, index) { %>
+				<%= invoiceListLine(invoice, invoice_display_options) %>
+			<% }); %>
+		<% } else { %>
+			<p class="list-empty"><%= _('You don\'t have any Open Invoices at the moment,</br>see <a href="/paid-invoices" class="InvoicePaidInFull">Invoices Paid In Full</a>').translate() %></p>
+		<% } %>
+	</div>
+</section>

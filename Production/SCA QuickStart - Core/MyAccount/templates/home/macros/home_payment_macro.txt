@@ -1,0 +1,25 @@
+<% registerMacro('homePayment', function(view) { %>
+	<article class="box-wells home-payment">
+		<div class="box-wells-header">
+			<h3><%= _('Payment').translate() %>
+				<% if (view.defaultCreditCard) { %>
+                <a href="/creditcards/<%= view.defaultCreditCard.get('internalid') %>" class="btn btn-mini pull-right" data-toggle="show-in-modal"><i class="fa fa-pencil pull-left"></i><%= _('Edit').translate() %></a>
+				<% } %>
+			</h3>
+		</div>
+		
+		<% if (!view.defaultCreditCard) { %>		
+		<div class="box-wells-body">
+			<p><%= _('We have no default credit card on file for this account.').translate() %></p>			
+		</div>
+		<div class="well-footer">
+			<a href="/creditcards/new" data-toggle="show-in-modal"><%= _('Add a Credit Card').translate() %></a>
+		</div>
+
+		<% } else { %>
+		<div class="box-wells-body">
+			<%= SC.macros.creditcard(view.defaultCreditCard, {icons: view.application.getConfig('creditCardIcons')}) %>
+		</div>
+		<% } %>
+	</article>
+<%})%>

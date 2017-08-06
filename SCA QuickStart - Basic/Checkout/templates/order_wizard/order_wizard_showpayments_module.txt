@@ -1,0 +1,28 @@
+<div class="row-fluid">
+	<div class="span6 wizard-showpayments-billing-address">
+		<h4 class="section-header">
+			<%=_('Billing Address').translate()%>
+		</h4>
+		<%
+			var billing_address = view.model.get('billaddress') ?
+					view.profile.get('addresses').get(view.model.get('billaddress')) :
+					null;
+		%>
+		<% if (billing_address) { %>
+			<%= address(billing_address, {
+				hideActions: true
+			,	hideDefaults: true
+			,	manage: 'billaddress'
+			}) %>
+		<% } else { %>
+			<a data-action="edit-module" href="<%- view.options.edit_url_billing %>?force=true">
+				<%= _('Please select a valid billing address').translate() %>
+			</a>
+		<% } %>
+		<% if (billing_address && view.options.edit_url_address) { %>
+			<a data-action="edit-module" href="<%- view.options.edit_url_address %>?force=true">
+				<%= _('Edit').translate() %>
+			</a>
+		<% } %>
+	</div>
+</div>

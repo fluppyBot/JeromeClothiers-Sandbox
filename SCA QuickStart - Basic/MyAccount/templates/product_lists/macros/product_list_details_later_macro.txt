@@ -1,0 +1,59 @@
+<% registerMacro('productListDisplayLater', function(item, view, options, paramFilteredItems, paramIsFiltered) { 
+	
+	var product = item.get('item')
+	,	quantity = item.get('quantity')
+	,	description = item.get('description')
+	,	item_details = item.get('itemDetails')
+	,	thumbnail = item_details.get('_thumbnail')
+	,	stock_info = item_details.getStockInfo()
+	,	internalid = item.get('internalid')
+	,   itemOptions = item.get('options')
+	,	created = item.get('created');
+	
+	
+	var plSku = item_details.get('_sku');
+	
+	
+   
+    console.log(item.get('client'));
+    console.log('document.getElementById(fitProfileClientName).innerHTML',document.getElementById('fitProfileClientName').innerHTML);
+	console.log('itemOptions',itemOptions.custcol_tailor_client.value);
+	
+	var isDisplay = itemOptions.custcol_tailor_client.value === document.getElementById('fitProfileClientInternalId').innerHTML;
+	
+	var arrFilteredItems = paramFilteredItems;
+	var arrFilteredItemsTotal = (!_.isNullOrEmpty(arrFilteredItems)) ? arrFilteredItems.length : 0;
+	var hasFilteredItems = (arrFilteredItemsTotal != 0) ? true : false;
+	var isFiltered = (paramIsFiltered == 'T') ? true : false;
+	console.log(product);
+%>
+
+<% if (isDisplay) { %>
+<article data-id=<%= item.get('internalid') %> data-item-id=<%= item_details.get('internalid') %> >
+	<div class="row-fluid">
+		<div class="span1 thumbnail cart-item-thumbnail" data-type="product-list-item" >
+			<img src="<%= view.application.resizeImage(thumbnail.url, 'thumbnail') %>" alt="<%=thumbnail.altimagetext %>">
+		</div>
+		
+		<div class="span4">
+			<div class="name">
+				<a href="#" data-touchpoint="home" data-hashtag="#<%= _(item.get('itemDetails').get('_url')).fixUrl() %>"> <%=  item.getProductName() || item.get('name') %></a>
+			</div>
+		</div>
+		<div class="span3" style="text-align:right;">
+			<%= created %>
+		</div>
+		<div class="span4" style="text-align:right;">
+			<div class="cart-item-actions" data-type="item-commands" style="margin:0px;">
+				<% if(!options || !options.hide_actions) { %>
+				<button data-action="add-to-cart" class="btn btn-primary btn-expanded add-to-cart <%= !product.ispurchasable ? 'disabled' : ''%>" <%= !product.ispurchasable ? 'disabled' : ''%>><%= _('Add to cart').translate() %></button>
+				<button class="btn btn-expanded remove" data-action="delete-item"><%= _('Remove').translate() %></button>				
+				<% } %>
+			</div>
+		</div>
+	</div>
+</article>
+
+<% } %>
+
+<% }) %>

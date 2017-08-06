@@ -1,0 +1,113 @@
+<%/*
+	© 2016 NetSuite Inc.
+	User may not copy, modify, distribute, or re-bundle or otherwise make available this code;
+	provided, however, if you are an authorized user with a NetSuite account or log-in, you
+	may use this code subject to the terms that govern your access and use.
+*/%>
+
+<%
+	var password_protected_site = session.getSiteSettings(['siteloginrequired']).siteloginrequired==='T';
+	password_protected_site && response.setCDNCacheable(response.CACHE_DURATION_UNIQUE);
+
+	if (password_protected_site && !session.isLoggedIn2())
+	{
+		nlapiSetRedirectURL('EXTERNAL', session.getSiteSettings(['touchpoints']).touchpoints.login);
+		return;
+	}
+
+	var ROOT = 'http://localhost:7777/'
+	,	Application = require('Application')
+	,	Environment = Application.getEnvironment(request)
+	,	Language = Environment.currentLanguage && Environment.currentLanguage.locale || ''
+	,	Currency = request.getParameter('cur');
+ %>
+
+<!DOCTYPE html>
+<html <%= Language ? 'lang="' + Language.replace('_', '-')+ '"' : '' %>>
+<head>
+
+	<!--[if !IE]><!-->
+		<link rel="stylesheet" href="<%= ROOT %>css/shopping.css"></link>
+	<!--<![endif]-->
+
+	<!--[if lte IE 9]>
+		<link rel="stylesheet" href="<%= ROOT %>css_ie/shopping_1.css?t=1472610243290" ></link>
+		<link rel="stylesheet" href="<%= ROOT %>css_ie/shopping.css?t=1472610243290" ></link>
+	<![endif]-->
+
+	<!--[if lt IE 9]>
+		<link href="<%= ROOT %>javascript/respond-proxy.html" id="respond-proxy" rel="respond-proxy" />
+		<link href="/javascript/respond.proxy.gif" id="respond-redirect" rel="respond-redirect" />
+		<script src="<%= ROOT %>javascript/html5shiv.min.js"></script>
+		<script src="<%= ROOT %>javascript/respond.min.js"></script>
+		<script src="<%= ROOT %>javascript/respond.proxy.js"></script>
+	<![endif]-->
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<meta name="robots" content="nofollow,noindex">
+	<link rel="shortcut icon" href="<%= session.getAbsoluteUrl("shopping", "img/favicon.ico") %>" />
+	<title>Shopping</title>
+
+</head>
+
+<body>
+
+<noscript>
+	<div class="shopping-layout-no-javascript-msg">
+		<strong>JavaScript is disabled on your browser.</strong><br>
+		To view this site, you must enable JavaScript or upgrade to a JavaScript-capable browser.
+	</div>
+</noscript>
+
+<div id="main" class="main"></div>
+
+<script>
+var SC=window.SC={ENVIRONMENT:{jsEnvironment:typeof nsglobal==='undefined'?'browser':'server'},isCrossOrigin:function(){return'<%= Environment.currentHostString %>'!==document.location.hostname},isPageGenerator:function(){return typeof nsglobal!=='undefined'},getSessionInfo:function(key){var session=SC.SESSION||SC.DEFAULT_SESSION||{};return key?session[key]:session},getPublishedObject:function(key){return SC.ENVIRONMENT&&SC.ENVIRONMENT.published&&SC.ENVIRONMENT.published[key]?SC.ENVIRONMENT.published[key]:null},isDevelopment:true};if(!history.pushState&&SC.ENVIRONMENT.jsEnvironment==='browser'&&(location.pathname!=='/'||location.search!=='')&&location.hash===''){if(location.pathname==='/'){var hash=(RegExp('fragment='+'(.+?)(&|$)').exec(location.search)||[,''])[1];location.replace(location.pathname+location.search+'/#'+unescape(hash))}else{location.replace('/#'+location.pathname+location.search)}document.write('')}if(!SC.isCrossOrigin()){document.getElementById('main').innerHTML='';if(SC.isPageGenerator()){document.body.className=document.body.className+' seo-support'}SC.ENVIRONMENT.seoSupport=!!~document.body.className.indexOf('seo-support');if(SC.isPageGenerator()){SC.ENVIRONMENT.PROFILE={}}if(SC.ENVIRONMENT.jsEnvironment=='browser'&&!SC.isCrossOrigin()){var datetime=new Date().getTime();var e=document.getElementsByTagName('script')[0];var d=document.createElement('script');d.src='<%= session.getAbsoluteUrl("shopping", "shopping.user.environment.ssp?lang=" + Language + "&cur=" + Currency) %>&t='+datetime+'';d.type='text/javascript';e.parentNode.insertBefore(d,e)}}</script>
+
+<% if (SC.Configuration.cms.useCMS) { %>
+	<script src="/cms/2/assets/js/postframe.js"></script>
+<% } %>
+
+<script src="<%= session.getAbsoluteUrl("shopping", "shopping.environment.ssp?lang=" + Language + "&cur=" + Currency) %>&t=1472610243290" ></script>
+<script type="text/javascript" src="<%= ROOT %>languages/shopping_<%=Language%>.js?t=1472610243290" ></script>
+<script type="text/javascript" src="<%= ROOT %>javascript/require.js" data-main="<%= ROOT %>javascript/shopping.js" ></script>
+<script type="text/javascript">
+if (!window.require)
+		{
+	var script = document.createElement('script');
+	script.src = '<%= ROOT %>javascript/shopping.js';
+	document.body.appendChild(script);
+		}
+	</script>
+<!-- <script type="text/javascript" src="/cms/1/cms.js"></script> -->
+
+<script type="text/javascript">
+	var script = document.createElement('script');
+	script.src =  (location.protocol || 'http:') + '//<%= ROOT %>:35729/livereload.js?snipver=1';
+	document.body.appendChild(script);
+</script>
+
+<% if (SC.Configuration.cms.useCMS) { %>
+	<script>
+		if (SC.ENVIRONMENT.jsEnvironment === 'browser')
+		{
+			setTimeout(function()
+			{
+				if (typeof define !== 'undefined')
+				{
+					define.amd = false;
+				}
+
+				jQuery.getScript('/cms/2/cms.js')
+					.done(function() {
+						CMS.trigger('cms:load');
+					});
+			}, 10000);
+		}
+	</script>
+<% } %>
+</body>
+
+</html>

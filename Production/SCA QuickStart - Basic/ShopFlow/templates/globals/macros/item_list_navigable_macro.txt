@@ -1,0 +1,238 @@
+<% registerMacro('itemListNavigable', function (options) { %>
+<%
+	var macros = SC.macros
+	,	is_advanced = SC.ENVIRONMENT.siteType !== 'STANDARD'
+
+	,	view = options.view
+	,	application = view.application
+
+	,	line = options.line
+	,	line_id = line.get('internalid')
+
+	,	item = line.get('item')
+	,	stock_info = item.getStockInfo()
+	,	thumbnail = item.get('_thumbnail')
+
+	,	link_attributes = _.getItemLinkAttributes(item);
+	
+	var item_details = item.get('itemDetails')
+	console.log('xyla: ' + '\n' + 'item_list_navigable_macro.txt');
+	
+	var isDisplayDateNeededHoldFabricHoldProduction = true;
+	var isDisplayButtCopy = true;
+%>
+<article id="<%- line_id %>" class="item-list-navigable <%= line_id %>" data-id=<%= item.get('internalid') %>>
+	<div class="item">
+		<div class="thumbnail">
+		<% if (options.showActions && false) { %>
+			<a <%= link_attributes %>>
+				<img src="<%- application.resizeImage(thumbnail.url, 'thumbnail') %>" alt="<%- thumbnail.altimagetext %>">
+			</a>
+		<% } else { %>
+			<img src="<%- application.resizeImage(thumbnail.url, 'thumbnail') %>" alt="<%- thumbnail.altimagetext %>">
+		<% } %>
+		</div>
+		<div class="info">
+			<div class="details">
+				<div class="name">
+				<% if (options.showActions && false) { %>
+					<a <%= link_attributes %>>
+						<%= item.get('_name') %>
+					</a>
+				<% } else { %>
+					<a><%= item.get('_name') %></a>
+				<% } %>
+				</div>
+				<div class="price">
+					<span itemtype="http://schema.org/Offer" itemscope="" itemprop="offers">
+						<meta content="<%= SC.getSessionInfo('currency').code %>" itemprop="priceCurrency">
+						<%
+							var tailorPricingColumn = _.where(line.get("options"), {id: "CUSTCOL_TAILOR_CUST_PRICING"})
+							,	tailorPricing = "0.00";
+
+							if(!_.isUndefined(tailorPricingColumn)){
+								tailorPricing = tailorPricingColumn[0].value;
+							}
+						%>
+						<span data-rate="<%= tailorPricing %>" itemprop="price" class="lead-price">
+						<%= _.formatCurrency(tailorPricing) %>
+						</span>
+						<link href="http://schema.org/OutOfStock" itemprop="availability">
+					</span>
+				</div>
+				<div class="sku">
+					<%= _('SKU: #$(0)').translate(item.get('_sku')) %>
+				</div>
+				
+				
+				<div class="sku">
+					<% 
+						var clientID = _.where(line.get("options"), {id: "CUSTCOL_TAILOR_CLIENT"})[0].value;
+						var client_collection = view.client_collection;
+						var client_name = "";
+
+						if(client_collection.length > 0) {
+							_.each(client_collection.models, function(model){
+								if(model.get("internalid") === clientID){
+									client_name = model.get("custrecord_tc_first_name") + " " + model.get("custrecord_tc_last_name");
+								}	
+							});
+						}
+					%>
+					<%= _('Client Name: $(0)').translate(client_name)%>
+				</div>
+
+						
+				<% if (isDisplayDateNeededHoldFabricHoldProduction) { %>
+						<!-- start avt date needed, hold fabric, hold production -->
+						<div class="sku">
+							<!-- start avt date needed -->
+							<div style="margin-bottom: 10px;">
+								<%
+									var defaultDateNeeded = '1/1/1900';
+									var dateNeededValue =  defaultDateNeeded;
+									try
+									{
+										dateNeededValue =  _.where(line.get("options"), {id: "CUSTCOL_AVT_DATE_NEEDED"})[0].value;
+									}
+										catch(ex)
+									{
+										dateNeededValue =  defaultDateNeeded;
+									}
+									var isEmptyDateNeeded = (dateNeededValue == defaultDateNeeded) ? true : false;
+									
+									
+									// >> 21/9/2016
+									console.log('dateNeededValue: ' + dateNeededValue)
+									
+									var arrSplitDateNeeded = dateNeededValue.split('/')
+									
+									var stDateNeeded = '';
+									var stYear = arrSplitDateNeeded[2];
+									var stMonth = arrSplitDateNeeded[1];
+									var stDate = arrSplitDateNeeded[0];
+									stDateNeeded += stYear;
+									stDateNeeded += '-';
+									stDateNeeded += (stMonth < 10) ? '0' + stMonth : stMonth;
+									stDateNeeded += '-';
+									stDateNeeded += (stDate < 10) ? '0' + stDate : stDate;
+									
+									
+								%>
+								
+								<form action="#" data-action="update-dateneeded">
+									<label for="custcol_avt_date_needed"><%= _('Date Needed:').translate() %>
+										<input type="hidden" name="internalid" id="update-internalid-<%= line_id %>" class="update-internalid-<%= line_id %>" value="<%- line_id %>">
+										<input class="input-date" id="custcol_avt_date_needed" pattern="(\d){4}-(\d){1,2}-(\d){1,2}" placeholder="<%= _('YYYY-MM-DD').translate() %>" name="custcol_avt_date_needed" type="date" value="<%= (isEmptyDateNeeded) ? '' : stDateNeeded %>"   data-action="range-filter">
+									</label>
+								</form>
+							</div>
+							<!-- end avt date needed -->
+							
+							<!-- start avt hold fabric -->
+							<div>
+								<%
+									var holdFabricValue =  _.where(line.get("options"), {id: "CUSTCOL_AVT_HOLD_FABRIC"})[0].value;
+								%>
+								<form action="#" data-action="update-options">
+									<input type="hidden" name="internalid" id="update-internalid-<%= line_id %>" class="update-internalid-<%= line_id %>" value="<%- line_id %>">	
+									<input type="checkbox" name="custcol_avt_hold_fabric" id="update-internalid-<%= line_id %>" value="<%- line_id %>" data-cart-option-id="custcol_avt_hold_fabric" <%= (holdFabricValue == 'T') ? 'checked' : ''%> style="margin-bottom: 5px;"> <span style="font-size: 12px;"><%= _('Hold Fabric').translate() %></span>
+								</form>
+							</div>
+							<!-- end avt hold fabric -->
+		
+							<!-- start avt hold production  -->
+							<div>
+								<%
+									var holdProductionValue =  _.where(line.get("options"), {id: "CUSTCOL_AVT_HOLD_PRODUCTION"})[0].value;
+								%>
+								<form action="#" data-action="update-options">
+									<input type="hidden" name="internalid" id="update-internalid-<%= line_id %>" class="update-internalid-<%= line_id %>" value="<%- line_id %>">	
+									<input type="checkbox" name="custcol_avt_hold_production" id="update-internalid-<%= line_id %>" value="<%- line_id %>" data-cart-option-id="custcol_avt_hold_production" <%= (holdProductionValue == 'T') ? 'checked' : ''%> style="margin-bottom: 5px;"> <span style="font-size: 12px;"><%= _('Hold Production').translate() %></span>
+								</form>
+							</div>
+							<!-- end avt hold production  -->
+		
+						</div>
+						<!-- end avt date needed, hold fabric, hold production -->
+				<% } %>
+
+				<div class="item-options">
+					<%= item.renderAllOptionSelected() %>
+				</div>
+				<div class="item-option selected-options-display">
+					<%= SC.macros.displayDesignOptions(line) %>
+				</div>
+			</div>
+			<div class="summary">
+				<% if (false) { // hardcoded to remove quantity and amount %>
+					<div class="quantity">
+					<% if (options.showActions) { %>
+						<form action="#" data-action="update-quantity">
+							<input type="hidden" name="internalid" id="update-internalid-<%= line_id %>" class="update-internalid-<%= line_id %>" value="<%- line_id %>">
+							<label for="quantity-<%= line_id %>">
+								<div class="quantity"><%= _('Fabric Quantity (Metres):').translate() %></div>
+								<% if (item.get('_itemType') !== 'GiftCert') { %>
+									<input type="number" step="0.05" readonly="true" name="custcol_fabric_quantity" id="quantity-<%= line_id %>" class="input-mini quantity-<%= line_id %>" value="<%- line.get('item').getOption('custcol_fabric_quantity').label %>" min="1">
+								<% } else { %>
+									<input type="hidden" name="custcol_fabric_quantity" id="quantity-<%= line_id %>" value="1">
+								<% } %>
+							</label>
+						</form>
+					<% } else { %>
+						<%= _('Qty: $(0)').translate(line.get('quantity')) %>
+					<% } %>
+					</div>
+				<% } %>	
+				<% if (false) { // hardcoded to remove quantity and amount %>	
+					<div class="amount">
+						<%= _('$(0) $(1)').translate('<span class="amount-label">' + _('Amount:').translate() + '</span>', line.get('total_formatted')) %>
+						<% if (line.get('amount') > line.get('total')) {%>
+							<small class="muted crossed"><%= line.get('amount_formatted') %></small>
+						<% } %>
+					</div>
+				<% } %>
+				<div class="stock">
+					<%= macros.itemDetailsStock(stock_info) %>
+				</div>
+			</div>
+		</div>
+		<div class="alert-placeholder" data-type="alert-placeholder">
+		<% if (item.get('_cartCustomAlert')) {%>
+			<div class="alert alert-<%= item.get('_cartCustomAlertType') || 'info' %>">
+				<%= item.get('_cartCustomAlert') %>
+			</div>
+		<% } %>
+		</div>
+	</div>
+	<% if (options.showActions) { %>
+	<div class="actions">
+		<%
+			var editUrl = "/"
+			,	categoryUrl = "product/"
+			,	internalid = item.get('internalid')
+			,	clientID = _.where(item.get("options"), {id:"CUSTCOL_TAILOR_CLIENT"})[0].value.split("=")[_.where(item.get("options"), {id:"CUSTCOL_TAILOR_CLIENT"})[0].value.split("=").length - 1]
+			,	lineID = item.get("line_id");
+
+			editUrl = editUrl + categoryUrl + internalid + "?client=" + clientID + "|" + lineID
+		%>
+		<a class="btn edit" href="<%- _(editUrl).fixUrl() %>" >
+			<%= _('Edit').translate() %>
+		</a>
+		
+		<% if (isDisplayButtCopy) { %>
+			<button data-action="copy-to-cart" class="btn add-to-cart" data-internalid="<%- line.get('internalid') %>"><%= _('Copy').translate() %></button>
+		<% } %>	
+		
+		<button class="btn remove" data-action="remove-item" data-internalid="<%- line.get('internalid') %>">
+			<%= _('Remove').translate() %>
+		</button>
+		<% if (is_advanced && application.ProductListModule && application.ProductListModule.isProductListEnabled() && application.name.toLowerCase() === 'shopping') { %>
+			<button class="btn saveforlater" data-action="save-for-later-item" data-internalid="<%- line.get('internalid') %>">
+				<%= _('Save for Later').translate() %>
+			</button>
+		<% } %>
+	</div>
+	<% } %>
+</article>
+<% }) %>

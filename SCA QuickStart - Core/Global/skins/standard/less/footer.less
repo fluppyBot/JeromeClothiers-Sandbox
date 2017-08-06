@@ -1,0 +1,98 @@
+footer#site-footer {
+  background: @ft-bk-wide;
+  border-bottom: none;
+  margin-top: 20px;
+  .container {
+    border-top: none;
+    background: @ft-bk-fixed;
+    padding-left: 30px;
+    padding-right: 30px;
+    //Phone (less than 767px)
+    @media (max-width: 767px) {
+      .back-to-top {
+        background: none;
+        border-top: 1px solid darken(@ft-bk-wide, 10%);
+      }
+      .customer-site-settings {
+        display: none;
+      }
+    }
+  }
+  //Live chat
+  .live-chat {
+    display: @live-chat-display;
+    text-align: @live-chat-align;
+    padding: 45px 0;
+    p {
+      color: @live-chat-color;
+      font-size: @live-chat-size;
+      strong {
+        color: @live-chat-b-color;
+      }
+      a.btn {
+        margin-left: 20px;
+        .right-arrow {
+          height: 12px;
+          width: 15px;
+          display: block;
+          float: right;
+          position: relative;
+          top: 3px;
+          margin-left: 8px;
+          background: url(../../img/button-arrow.png) no-repeat 0 0px;
+        }
+      }
+    }
+  }
+  //Social and contact
+  .footer-cols {
+    margin: 0 -30px;
+    padding: 30px 30px 0 30px;
+    //border-top: 2px solid #D6D7D8;
+    ul>li{
+      &.social-container {
+        //border: solid rgba(255, 255, 255, .15);
+        //border-width: 1px 0 0 0;
+        //padding-top: 10px;
+        .social-message {
+          display: block;
+          p {
+            margin-bottom: 0;
+          }
+        }
+        .social-icons {
+          a {
+            .scale-hover();
+            padding-right: 10px;
+            font-size: 18px;
+            color: @footer-icon-color;
+          }
+        }
+      }
+      p {
+        font-family: @font-footer-title-family;
+        color:@font-footer-title-color;
+        font-size:@font-footer-title-size;
+        //text-transform: uppercase;
+      }
+      a, span {
+        font-family: @font-footer-links-family;
+        color:@font-footer-links-color;
+        font-size:@font-footer-links-size;
+        display: inline-block;
+        padding: 0 0 10px 0;
+        .contrast (@ft-bk-wide) when (luminance(@ft-bk-wide) < 50%) {
+          color:#ffffff;
+        }
+        .contrast(@ft-bk-wide);
+      }
+    }
+    ul {
+      form#email-sign-up-form {
+        input {
+          max-width: 100%;
+        }
+      }
+    }
+  }
+}

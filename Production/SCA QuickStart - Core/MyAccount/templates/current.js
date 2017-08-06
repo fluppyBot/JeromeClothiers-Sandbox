@@ -1,0 +1,1 @@
+BDQ.currentTemplatesUrl = '/Web Site Hosting Files/SCA QS Hosting Files/SSP Applications/SCA QuickStart - Core/MyAccount/templates/Templates-014aea5841bd.js';

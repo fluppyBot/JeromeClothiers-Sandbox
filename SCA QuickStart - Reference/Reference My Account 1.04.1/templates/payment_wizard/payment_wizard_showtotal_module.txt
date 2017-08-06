@@ -1,0 +1,10 @@
+<div class="payment-table-footer">
+	<div class="row-fluid payment-table-row-main lead payment-show-total-container">
+		<div class="span4 offset4">
+			<%= _('Payment Total').translate() %>
+		</div>
+		<div class="span4 text-right">
+			<b><%= view.wizard.model.get('confirmation') ? view.wizard.model.get('confirmation').payment_formatted : view.wizard.model.get('payment_formatted') %></b>
+		</div>
+	</div>
+</div>

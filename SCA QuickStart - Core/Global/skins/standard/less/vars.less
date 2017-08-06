@@ -1,0 +1,299 @@
+//Paths
+@css-images-path: "../../img/";
+
+//Gird width
+@gird-width: 1170px;
+
+//===================================== Some color tricks ==============================================
+// Experimental Feature... Just define the @color-base, and the sheet will choose the rest
+@color-base: #2A2B2D;
+
+// Accented analogue (default)
+@wheel_pos1:45; @wheel_pos2:315; @wheel_pos3:180;
+
+// Tetrad
+// @wheel_pos1:30; @wheel_pos2:180; @wheel_pos3:210;
+
+// Triad
+//@wheel_pos1:120; @wheel_pos2:240; @wheel_pos3:0;
+
+// Compliment
+//@wheel_pos1:180; @wheel_pos2:0; @wheel_pos3:180;
+
+// Monochrome
+//@wheel_pos1:8; @wheel_pos2:352; @wheel_pos3:0;
+
+
+// Automatic Colors
+@color-1: spin(@color-base, @wheel_pos1);
+@color-2: spin(@color-base, @wheel_pos2);
+@color-3: spin(@color-base, @wheel_pos3);
+//===================================== Some color tricks ==============================================
+
+//Basic Colors -----------------------------
+//First ink (Some icons, buttons and details)
+@ink-1: #85C14C;
+//Seccond ink (Content titles and Footer)
+@ink-2: #3692D0; //#3692D0
+//Third ink
+@ink-3: #282C2E; //#282C2E
+//Extra color
+@ink-0: #2A2B2D;
+
+//-------------------- Backrounds ---------------------//
+//Body
+@bk-color: #FFFFFF;
+//Container BK
+@bk-content-color: #FFFFFF;
+
+//Mini Cart
+@cart-button: #FFFFFF;
+//Top Nav Buttons
+@active-top-nav-bk: @ink-1;
+//Checkout Button
+@fast-checkout-bk: @ink-1;
+
+//Gradient Backgrounds for containers
+//Border in top
+@bk-gradient-border: #E0E0E0;
+//Gradient start (top)
+@bk-gradient-color-top: #F9F9F9;
+//Gradient end
+@bk-gradient-color-end: #FFFFFF;
+//Height limit for gradient end. In case you don't need a fixed height, just put "auto" instead a number below
+@bk-gradient-size: 180px;
+
+//-------------------- Fonts Family / Colors / Size --------------------------//
+//General Font-Family
+@font-family-general:'Raleway', sans-serif;
+//General Color
+@font-primary-color: #777777;
+//General Size
+@font-general-size: 14px;
+//Optional Color (facet list header by example)
+@font-optional-color: #637889;
+
+//Titles Font
+@font-general-titles: 'Raleway', sans-serif;
+
+//-------------- Title: H1 --------------//
+//Font-Family
+@font-h1-general: @font-general-titles;
+//Color
+@font-h1-color: @ink-2;
+//Size
+@font-h1-size: 27px;
+//Line Height
+@font-h1-line: (@font-h1-size + 4);
+//weight
+@font-h1-weight: 400;
+
+//-------------- Title: H2 --------------//
+//Font-Family
+@font-h2-general: @font-general-titles;
+//Color
+@font-h2-color: @ink-2;
+//Size
+@font-h2-size: 20px;
+//Line Height
+@font-h2-line: (@font-h2-size + 4);
+//weight
+@font-h2-weight: 400;
+
+//-------------- Title: H3 --------------//
+//Font-Family
+@font-h3-general: @font-general-titles;
+//Color
+@font-h3-color: @ink-2;
+//Size
+@font-h3-size: 20px;
+//Line Height
+@font-h3-line: (@font-h3-size + 4);
+//weight
+@font-h3-weight: 400;
+
+
+//Button normal (If you don't want gradient just put the same color in both variables)
+//background
+@button-bk-np: white;
+@button-bk-ns: darken(white, 10%);
+//font
+@button-font-n: #333;
+@button-font-n-shadow:0 -1px 0 #333;
+//border
+@button-border-n: 1px solid darken(white, 10%);
+@button-border-rn: 5px;
+
+//Button Primary
+//background
+@button-bk-pp: @ink-1;
+@button-bk-ps: @ink-1;
+//font
+@button-font-p: #FFFFFF;
+@button-font-p-shadow:none;
+//border
+@button-border-p: 1px solid @button-bk-ps;
+@button-border-rp: 5px;
+
+//-------------------- Header: Profile Nav -----------------------//
+//Background
+@profile-bk: @ink-0;
+//Color Cart
+@cart-font-color: #FFFFFF;
+//Color Common Nav
+@nav-font-color: lighten(@ink-0, 80%);
+//Color Active and Hovers
+@nav-font-bk: @ink-2;
+
+//-------------------- Header: Minicart -----------------------//
+//Product name color
+@mini-title: @ink-2;
+//Product price color
+@mini-price: @ink-2;
+//Item borders
+@mini-borders: #829CA9;
+
+//-------------------- Header: Navigation -----------------------//
+//Background
+@nav-background: #FAFAFA;
+//Border
+@nav-border: 1px solid #DADADA;
+//Font-color
+@main-nav-font: @ink-0;
+//Font-color-hover
+@main-nav-font-h: darken(@ink-0, 10%);
+
+//-------------------- Header: Checkout Steps -----------------------//
+//step color (active)
+@step-color-active: @ink-1;
+
+//-------------------- Header: Search -----------------------//
+//Background - full
+@search-bk:transparent;
+//Background - input
+@search-input-bk:transparent;
+//Background - Button
+@search-bk-bt:transparent;
+//Border
+@search-bd: 1px solid #DADADA;
+//icon color
+@search-icon-color: @ink-1;
+
+//-------------------- Header: Breadcrumbs -----------------------//
+//Link color
+@bread-link: @ink-2;
+//Active color
+@bread-active: @ink-1;
+//Font Size
+@bread-size: 12px;
+
+//-------------------- Footer: Backgrounds -----------------------//
+//Background wide
+@ft-bk-wide: @ink-2;
+//Background fixed width
+@ft-bk-fixed: transparent;
+
+//-------------------- Footer: Links -----------------------//
+//Title Font-Family
+@font-footer-title-family:'Raleway', sans-serif;
+//Title Font Color
+@font-footer-title-color: #FFFFFF;
+//Title Font Size
+@font-footer-title-size: 18px;
+//Links Font-Family
+@font-footer-links-family:'Raleway', sans-serif;
+//Links Font Color
+@font-footer-links-color: average(darken(@ink-3,30%),#222);
+//Links Font Size
+@font-footer-links-size: 14px;
+//Social Icons
+@footer-icon-color: #FFFFFF;
+
+//-------------------- Footer: Live Chat -----------------------//
+//Display? (none: no / block: yes)
+@live-chat-display: none;
+//Text Align
+@live-chat-align: center;
+//Font
+@live-chat-color:#FFFFFF;
+//Font: Bold
+@live-chat-b-color: #384750;
+//Font: Size
+@live-chat-size:20px;
+
+//-------------------- Home: Slider Pagination and arrows -----------------------//
+//Pagination dots border
+@pagination-color:#E3E3E3;
+//Pagination dots fill
+@pagination-fill: lighten(@ink-0, 10%);
+//Arrows Background
+@arrows-fill: lighten(@ink-0, 5%);
+//Arrows Background: Hover
+@arrows-fill-hover: darken(@arrows-fill, 5%);
+
+//-------------------- Home: Merchandising Arrows -----------------------//
+//Merch Arrows Background
+@merch-arrows-fill: @ink-1;
+//Merch Arrows Background: Hover
+@merch-arrows-fill-hover: darken(@merch-arrows-fill, 5%);
+
+//-------------------- Home: Merchandising rule -----------------------//
+//Display
+@home-merchandising-visibility: block;
+//Display - 'see more' Button
+@home-merchandising-button: none;
+
+//-------------------- Home: Content Delivery Zone -----------------------//
+//Display
+@home-content-visibility: none;
+
+//-------------------- Item Detail: Social icons -----------------------//
+//Size
+@pdp-social-size: 30px;
+//Color
+@pdp-social-color: @ink-1;
+
+//-------------------- Global: Prices -----------------------//
+@primary-price-color: @ink-1;
+
+//-------------------- Global: Content Boxes -----------------------//
+//Background
+@box-bk: #FFFFFF;
+//Border
+@box-border: #E0E0E0 1px solid;
+//Padding
+@box-padding: 20px;
+//Border Radius
+@box-radius: 5px;
+
+//-------------------- Global: Well Boxes (for side contents) -----------------------//
+//Background
+@side-box-bk: #FAFAFA;
+//Border
+@side-box-border: #E0E0E0 1px solid;
+//Padding
+@side-box-padding: 20px;
+//Border Radius
+@side-box-radius: 5px;
+
+//-------------------- Item List: Facets Box -----------------------//
+//Background
+@facet-box-bk: transparent;
+//Border
+@facet-box-border: none;
+//Padding
+@facet-box-padding: 0px;
+//Border Radius
+@facet-box-radius: 5px;
+//Narrow By Display. Write 'none' if you wanna hide it, or leave empty if you want it.
+@facet-box-narrow: none;
+//Selected Facet
+@facet-selected: @ink-2;
+//Facet Range Skin
+@facet-range: @ink-1;
+
+//-------------------- Item List: Head -----------------------//
+//"View By" buttons color
+@view-by-color: #CCC;
+//"View By" buttons color
+@view-by-color-active: @ink-1;

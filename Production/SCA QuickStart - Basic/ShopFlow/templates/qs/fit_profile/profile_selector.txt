@@ -1,0 +1,14 @@
+<h2><%= _('Fit Profile').translate() %></h2><hr/>
+
+<% if(view.groupProfile && view.groupProfile.length > 0){ %>
+	<% _.each(view.groupProfile, function(profile){ %>
+		<%= SC.macros.fitProfileOptionDropdown(profile) %>
+	<% }); %>
+<% } %>
+
+<div class="control-group" data-input="fitprofile-message">
+	<label class="control-label" for="fitprofile-message"><%= _('Fit Profile Notes').translate() %></label>
+	<div class="controls">
+		<textarea class="input-xxlarge fitprofile-message" id="fitprofile-message" name="fitprofile"></textarea>
+	</div>
+</div>

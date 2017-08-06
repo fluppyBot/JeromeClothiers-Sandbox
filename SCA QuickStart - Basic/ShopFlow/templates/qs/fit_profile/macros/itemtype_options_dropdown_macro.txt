@@ -1,0 +1,10 @@
+<% registerMacro('itemTypeDropdown', function (itemTypes, selectedType) { %>
+	<% if(itemTypes && itemTypes.length){ %>
+		<select class="input-xlarge" id="custrecord_fp_product_type" name="custrecord_fp_product_type">
+			<option value="">Select an Item Type</option>
+			<% _.each(itemTypes, function(itemType){ %>
+				<option value="<%= itemType %>" <%= selectedType == itemType? 'selected' : '' %>><%= itemType %></option>
+			<% }) %>
+		</select>
+	<% } %>
+<% }) %>

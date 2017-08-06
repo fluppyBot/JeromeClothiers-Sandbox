@@ -1,0 +1,11 @@
+<div class="payment-table">
+	<h3><%= _('Payment review:').translate() %></h3>
+	<h5 class="payment-table-header"><%= _('Invoices').translate() %></h5>
+	<% view.wizard.model.getSelectedInvoices().each(function (invoice) { %>
+		<%= paymentWizardInvoice(invoice, false) %>
+	<% }); %>
+	<p class="payment-table-footer lead text-center clearfix payment-summary-payment-total">
+		<span class="pull-right"><%= _.formatCurrency(view.wizard.model.get('invoices_total')) %></span>
+		<span><%= _('Payment Total').translate() %></span>
+	</p>
+</div>

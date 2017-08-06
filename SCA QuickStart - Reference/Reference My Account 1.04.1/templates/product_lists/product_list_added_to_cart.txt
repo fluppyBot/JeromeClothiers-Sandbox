@@ -1,0 +1,36 @@
+<%
+/* notice that this used both when add list to cart and add item to cart. */
+var list = view.options.list
+,	isItem = !list
+,	models = isItem ? [view.options.item] : list.get('items').models.filter(function(model) { return model.item.ispurchasable })
+,	list_display_options = {id: 'list', name: 'List', macro: 'productListDisplayFull', columns: 1, icon: 'icon-th-list', isDefault: true}; 
+%>
+<div class="modal-body">
+	<span data-warning-message class="added-to-cart-item-warning-message"></span>		
+	<% if (!isItem) { %>
+	<p class="list-added-to-cart-msg1">
+		<% if(models.length > 1) { %> 
+			<%= _('From $(0) product list ($(1) items)').
+				translate('<span class="product-list-name">' + list.get('name') + '</span>', models.length) %>
+			
+		<% } else{ %>
+			<%= _('From $(0) product list ($(1) item)').
+				translate('<span class="product-list-name">' + list.get('name') + '</span>', models.length) 
+			%>
+		<% } %>
+	</p>
+	<% } 
+	var display_fn = function (row) {
+		return SC.macros[list_display_options.macro](row, view, {hide_actions: true, hide_rating: true, hide_added_on: true});
+	}; 
+	%>
+
+	<div class="added-to-cart-item-list">
+	<%= displayInRows(models, display_fn, list_display_options.columns) %>
+	</div>
+</div>
+
+<div class="modal-footer">
+	<button class="pull-right btn btn-primary" data-action="view-cart"><%=_('View Cart &amp; Checkout').translate()%></button>
+	<button class="pull-left btn" data-action="back-to-wishlists"><%= isItem ? _('Back to product list').translate() : _('Back to product list').translate() %></button>
+</div>	

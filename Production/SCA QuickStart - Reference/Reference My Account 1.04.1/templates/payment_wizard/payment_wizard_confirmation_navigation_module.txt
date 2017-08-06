@@ -1,0 +1,27 @@
+<div class="pull-right">
+
+	<% if (view.model.get('confirmation') && view.model.get('confirmation').internalid !== '0') {
+		var url = _.getDownloadPdfUrl({asset:'customer-payment-details', 'id': view.model.get('confirmation').internalid});
+	%>
+
+		<p class="hidden-phone">
+			<a href="<%= url %>" target="_blank" class="btn download-pdf payment-total-width" >
+				<%= _('Download as PDF').translate() %>
+			</a>
+		</p>
+
+	<% } %>
+
+	<p>
+		<a href="/transactionhistory" class="btn go-to-transaction-history payment-total-width hidden-phone" data-action="update-layout">
+			<%= _('Go To Transaction History').translate() %>
+		</a>
+	</p>
+	<p>
+		<% if (view.wizard.model.get('invoices').length) { %>
+			<a href="/make-a-payment" class="btn make-another-payment payment-total-width hidden-phone" data-action="update-layout" > <%= _('Make another payment').translate() %> </a>
+		<% } else { %>
+			<a class="btn payment-total-width hidden-phone" disabled ><%= _('No payment due').translate() %></a>
+		<% } %>
+	</p>
+</div>

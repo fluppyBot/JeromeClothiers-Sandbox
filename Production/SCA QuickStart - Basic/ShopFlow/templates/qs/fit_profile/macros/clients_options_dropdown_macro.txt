@@ -1,0 +1,38 @@
+<% registerMacro('clientsOptionDropdown', function (clients, parent) { %>
+	<% if(clients){ %>
+		<form id="tailorclient-form">
+			<fieldset>
+				<div data-input="clients-options" class="control-group">
+					<label for="clients-options" class="control-label"><%= _('Client: ').translate() %></label>
+					<div class="controls">
+						<select class="clients-options" id="clients-options">
+							<% 
+								var selected = false;
+								var selectedID = "";
+							%>
+							<option value=""><%= _('Select a client').translate() %></option>
+							<% clients.sort(); %>
+							<% clients.each(function(client){ %>
+								<% 
+									if(client.get("internalid") == SC._applications.Shopping.getLayout().currentView.model.get("current_client")){
+										selected = true;
+										selectedID = client.get("internalid");
+									}
+								%>
+								<option value="<%= client.get("internalid")%>" <%= client.get("internalid") == SC._applications.Shopping.getLayout().currentView.model.get("current_client") ? 'selected' : ''%>><%= client.get("custrecord_tc_last_name")%>, <%= client.get("custrecord_tc_first_name")%></option>
+							<% }) %>
+						</select>
+					</div>
+				</div>
+				<div class="form-actions">
+					<a id="swx-order-clients-add-href" data-toggle="show-in-modal" class="btn" href="/tailorclientdetails/new|client|<%= parent %>">Add</a>
+					<% if(selected){ %>
+						<a data-toggle="show-in-modal" class="btn" href="/tailorclientdetails/<%= selectedID %>|client|<%= parent %>">Edit</a>
+						<a data-toggle="show-in-modal" class="btn" data-action="remove-rec" data-type="client" data-id="<%= selectedID %>">Remove</a>
+						<a class='btn btn-primary' data-hashtag='#/item-types?client=<%= selectedID %>' data-touchpoint='home' href='/item-types?client=<%= selectedID %>'>Create Order</a>
+					<% } %>	
+				</div>
+			</fieldset>
+		</form>					
+	<% } %>
+<% }) %>

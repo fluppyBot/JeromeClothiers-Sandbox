@@ -1,0 +1,9 @@
+<% registerMacro('image_default', function (content) { %>
+	<% if (content.fields.string_link) { %>
+		<a href="<%- content.fields.string_link %>">
+	<% } %>
+	<img src="<%- content.fields.string_src %>"<% if (content.fields.string_alt) { %> alt="<%- content.fields.string_alt %>"<% } %> data-loader="false" />
+	<% if (content.fields.string_link) { %>
+		</a>
+	<% } %>
+<% }); %>

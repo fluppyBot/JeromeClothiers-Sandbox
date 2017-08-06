@@ -1,0 +1,53 @@
+<div class="well payment-summary">
+	<header class="well-header">
+		<h2>
+			<%= _('Payment Summary').translate() %>
+		</h2>
+	</header>
+	<div class="well-body accordion">
+		<div class="well-section payment-summary-invoices">
+			<p>
+				<%= _('Invoices (<span class="invoices-number">$(0)</span>)').translate(view.wizard.model.getSelectedInvoices().length) %>
+				<span class="pull-right invoices-total"><%= _.formatCurrency(view.wizard.model.get('invoices_total')) %></span>
+			</p>
+		</div>
+			<% if (view.options.total_label) { %>
+			<div class="well-section payment-deposits-subtotal">
+				<p>
+					<%= _('Deposits Subtotal').translate() %>
+					<span class="pull-right"><%= view.wizard.model.get('deposits_total_formatted') %></span>
+				</p>
+			</div>
+			<div class="well-section payment-credits-subtotal">
+				<p>
+					<%= _('Credits Subtotal').translate() %>
+					<span class="pull-right"><%= view.wizard.model.get('credits_total_formatted') %></span>
+				</p>
+			</div>
+		<% } %>
+		<div class="well-section payment-summary-estimated">
+			<p class="strong">
+				<%= view.options.total_label ? view.options.total_label : _('Estimated payment').translate() %>
+				<% if (view.options.show_estimated_as_invoices_total) { %>
+					<span class="pull-right estimated-payment-total"><%= _.formatCurrency(view.wizard.model.get('invoices_total')) %></span>
+				<% } else { %>
+					<span class="pull-right estimated-payment-total"><%= view.wizard.model.get('payment_formatted') %></span>
+				<% } %>
+			</p>
+		</div>
+		<% if (view.options.total_label && view.wizard.model.get('payment') && view.wizard.application.getConfig('siteSettings.checkout.requireccsecuritycode') === 'T') { %>
+			<div class="alert alert-info payment-summary-alert-information">
+				<%= _('Add your credit card security code (CSC/CVV) before submitting the payment').translate() %>
+			</div>
+		<% } else if (view.options.total_label && !view.wizard.model.get('payment')) {%>
+			<div class="alert alert-success payment-summary-alert-information">
+				<%= _('Payment method is not required').translate() %>
+			</div>
+		<% } %>
+		<div class="well-footer payment-summary-action-buttons">
+			<button class="btn btn-primary btn-block btn-large btn-continue" data-action="submit-step" <%= view.continueButtonDisabled %>>
+				<%= view.continueButtonLabel %>
+			</button>
+		</div>
+	</div>
+</div>

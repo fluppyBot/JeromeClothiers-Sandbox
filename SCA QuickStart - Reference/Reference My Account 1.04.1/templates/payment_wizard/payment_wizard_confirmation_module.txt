@@ -1,0 +1,34 @@
+<% var confirmation = view.wizard.model.get('confirmation') %>
+<div class="alert alert-success">
+	<div class="row-fluid display-flex">
+		<div class="span1 payment-confirmation-tick-container hidden-phone" >✓</div>
+		<div class="span11">
+			<h2 class="payment-confirmation-greeting-container"><%= _('Thank you!').translate() %></h2>
+			<p class="payment-confirmation-body-container">
+				<% if (confirmation && confirmation.internalid !== '0') { %>
+					<a href="/transactionhistory/customerpayment/<%= confirmation && confirmation.internalid !== '0' %>" data-touchpoint="customercenter" data-hashtag="#transactionhistory/customerpayment/<%= confirmation.internalid %>" data-action="update-layout">
+						<b><%= _('Payment #$(0)').translate(confirmation.tranid) %></b>
+					</a>
+				<% } else { %>
+					<%= _('A Deposit/Credit Memo Application was generated.').translate() %><br>
+					<%= _('You can see the details in <a href="/transactionhistory" data-action="update-layout">Transaction History</a> page.').translate() %>
+				<% } %>
+				<br>
+				<%= _('You will receive an email with your payment confirmation.').translate() %>
+			</p>
+		</div>
+	</div>
+</div>
+
+<p>
+	<a href="/transactionhistory" class="btn go-to-transaction-history payment-total-width visible-phone btn-expanded" data-action="update-layout">
+		<%= _('Go To Transaction History').translate() %>
+	</a>
+</p>
+<p>
+	<% if (view.wizard.model.get('invoices').length) { %>
+		<a href="/make-a-payment" class="btn make-another-payment payment-total-width visible-phone btn-expanded" data-action="update-layout" > <%= _('Make another payment').translate() %> </a>
+	<% } else { %>
+		<a class="btn payment-total-width visible-phone" disabled ><%= _('No payment due').translate() %></a>
+	<% } %>
+</p>

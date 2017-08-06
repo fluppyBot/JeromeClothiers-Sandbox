@@ -1,0 +1,52 @@
+<% registerMacro('designOptionMultiField', function (fields, values) { console.log(values);%>
+	<% if (fields) { %>
+		<% _.each(fields.options, function (option) { %>
+			<div class="<%= option.name %>">
+				<h4><%= option.label %></h4><hr />
+
+				<% _.each(option.fields, function (field) {
+					value = _.where(values, {name: escape(field.name)});
+				%>
+					<div class="control-group" data-input="<%= field.name %>">
+						<label class="control-label" for="<%= field.name %>"><%= field.label %></label>
+						<div class="controls">
+							<select class="input-xlarge" multiple id="<%= field.name %>" name="<%= field.name %>">
+							<% _.each(field.texts, function (text, count) { %>
+								<% if(value[0] && value[0].value != ""){
+											console.log('field');
+											console.log(field.values[count]);
+											console.log('value');
+											console.log(value[0]);
+											var tmpvalue = value[0].value;
+											if(value[0].value.indexOf(',') != -1){
+												tmpvalue = value[0].value.split('+').join(' ');
+												var temp = tmpvalue.split(',');
+												if(temp.length>0){
+													var tempindex = temp.indexOf(field.values[count]);
+													if(tempindex != -1)
+													tmpvalue = temp[tempindex];
+												}												
+											}
+											else{
+												tmpvalue = value[0].value.split('+').join(' ');
+											}
+								 %>
+
+									<% if(tmpvalue == field.values[count]){
+									%>
+										<option value="<%= field.values[count] %>" selected><%= text %></option>
+									<% } else { %>
+										<option value="<%= field.values[count] %>"><%= text %></option>
+									<% } %>
+								<% } else { %>
+									<option value="<%= field.values[count] %>"><%= text %></option>
+								<% } %>
+							<% }) %>
+							</select>
+						</div>
+					</div>
+				<% }) %>
+			</div>
+		<% }) %>
+	<% }  %>
+<% }) %>

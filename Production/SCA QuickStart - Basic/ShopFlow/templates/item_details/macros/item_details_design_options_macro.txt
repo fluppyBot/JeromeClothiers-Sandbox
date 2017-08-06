@@ -1,0 +1,132 @@
+<% registerMacro('itemDetailsDesignOptions', function (designOptions) { %>
+	<%
+	var Jacket = ['Trims','Monogram Underside Collar','Monogram Lining','Branding'];
+	var Trouser = ['Trims','Monogram','Branding'];
+	var Waistcoat = ['Trims','Branding'];
+	var Overcoat = ['Trims','Monogram Under Collar','Monogram Interior Lining','Branding'];
+	var Shirt = ['Trims','Contrast','Monogram','Branding and Presentation'];
+	var collapse = [];
+	collapse['Jacket'] = Jacket;
+	collapse['Trouser'] = Trouser;
+	collapse['Waistcoat'] = Waistcoat;
+	collapse['Overcoat'] = Overcoat;
+	collapse['Shirt'] = Shirt;
+		%>
+
+	<% if (designOptions && Object.keys(designOptions).length > 0) { %>
+
+		<%
+			var objDesignOpt = designOptions;
+
+			//console.log('objDesignOpt: ' + '\n' + JSON.stringify(objDesignOpt, 'key', '\t'))
+		%>
+
+		<h2 class="section-header"><%= _('Design Options').translate() %></h2><hr/>
+
+	    <div class="accordion" id="design-option">
+			<% var count = 0; %>
+			<% for (var clothingType in designOptions){
+				var currentClothingType = designOptions[clothingType];
+
+				//console.log('currentClothingType: ' + '\n' + JSON.stringify(currentClothingType, 'key', '\t'))
+			%>
+				<div class="accordion-group">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-target="#design-option-<%= clothingType %>" data-parent="#design-option">
+							<%= clothingType %>
+						</a>
+					</div>
+					<div id="design-option-<%= clothingType %>" class="accordion-body collapse" style="height: 0;background-color:#ececec;">
+						<%
+							var index1 = 0;
+							for (var component in currentClothingType){
+							index1++;
+							var currentComponent = currentClothingType[component];
+							//console.log('currentComponent: ' + '\n' + JSON.stringify(currentComponent, 'key', '\t'))
+						%>
+								<div class="control-group-new" data-input="canvas_canvas_jacket" id="design-option-control-group-<%= clothingType %>-<%=index1%>">
+								<% if(collapse[clothingType].indexOf(component) !=-1){ %>
+									<a data-toggle="collapse" data-target="#design-option-members-<%= clothingType %>-<%=index1%>" data-parent="#design-option-control-group<%=index1%>" class="collapsed">
+										<h4 class="accordion-toggle" style="margin:8px 0;"><%= component %></h4>
+									</a>
+								<% }else{ %>
+									<a data-toggle="collapse" data-target="#design-option-members-<%= clothingType %>-<%=index1%>" data-parent="#design-option-control-group<%=index1%>">
+										<h4 class="accordion-toggle" style="margin:8px 0;"><%= component %></h4>
+									</a>
+								<% } %>
+								
+									<hr style="margin:6px 0;"/>
+
+									<% if(collapse[clothingType].indexOf(component) !=-1){ %>
+										<div id="design-option-members-<%= clothingType %>-<%=index1%>" class="collapse" style="background-color:#ececec;height:0px;">
+									<% }else{ %>
+										<div id="design-option-members-<%= clothingType %>-<%=index1%>" class="in collapse" style="background-color:#ececec;">
+									<% } %>
+									
+									<%
+										for (var field in currentComponent){
+										var currentField = currentComponent[field];
+
+										//console.log('currentField: ' + '\n' + JSON.stringify(currentField, 'key', '\t'))
+
+									%>
+										<div style="padding-left:25px;">
+											<div style="width:200px;display:inline-block;" >
+											<label class="control-label" for="canvas_canvas_jacket"><%= field %></label>
+											</div>
+											<%
+												var isSelectType = (currentField.type == "select") ? true : false;
+												var isTextType = (currentField.type == "text") ? true : false;
+											%>
+
+											<% if (isSelectType) { %>
+												<div class="controls" style="display:inline-block;">
+													<select id="<%= currentField.name %>" class="input-xlarge display-option-dropdown" name="<%= currentField.name %>" data-type="fav-option-customization">
+														<% var fieldCount = 0; %>
+														<% _.each(currentField.values, function (option) { %>
+															<option
+																<% if (option.isFavourite == true || option.isFavourite == "true"){ %>
+																	selected="selected"
+																<% } %>
+																value="<%= option.value %>"
+																name="<%=option.name%>">
+																	<%= option.name %>
+															</option>
+														<% }) %>
+														<% fieldCount++;%>
+													</select>
+													<div class="show-options-img" id="more-info_<%= currentField.name %>">
+														<% _.each(currentField.values, function (option, index) { %>
+															<% if (option.isFavourite == true || option.isFavourite == "true"){ %>
+																<%= SC.macros.displayMoreInfo(option.value + "|" + currentField.name)%>
+															<% } %>
+														<% }) %>
+													</div>
+												</div>
+											<% 	}  %>
+
+											<% if (isTextType) { %>
+												<div class="controls" style="margin-bottom: 15px;display:inline">
+													<input type="text" id="<%= currentField.name %>" class="input-xlarge" name="<%= currentField.name %>" value="<%= currentField.value %>" data-type="fav-option-customization">
+												</div>
+											<% 	}  %>
+											</div>
+									<% 	}  %>
+									</div>
+								</div>
+
+						<% } %>
+					</div>
+				</div>
+				<% count++; %>
+			<% } %>
+	    </div>
+
+		<div class="control-group" data-input="designoption-message">
+			<label class="control-label" for="designoption-message"><%= _('Design Options Notes').translate() %></label>
+			<div class="controls">
+				<textarea class="input-xxlarge designoption-message" id="designoption-message" name="designoption-message"></textarea>
+			</div>
+		</div>
+	<% }  %>
+<% }) %>

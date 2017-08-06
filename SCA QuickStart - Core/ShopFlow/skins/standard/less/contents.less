@@ -1,0 +1,35 @@
+//Contact Us
+.contact-us-image {
+  .span8 {
+    .form-wrap {
+      border-left: @box-border;
+      padding-left: 30px;
+      //phone (less than 767px)
+      @media (max-width: 767px) {
+        padding-left: 0;
+        border-left: none;
+        border-top: @box-border;
+        padding-top: 20px;
+        margin-top: 20px;
+      }
+    }
+  }
+}
+
+//General Landing Pages
+.landing-page {
+  //phone (less than 767px)
+  @media (max-width: 767px){
+    .gradient-content {
+      padding: 20px;
+    }
+  }
+}
+
+.item-list-navigable .details{
+  @media (min-width: 980px) {
+    float: left;
+    margin-right: 5%;
+    width: 100%;
+  }
+}

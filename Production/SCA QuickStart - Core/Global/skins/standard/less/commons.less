@@ -1,0 +1,246 @@
+body {
+  background: @bk-color;
+  font-family: @font-family-general;
+  color: @font-primary-color;
+  font-size:@font-general-size;
+}
+@media (min-width: 1200px) {
+  .container, .navbar-static-top .container, .navbar-fixed-top .container, .navbar-fixed-bottom .container {
+    width: @gird-width;
+  }
+  .container.product-list-new {
+    width: auto;
+  }
+}
+
+//Links
+a {
+  color: darken(@ink-1, 5%);
+  &:hover {
+    color: darken(@ink-1, 15%);
+  }
+}
+
+//Titles
+h1 {
+  font-family: @font-h1-general;
+  font-weight: @font-h1-weight;
+  font-size: @font-h1-size;
+  color: @font-h1-color;
+  line-height: @font-h1-line;
+}
+h2 {
+  font-family: @font-h2-general;
+  font-weight: @font-h2-weight;
+  font-size: @font-h2-size;
+  color: @font-h2-color;
+  line-height: @font-h2-line;
+}
+h3 {
+  font-family: @font-h3-general;
+  font-weight: @font-h3-weight;
+  font-size: @font-h3-size;
+  color: @font-h3-color;
+  line-height: @font-h3-line;
+}
+
+// Button backgrounds
+.btn {
+  .buttonBackground(@button-bk-np, @button-bk-ns, @button-font-n, @button-font-n-shadow, @button-border-rn);
+  border: @button-border-n;
+  font-family: @font-family-general;
+  text-shadow: none;
+  &:hover {
+    .buttonBackground(darken(@button-bk-np, 5%), darken(@button-bk-ns, 5%), @button-font-n, @button-font-n-shadow, @button-border-rn);
+    border: @button-border-n;
+    font-family: @font-family-general;
+    text-shadow: none;
+  }
+  &.btn-primary {
+    .buttonBackground(@button-bk-pp, @button-bk-ps, @button-font-p, @button-font-p-shadow, @button-border-rp);
+    border: @button-border-p;
+    font-family:  @font-family-general;
+    font-weight: 700;
+    &:hover {
+      .buttonBackground(darken(@button-bk-pp, 10%), darken(@button-bk-ps, 10%), @button-font-p, @button-font-p-shadow, @button-border-p);
+      border: @button-border-p;
+      font-family:  @font-family-general;
+      font-weight: 700;
+    }
+  }
+}
+
+//Primary Prices
+.lead-price {
+  color: @primary-price-color;
+  font-weight: bold;
+}
+
+//BX Slider - Pager Customization
+.slider-wrapper {
+  .bx-viewport {
+    height: auto !important;
+  }
+  .bx-pager {
+    &.bx-default-pager {
+      .bx-pager-item {
+        a {
+          display: inline-block;
+          border-radius: 10px;
+          border: 2px solid @pagination-color;
+          width: 3px;
+          height: 3px;
+          background-color: transparent;
+        }
+      }
+      div a.active,
+      div a:hover {
+        background-color: @pagination-fill;
+        font-weight: bold;
+        border: 2px solid @pagination-fill;
+        //box-shadow: 1px 1px 2px -1px black;
+      }
+
+    }
+  }
+  .bx-controls-direction {
+    width: 86px;
+    position: relative;
+    margin: 0 auto;
+    top: -90px;
+    a {
+      background: @arrows-fill url('@{css-images-path}slider_arrows.png') no-repeat;
+      &:hover {
+        background: @arrows-fill-hover url('@{css-images-path}slider_arrows.png') no-repeat;
+      }
+      &.bx-next {
+        background-position: -51px 0px;
+        .border-radius(0, 4px, 4px, 0)
+      }
+      &.bx-prev {
+        background-position: 8px 0px;
+        .border-radius(4px, 0, 0, 4px)
+      }
+    }
+  }
+}
+
+//BX Slider - Pager Customization (for merchandising zone)
+.home-merchandising {
+  .bx-viewport {
+    height: auto !important;
+  }
+  .bx-pager {
+    &.bx-default-pager {
+      margin-top: 40px;
+      .bx-pager-item {
+        a {
+          display: inline-block;
+          border-radius: 10px;
+          border: 2px solid @pagination-color;
+          width: 3px;
+          height: 3px;
+          background-color: transparent;
+        }
+      }
+      div a.active,
+      div a:hover {
+        background-color: @pagination-fill;
+        font-weight: bold;
+        border: 2px solid @pagination-fill;
+        //box-shadow: 1px 1px 2px -1px black;
+      }
+
+    }
+  }
+  .bx-controls-direction {
+    width: 86px;
+    position: relative;
+    margin: 0 auto;
+    top: -70px;
+    a {
+      background: @merch-arrows-fill url('@{css-images-path}slider_arrows.png') no-repeat;
+      &:hover {
+        background: @merch-arrows-fill-hover url('@{css-images-path}slider_arrows.png') no-repeat;
+      }
+      &.bx-next {
+        background-position: -51px 0px;
+        .border-radius(0, 4px, 4px, 0)
+      }
+      &.bx-prev {
+        background-position: 8px 0px;
+        .border-radius(4px, 0, 0, 4px)
+      }
+    }
+  }
+}
+
+//Gradient Backgrounds for containers
+.gradient-content {
+  border-top: 1px solid @bk-gradient-border;
+  padding-top: 20px;
+  .gradient-background (@bk-gradient-color-top, @bk-gradient-color-end, @bk-gradient-size);
+}
+
+//Box container
+.box-cont {
+  border: @box-border;
+  padding: @box-padding;
+  background: @box-bk;
+  margin-bottom: 20px;
+  .border-radius(@box-radius, @box-radius, @box-radius, @box-radius);
+}
+
+//Box wells
+.box-wells {
+  border: @side-box-border;
+  background: @side-box-bk;
+  padding: 5px;
+  margin-bottom: 20px;
+  .border-radius(@side-box-radius, @side-box-radius, @side-box-radius, @side-box-radius);
+  .box-wells-header {
+    border-bottom: @side-box-border;
+    border-width: 0 0 1px 0;
+    margin: 0 -6px;
+    padding: 5px 14px 14px;
+    h3 {
+      padding: 0;
+      margin: 0;
+    }
+  }
+  .box-wells-body {
+    padding: 10px 10px 0 10px;
+    .promo-code-container {
+      padding: 0;
+    }
+  }
+}
+
+//fix position for icons in buttons
+#content .btn i {
+  margin-top: 2px;
+}
+
+//Content Padding for Mobile
+//Reviews containers (for mobile)
+@media (max-width: 767px){
+  .product-review-form,
+  #product-review-form-preview,
+  #shopping-cart,
+  #login-register,
+  .main-container,
+  .facet-browse {
+    padding: 0;
+    .gradient-content {
+      padding: 10px;
+    }
+  }
+  .shopping-cart-header,
+  .page-header {
+    padding: 10px;
+  }
+  //fix for mobile row
+  .row-fluid {
+    width: 99%;
+  }
+}

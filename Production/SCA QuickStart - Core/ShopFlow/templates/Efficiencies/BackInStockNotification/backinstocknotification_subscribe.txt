@@ -1,0 +1,35 @@
+
+<div class="show-bis-link">
+    <button class="btn dropdown-toggle show-bis" data-toggle="dropdown" data-action="show-bis-control">
+        <%= _('Email me when it is back in stock').translate() %>
+    </button>
+
+<div class="dropdown-menu sub-menu bis-control" data-type="bis-control" <%= view.is_visible ? 'style="display: block"' : ''%>>
+    <p class="bis-message"><%= _('To be notified when this item is back in stock, please enter your name and email address').translate() %></p>
+    <div data-confirm-bin-message=""></div>
+    <form class="bis-form">
+        <fieldset>
+            <div class="control-group">
+                <label class="control-label">
+                <%=_('Name').translate() %> <small> <%=_('(required)').translate() %></small>
+                </label>
+                <div class="controls">
+                    <input type="text" name="firstname" id="firstname" class="input-xlarge" placeholder="<%=_('First Name').translate() %>">
+                    <input type="text" name="lastname" id="lastname" class="input-xlarge" placeholder="<%=_('Last Name').translate() %>">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">
+                <%=_('Email').translate() %> <small><%=_('(required)').translate() %></small>
+                </label>
+                <div class="controls">
+                    <input type="email" name="email" id="bis-email" class="input-xlarge" placeholder="<%=_('your@email.com').translate() %>">
+                </div>
+            </div>
+            <input type="hidden" name="item" id="item" value="<%= view.getSelectedProduct()%>">
+            <div class="sign-in-actions">
+                <button type="submit" class="btn btn-primary btn-large"><%=_('Notify Me!').translate() %></button>
+            </div>
+        </fieldset>
+    </form>
+</div>

@@ -1,0 +1,9 @@
+<% registerMacro('itemListDisplaySelector', function(config) {  %>
+<div class="item-listing-display span6 <%= config.classes || '' %>">
+	<span class="btn-group pull-right">
+		<% _.each(config.options, function(option) { %>
+			<a href="<%- config.translator.cloneForOption("display", option.id).getUrl() %>" class="btn <%= config.translator.getOptionValue("display") === option.id ? 'active' : '' %> " title="<%= option.name %>"><i class="<%= option.icon  %>"></i></a>
+		<% }) %> 
+	</span>
+</div>
+<%})%>

@@ -1,0 +1,85 @@
+<% registerMacro('swxMyAccountClientProfileSaveOrders', function( saveForLaterItems ){ %>
+    <% 
+    var items = saveForLaterItems;
+    //console.log(saveForLaterItems.length);
+    //console.log(saveForLaterItems[0]);
+%>
+        <style>
+            #fitProfileSaveOrdersList .accordion-toggle:after {
+                font-family: FontAwesome;
+                font-style: normal;
+                font-weight: normal;
+                content: "\f054";
+                /*Font awesome icon chevron right*/
+                float: right;
+                color: grey;
+            }
+
+            #fitProfileSaveOrdersList .accordion-toggle:hover {
+                text-decoration: none;
+                color: grey;
+            }
+
+            #fitProfileSaveOrdersList .accordion-toggle.collapsed:after {
+                content: "\f078";
+                /* Font awesome chevron down*/
+            }
+        </style>
+
+        <% if(saveForLaterItems.length>0){ %>
+            <div id="fitProfileSaveOrdersList" style="margin-top: 24px;">
+                <div class="row-fluid" style="border-bottom: solid 1px #e5e5e5; margin-bottom: 18px; padding-bottom: 10px;">
+                    <div class="span12">
+                        <span style="font-size: 20px; font-weight: 400; color: #a6a6a6;">
+							<a data-target="#fitProfileSaveOrdersListBody" data-toggle="collapse"   aria-expanded="true" aria-controls="collapseOne" class="accordion-toggle" style="text-decoration:none;color:grey;">
+								Save Items
+							</a>
+						</span>
+                    </div>
+                </div>
+                <div id="fitProfileSaveOrdersListBody" class="collapse">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Item
+                                </th>
+                                <!--<th>
+                                    Price
+                                </th>-->
+                                <th>
+                                    Created
+                                </th>
+                                <th>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for(var i= 0;i<saveForLaterItems.length;i++) { %>
+                                <tr>
+                                    <td>
+                                        <%= saveForLaterItems[i].displayname %>
+                                    </td>
+                                    <!--<td>
+                                        <%= saveForLaterItems[i].priceDisplay %>
+                                    </td>-->
+                                    <td>
+                                        <%= saveForLaterItems[i].created %>
+                                    </td>
+                                    <td style="text-align:right;">
+                                        <button class="btn btn-primary" id="swx-later-add-order" swx-client-item-id="<%=saveForLaterItems[i].displayname%>">Add to order</button>
+                                        <button class="btn btn-default">Remove</button>
+                                    </td>
+                                </tr>
+
+                                <%}%>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <%}%>
+
+
+                <% }); %>
