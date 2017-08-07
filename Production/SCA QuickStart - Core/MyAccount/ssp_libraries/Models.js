@@ -417,9 +417,9 @@ Application.defineModel('PlacedOrder', {
 	setDateNeeded: function (options) {
 		var recid = options.solinekey.split('_')[0];
 		//NOTE: This is for sandbox
-		nlapiRequestURL('https://forms.sandbox.netsuite.com/app/site/hosting/scriptlet.nl?script=189&deploy=1&compid=3857857&h=8ae0b4c46639c406c38a&recid=' + recid + '&solinekey=' + options.solinekey + '&dateneeded=' + options.dateneeded);
+		//nlapiRequestURL('https://forms.sandbox.netsuite.com/app/site/hosting/scriptlet.nl?script=189&deploy=1&compid=3857857&h=8ae0b4c46639c406c38a&recid=' + recid + '&solinekey=' + options.solinekey + '&dateneeded=' + options.dateneeded);
 		//NOTE: This is for production
-		//nlapiRequestURL('https://forms.netsuite.com/app/site/hosting/scriptlet.nl?script=181&deploy=1&compid=3857857&h=bf9b68501c2e0a0da79f&recid=' + recid + '&solinekey=' + options.solinekey + '&dateneeded=' + options.dateneeded);
+		nlapiRequestURL('https://forms.na2.netsuite.com/app/site/hosting/scriptlet.nl?script=181&deploy=1&compid=3857857&h=bf9b68501c2e0a0da79f&recid=' + recid + '&solinekey=' + options.solinekey + '&dateneeded=' + options.dateneeded);
 	}
 
 	, list: function (page, clientName,sort) {
@@ -463,7 +463,9 @@ Application.defineModel('PlacedOrder', {
 		if (isMultiCurrency) {
 			columns.push(new nlobjSearchColumn('currency'));
 		}
-
+		if(sort && sort == 'true'){
+			filters.push(new nlobjSearchFilter('status', null, 'anyof', ['SalesOrd:D','SalesOrd:E','SalesOrd:F','SalesOrd:B']));
+		}
 		// used for filtering via clientName
 		if (clientName) {
 			nlapiLogExecution('debug', 'ClientName', clientName);
@@ -473,7 +475,6 @@ Application.defineModel('PlacedOrder', {
 			filters.push(fil_client);
 			//filters.push(new nlobjSearchFilter('mainline', null, 'is', 'T'));
 			filters.push(new nlobjSearchFilter('mainline', null, 'is', 'F'));
-
 		} else {
 			filters.push(new nlobjSearchFilter('mainline', null, 'is', 'F'));
 		}
@@ -481,38 +482,45 @@ Application.defineModel('PlacedOrder', {
 		if (context.getFeature('MULTISITE') && session.getSiteSettings(['siteid']).siteid) {
 			filters.push(new nlobjSearchFilter('website', null, 'anyof', [session.getSiteSettings(['siteid']).siteid, '@NONE@']));
 		}
-		var result = Application.getAllSalesOrderPaginatedSearchResults({
-			record_type: 'salesorder'
-			, filters: filters
-			, columns: columns
-			, page: page
-		});
-		
-		if (clientName) {
+		var result = {};
+
+		if (clientName){
 			filters = [
 				new nlobjSearchFilter('entity', null, 'is', nlapiGetUser())
 				, new nlobjSearchFilter('custcol_itm_category_url', null, 'isnotempty')
 			]
+			if(sort && sort == 'true'){
+				filters.push(new nlobjSearchFilter('status', null, 'anyof', ['SalesOrd:D','SalesOrd:E','SalesOrd:F','SalesOrd:B']));
+			}
 			var fil_soid = new nlobjSearchFilter('custcol_so_id', null, 'startswith', clientName);
 			filters.push(fil_soid);
 			filters.push(new nlobjSearchFilter('mainline', null, 'is', 'F'));
 			if (context.getFeature('MULTISITE') && session.getSiteSettings(['siteid']).siteid) {
 				filters.push(new nlobjSearchFilter('website', null, 'anyof', [session.getSiteSettings(['siteid']).siteid, '@NONE@']));
 			}
-			var newresult = Application.getAllSalesOrderPaginatedSearchResults({
+			result = Application.getSalesOrderPaginatedSearchResults({
 				record_type: 'salesorder'
 				, filters: filters
 				, columns: columns
 				, page: page
 			});
-
-			if (newresult.records.length > 0) {
-				result.records = result.records.concat(newresult.records);
-				
-			}
 		}
-		result.records = result.records.slice(0, 1000);
-		result.totalRecordsFound = 1000;
+		else if(sort == 'true'){
+			result = Application.getAllSalesOrderPaginatedSearchResults({
+				record_type: 'salesorder'
+				, filters: filters
+				, columns: columns
+				, page: page
+			});
+		}
+		else{
+			result = Application.getSalesOrderPaginatedSearchResults({
+				record_type: 'salesorder'
+				, filters: filters
+				, columns: columns
+				, page: page
+			});
+		}
 		result.records = _.map(result.records || [], function (record) {
 			var dateneeded = record.getValue('custcol_avt_date_needed');//this
 			var expdeliverydate = record.getValue('custcol_expected_delivery_date');
@@ -581,9 +589,9 @@ Application.defineModel('PlacedOrder', {
 					confirmedDate.setDate(confirmedDate.getDate() + parseFloat(custcol_tailor_delivery_days ? custcol_tailor_delivery_days : 0));
 					nlapiLogExecution('debug','CMT confirmedDate productiondate', confirmedDate);
 				}
-				
+
 				if (confirmedDate) {
-					if (confirmedDate > dateNeeded){						
+					if (confirmedDate > dateNeeded){
 						cmtstatuscheck = true;
 					}
 					else
@@ -631,17 +639,17 @@ Application.defineModel('PlacedOrder', {
 		});
 		var results_per_page = SC.Configuration.results_per_page;
 
-		if(sort && sort == 'true'){
+		if(sort == 'true'){
 			nlapiLogExecution('debug','sort',sort);
-		result.records.sort(function(a,b){
-			return (a.tranline_status === b.tranline_status)? 0 : a.tranline_status? -1 : 1
-		});
+			result.records.sort(function(a,b){
+				return (a.tranline_status === b.tranline_status)? 0 : a.tranline_status? -1 : 1
+			});
+
+			var range_start = (page * results_per_page) - results_per_page
+			,	range_end = page * results_per_page;
+			result.records = result.records.slice(range_start, range_end);
 		}
-		
-		var range_start = (page * results_per_page) - results_per_page
-		,	range_end = page * results_per_page;
-		result.records = result.records.slice(range_start, range_end);
-		
+
 		/**
 		var arrObjRecords = [];
 		var stRecords = JSON.stringify(result.records);
