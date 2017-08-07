@@ -717,14 +717,13 @@ var Application = _.extend({
 
 			var search = nlapiCreateSearch(record_type, filters, columns).runSearch();
 			var searchindex = 0;
-			do{
-
+			//do{
 				var searchresults = search.getResults(searchindex, searchindex+1000);
 				result.records = result.records.concat(searchresults);
 				result.totalRecordsFound += searchresults.length;//search.getResults(0, 1000).length;
 				searchindex += 1000;
-			}
-			while(searchresults.length == 1000)
+			//}
+			//while(searchresults.length == 1000)
 		return result;
 	}
 
