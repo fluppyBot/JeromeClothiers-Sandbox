@@ -50,10 +50,11 @@
 					fieldsForm = _.where(model.measurement_config, {item_type: selectedItemTypeMeasure})[0];
 					fieldsForm = _.where(fieldsForm.measurement, {type: measurementTypeMeasure})[0];
 					
-					model.selected_measurement = fieldsForm;			
+					model.selected_measurement = fieldsForm;
+					console.log('ShowFlow>profile_form_macto.txt>',profile);			
 			%>
-				<%= SC.macros.measureForm(fieldsForm, profile ? JSON.parse(profile.get("custrecord_fp_measure_value")) : null) %>
-			<% 
+				 <%= SC.macros.measureForm(fieldsForm, profile ? JSON.parse(profile.get("custrecord_fp_measure_value")) : null,profile?profile.get("custrecord_fp_product_type"):null) %> 
+			<%  
 				}
 			} 
 			%>			

@@ -78,12 +78,12 @@
                 "max": 194
             },
             {
-                "name": "Bottom",
+                "name": "Seat",
                 "min": 83,
                 "max": 200
             },
             {
-                "name": "Length",
+                "name": "Back-Lt",
                 "min": 60,
                 "max": 98
             },
@@ -149,7 +149,7 @@
             }
         ]
     },
-    {
+    { 
         "type": "Waistcoat",
         "config": [
             {
@@ -163,7 +163,7 @@
                 "max": 190
             },
             {
-                "name": "back",
+                "name": "back-lt",
                 "min": 42,
                 "max": 77
             }

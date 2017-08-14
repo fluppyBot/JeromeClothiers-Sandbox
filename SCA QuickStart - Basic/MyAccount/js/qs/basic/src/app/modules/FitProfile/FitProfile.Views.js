@@ -263,6 +263,10 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 		}
 		, swxClientProfileSelect: function (e) {
 
+			jQuery.get(_.getAbsoluteUrl('js/itemRangeConfig.json')).done(function (data) {
+				window.itemRangeConfig = data;
+				console.log('swxFitProfileViewEdit>window.itemRangeConfig'>window.itemRangeConfig);
+			});
 
 			//var orderHistoryCollection = this.model.orderhistory_collection;
 			//console.log('orderHistoryCollection: ' + '\n' + JSON.stringify(orderHistoryCollection, 'key', '\t'))
@@ -388,21 +392,25 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 
 		, swxFitProfileViewEdit: function (e) {
 
+			var $ = jQuery;
+			var selectedProfileIdValue = e.target.getAttribute('swx-fitprofile-id');
+
 			jQuery.get(_.getAbsoluteUrl('js/itemRangeConfig.json')).done(function (data) {
 				window.itemRangeConfig = data;
 				console.log('swxFitProfileViewEdit>window.itemRangeConfig'>window.itemRangeConfig);
+ 
+				$("select[id='profiles-options']").val(selectedProfileIdValue);
+				$("select[id='profiles-options']").change();
+
+				$("[id='butt-modal-submit']").show();
+				$("[id='butt-modal-remove']").show();
+				$("[id='butt-modal-copy']").show();
+
+				$("[id='butt-modal']").click();
 			});
 
-			var $ = jQuery;
-			var selectedProfileIdValue = e.target.getAttribute('swx-fitprofile-id');
-			this.$("select[id='profiles-options']").val(selectedProfileIdValue);
-			this.$("select[id='profiles-options']").change();
-
-			$("[id='butt-modal-submit']").show();
-			$("[id='butt-modal-remove']").show();
-			$("[id='butt-modal-copy']").show();
-
-			$("[id='butt-modal']").click();
+			
+			
 
 		}
 
@@ -782,14 +790,15 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 			jQuery("[id='butt-modal-remove']").hide();
 			jQuery("[id='butt-modal-submit']").hide();
 
+			//console.log(e.target);
 			var fitType = jQuery(e.target).val()
 				, measureType = jQuery("#custrecord_fp_measure_type").val()
 				, itemType = jQuery("#custrecord_fp_product_type").val()
 				, self = this
 				, fieldsForm = null;
 
-			console.log('rebuildMeasureForm>fitType', fittype);
-			console.log('rebuildMeasureForm>')
+			console.log('rebuildMeasureForm>fitType', fitType);
+			//console.log('rebuildMeasureForm>')
 
 			if (measureType && itemType && fitType) {
 				fieldsForm = _.where(self.fitprofile.measurement_config, { item_type: itemType })[0];

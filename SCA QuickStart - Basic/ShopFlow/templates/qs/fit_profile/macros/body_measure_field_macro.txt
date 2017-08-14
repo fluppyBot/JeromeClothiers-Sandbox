@@ -1,4 +1,4 @@
-<% registerMacro('bodyMeasureField', function (field, value, fieldset, baseAllowance, allowance) {
+<% registerMacro('bodyMeasureField', function (field, value, fieldset, baseAllowance, allowance,selectedItemType) {
 	var type = field.type
 	,	label = field.label
 	,	name = field.name
@@ -21,24 +21,49 @@
 
 	console.log('name',name);
 
+	console.log('window.itemRangeConfig',window.itemRangeConfig);
 	var measurementConfiguration = JSON.parse(window.itemRangeConfig);
-	var selectedProductType = jQuery("#in-modal-custrecord_fp_product_type option:selected").text();
+	console.log('measurementConfiguration',measurementConfiguration);
+
+	var selectedProductType = selectedItemType;
+	if(selectedProductType==='' || selectedProductType === null || selectedProductType === undefined){
+		//selectedProductType = window.selectedProductType;
+		selectedProductType = jQuery("#in-modal-custrecord_fp_product_type option:selected").text();
+		console.log('from null>selectedProductType',selectedProductType);
+	}
+	console.log('selectedProductType',selectedProductType);
 	var selectedMeasurementConfig = _.findWhere(measurementConfiguration,{ type: selectedProductType });
+	console.log('selectedMeasurementConfig',selectedMeasurementConfig);
+	
 	var config = _.findWhere(selectedMeasurementConfig.config,{ name: name});
+	if(config===null || config ==undefined){
+		if(name==="Sleeve L" || name==="Sleeve-L"){
+			config = _.findWhere(selectedMeasurementConfig.config,{ name: "Sleeve L"});
+		}
+		if(name==="Sleeve R" || name==="Sleeve-R"){
+			config = _.findWhere(selectedMeasurementConfig.config,{ name: "Sleeve R"});
+		}
+	}
+	
 
 	if(config!=null){
 		console.log('bodyMeasureField>config',config);
 	}
-
+ 
 	if(type == "select"){
-		inputHtml = '<select class="input input-small" id="' + name + '" name="' + name + '">';
+		inputHtml = '<select class="input" id="' + name + '" name="' + name + '">';
 		if(field.options && field.options.length){
 			_.each(field.options, function(option){
-				if(value == option){
-					inputHtml = inputHtml + '<option value="' + option + '" selected>' + option + '</option>'
-				} else {
-					inputHtml = inputHtml + '<option value="' + option + '" >' + option + '</option>'
-				}
+
+				if(value===null){
+                                     inputHtml = inputHtml + ' <option value="' + option + '">' + option + '</option>'
+                                }else{
+                                         if(value.toString().replace(/\+/g,' ') == option.replace(/\+/g,' ')){
+                                              inputHtml = inputHtml + '<option value="' + option + '" selected>' + option + '</option>'
+                                         } else {
+                                               inputHtml = inputHtml + '<option value="' + option + '">' + option + '</option>'
+                                         }
+                                 }
 
 			});
 		}
@@ -61,6 +86,21 @@
 			}
 		}
 		finishValue = Math.round(finishValue * 10) / 10;
+	}
+
+	if(isNaN(finishValue)){
+		console.log('isNaN(finishValue)',finishValue);
+		finishValue = 0;
+	}
+
+	if(finishValue=='NaN'){
+		console.log('finishValue==NaN',finishValue);
+		finishValue = 0;
+	}
+
+	if(!finishValue){
+		console.log('!finishValue',finishValue);
+		finishValue = 0;
 	}
 %>
 	<div class="row-fluid">

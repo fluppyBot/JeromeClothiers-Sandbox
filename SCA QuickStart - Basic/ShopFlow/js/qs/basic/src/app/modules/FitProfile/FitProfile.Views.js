@@ -276,7 +276,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 				, fieldsForm = null;
 
 			var config = [];
-
+ 
 			jQuery.get(_.getAbsoluteUrl('js/itemRangeConfig.json')).done(function (data) {
 				config = data;
 				if (measureType && itemType) {

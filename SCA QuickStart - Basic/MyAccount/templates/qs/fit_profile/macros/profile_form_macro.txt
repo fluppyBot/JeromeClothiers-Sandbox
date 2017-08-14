@@ -81,6 +81,7 @@
 							%>
 								<%
 									var swxFpMeasureValue = profile ? JSON.parse(profile.get("custrecord_fp_measure_value")) : null;	
+									console.log('MyAccount>profile_form_macro.txt>profile',profile);
 								%>
 								<%= SC.macros.measureForm(fieldsForm, swxFpMeasureValue, eventValue,profile ? profile.get("custrecord_fp_product_type") : null) %>
 							<% 
@@ -90,7 +91,7 @@
 						</div>
 					</fieldset>
 				</form>
-		 </div>
+		 </div> 
 		 <div class="modal-footer">
 		 
 				<div class="form-actions" style="margin: 0px; border: none; padding: 0px;">

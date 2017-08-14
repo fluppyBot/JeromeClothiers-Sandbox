@@ -51,12 +51,27 @@
 							</div>
 						<% } %>
 						<% _.each(fieldset.fields, function(field){
-							var bodyValue = null
-							,	allowance = null
-							,	baseAllowance = null
-							,	fieldValue = _.where(values, {name: field.name})
-							,	allowFieldValue = _.where(values, {name: "allowance-" + field.name})
-							,	lookUpField = _.where(values, {name: fields["lookup-key"]});
+
+							var fieldName = field.name;
+							
+							console.log('values',values);
+							var bodyValue = 0
+							,	allowance = 0
+							,	baseAllowance = 0
+							 
+							var fieldValue = _.where(values, {name: fieldName});
+							if(fieldValue.length === 0){
+								fieldValue = _.where(values, {name: fieldName.replace('-',' ')});
+								fieldName = fieldName.replace('-',' ');
+							}
+							if(fieldValue.length === 0){
+								fieldValue = _.where(values, {name: fieldName.replace('+',' ')});
+								fieldName = fieldName.replace('+',' ');
+							}
+
+							console.log('MyAccount>measure_form_macro.txt>fieldValue',fieldValue);
+							var	allowFieldValue = _.where(values, {name: "allowance-" + fieldName})
+							var	lookUpField = _.where(values, {name: fields["lookup-key"]});
 							
 							if(values) {
 								if(fieldValue.length){
@@ -75,11 +90,18 @@
 							}
 						%>
 							<% 
-								if(bodyValue !== null && bodyValue!== '' && bodyValue!== undefined){
-									bodyValue = bodyValue.replace('+',' ');
-								}
+								//if(bodyValue !== null && bodyValue!== '' && bodyValue!== undefined){
+									//bodyValue = bodyValue.replace('+',' ');
+								//}
 							
 							 %>
+							<%
+								console.log('MyAccount>measure_form_macro.txt>field.name',field.name)
+								console.log('MyAccount>measure_form_macro.txt>values',values);
+								console.log('bodyValue>',bodyValue);
+								console.log('baseAllowance>',baseAllowance);
+								console.log('allowance>',allowance);
+							%>
 							<%= SC.macros.bodyMeasureField(field, bodyValue, fieldset.name, baseAllowance, allowance,selectedItemType) %>
 						<% }) %>
 					<% } else { %>	

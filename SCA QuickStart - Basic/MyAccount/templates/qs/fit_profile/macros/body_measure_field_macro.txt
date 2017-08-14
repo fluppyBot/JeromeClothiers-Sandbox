@@ -36,19 +36,32 @@ console.log('name',name);
 	var selectedMeasurementConfig = _.findWhere(measurementConfiguration,{ type: selectedProductType });
 	console.log('selectedMeasurementConfig',selectedMeasurementConfig);
 	var config = _.findWhere(selectedMeasurementConfig.config,{ name: name});
-
+	if(config === null || config === undefined){
+		if(name==="Sleeve L" || name ==="Sleeve-L"){
+			config = _.findWhere(selectedMeasurementConfig.config,{ name: "Sleeve L"});
+		}
+		if(name==="Sleeve R"|| name ==="Sleeve-R"){
+			config = _.findWhere(selectedMeasurementConfig.config,{ name: "Sleeve R"});
+		}
+	}
+	
 	if(config!=null){
 		console.log('bodyMeasureField>config',config);
 	}
-	
+	 
 	if(type == "select"){
-		inputHtml = '<select class="input input-small" id="' + name + '" name="' + name + '">';
+		inputHtml = '<select class="input" id="' + name + '" name="' + name + '">';
 		if(field.options && field.options.length){
 			_.each(field.options, function(option){
 				console.log('body_measure_field_macro>field.option',option);
-				if(value == option){
-					inputHtml = inputHtml + '<option value="' + option + '" selected>' + option + '</option>'
-				} else {
+				if(value !=null){
+					if(value.toString().replace(/\+/g,' ') == option.replace(/\+/g,' ')){
+						inputHtml = inputHtml + '<option value="' + option + '" selected>' + option + '</option>'
+					}else{
+						inputHtml = inputHtml + '<option value="' + option + '" >' + option + '</option>'
+					}	
+				}
+				 else {
 					inputHtml = inputHtml + '<option value="' + option + '" >' + option + '</option>'
 				}
 
@@ -89,6 +102,11 @@ console.log('name',name);
 		console.log('!finishValue',finishValue);
 		finishValue = 0;
 	}
+
+	console.log('value',value);
+	console.log('baseAllowance',baseAllowance);
+	console.log('allowance',allowance);
+	console.log('finishValue',finishValue);
 %>
 	<div class="row-fluid">
 		<div class="span2">
@@ -106,8 +124,10 @@ console.log('name',name);
 
 					<% if(fieldset == "body-measurement"){ %>
 						<div class="span3-profile">
-							<input class="input input-small allowance-fld" type="number" step="any" id="allowance_<%= name %>" name="allowance-<%= name %>"
-							 value="<%= baseAllowance ? baseAllowance : 0 %>" />
+							<!-- <input class="input input-small allowance-fld" type="number" step="any" id="allowance_<%= name %>" name="allowance-<%= name %>"
+							 value="<%= baseAllowance ? baseAllowance : 0 %>" /> -->
+							  <input class="input input-small allowance-fld" type="number" step="any" id="allowance_<%= name %>" name="allowance-<%= name %>"
+							 value="<%= finishValue>0 ? (finishValue - value).toFixed(1) : baseAllowance ? baseAllowance : 0 %>" />
 						</div>
 						<div class="span3-profile">
 							<% if(config!=null){ %>
