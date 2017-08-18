@@ -35,7 +35,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 			this.application.getLayout().showContent(this, 'tailorclient', []);
 
 			if (this.model.get("current_client")) {
-				console.log('self.model',self.model);
+				console.log('self.model', self.model);
 				jQuery("#profile-options").html(SC.macros.fitProfileOptionDropdown(self.model.profile_collection, this.model.get("current_client")));
 			}
 
@@ -101,6 +101,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 					, application: self.application
 					, fitprofile: self.model
 				});
+
 
 				profileView.render();
 				jQuery("#profile-section").html(profileView.$el);
@@ -224,7 +225,8 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 		template: 'profile'
 		, title: _('Fit Profile').translate()
 		, events: {
-			'change select#in-modal-custrecord_fp_product_type': 'getMeasurementType'
+			'change select#in-modal-custrecord_fp_product_type': 'getMeasurementType',
+			'change select#custrecord_fp_product_type': 'getMeasurementType'
 			, 'change select#custrecord_fp_measure_type': 'buildMesureForm'
 			// ,  'change select#body-fit': 'rebuildMeasureForm'
 			, 'change .allowance-fld': 'updateFinalMeasure'
@@ -233,66 +235,168 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 			, 'change #in-modal-fit': 'updateAllowanceLookup'
 			, 'change .block-measurement-fld': 'disableCounterBlockField'
 			, 'submit #in-modal-profile-form': 'submitProfile'
-
+			, 'change [id="units"]': 'changedUnits'
+			, 'change [id="in-modal-units"]': 'changedUnits',
+			
 		}
 
 		, initialize: function (options) {
 			this.model = options.model;
 			this.fitprofile = options.fitprofile;
-			//SC.sessioncheck();
+			
+			jQuery.get(_.getAbsoluteUrl('js/itemRangeConfig.json')).done(function (data) {
+				window.cmConfig = data;
+			});
+			jQuery.get(_.getAbsoluteUrl('js/itemRangeConfigInches.json')).done(function (data) {
+				window.inchConfig = data;
+			});
+
+		}
+
+		, changedUnits: function (el) {
+			console.log('ShopFlow>FitProfile.Views.js>changeUnits-triggered');
+			var $ = jQuery;
+
+			//var productType = jQuery('#in-modal-custrecord_fp_product_type').val();
+			var productType = jQuery('#custrecord_fp_product_type').val();
+			if(productType === undefined ){
+				productType = jQuery('#in-modal-custrecord_fp_product_type').val();
+			}
+			var unit = $('#units').val();
+			if(unit === undefined ){
+				unit = $('#in-modal-units').val();
+			}
+
+			console.log('ShopFlow>FitProfile.Views.js>productType', productType);
+			console.log('ShopFlow>FitProfile.Views.js>unit', unit);
+			var configUrl = unit === 'CM' ? 'js/itemRangeConfig.json' : 'js/itemRangeConfigInches.json';
+
+			
+			$.get(_.getAbsoluteUrl(configUrl)).done(function (data) {
+				console.log('data>', JSON.parse(data));
+				var selectedMeasurementConfig = _.findWhere(JSON.parse(data), { type: productType });
+				console.log('selectedMeasurementConfig>', selectedMeasurementConfig);
+				_.each(selectedMeasurementConfig.config, function (el) {
+					//console.log('Range config '+el);
+					var fiedlName = el.name;
+					if (el.name === 'Sleeve L' || el.name === 'Sleeve R') {
+						fiedlName = fiedlName.replace(' ', '-');
+					}
+
+					$('#range_' + fiedlName).html('(' + el.min + '-' + el.max + ')');
+					$('#finish_' + fiedlName).attr('min-value', el.min);
+					$('#finish_' + fiedlName).attr('max-value', el.max);
+
+					$('#in-modal-range_' + fiedlName).html('(' + el.min + '-' + el.max + ')');
+					$('#in-modal-finish_' + fiedlName).attr('min-value', el.min);
+					$('#in-modal-finish_' + fiedlName).attr('max-value', el.max);
+
+				});
+			});
+
+			jQuery('#in-modal-fit').trigger('change');
+			jQuery('#fit').trigger('change');
 		}
 
 		, render: function () {
-			this._render();
-			this.$("#profile-details").html(SC.macros.profileForm(this.fitprofile));
+
+			//var selectedProfile = this.fitprofile.profile_collection.where({internalid: this.model})[0];
+			//var selectedUnit = JSON.parse(selectedProfile.get('custrecord_fp_measure_value'))[0].value;
+
+			var configUrl = 'js/itemRangeConfig.json';
+			console.log('ShowFlow>FitProfile.Views.js>render>this.fitprofile.profile_collection>', this.fitprofile.profile_collection);
+			console.log('ShowFlow>FitProfile.Views.js>render>this.fitprofile.get("current_profile")>', this.fitprofile.get("current_profile"));
+			
+			var self = this;
+			var selectedUnit = "CM";
+			if (this.fitprofile.get("current_profile") !== null) {
+				var selectedProfile = this.fitprofile.profile_collection.where({ internalid: this.fitprofile.get("current_profile") })[0];
+				console.log('ShowFlow>FitProfile.Views.js>render>selectedProfile>', selectedProfile);
+				selectedUnit = JSON.parse(selectedProfile.get('custrecord_fp_measure_value'))[0].value;
+			} 
+
+			console.log('ShowFlow>FitProfile.Views.js>render>selectedUnit>', selectedUnit);
+
+			window.itemRangeConfig = window.cmConfig;
+			if (selectedUnit === 'Inches' && (selectedUnit !== null || selectedUnit !== undefined)) {
+				window.itemRangeConfig = window.inchConfig;
+				console.log('inch');
+			}
+
+			console.log('ShopFlow>FitProfile.Views.js>render>window.itemRangeConfig>', window.itemRangeConfig);
+
+			self._render();
+			self.$("#profile-details").html(SC.macros.profileForm(self.fitprofile));
+			//this._render();
+			//this.$("#profile-details").html(SC.macros.profileForm(this.fitprofile));
 		}
 
 		, getMeasurementType: function (e) {
+			var $ = jQuery;
+			console.log('e.target>',e.target);
 			var itemType = jQuery(e.target).val()
 				, self = this
 				, selectedItemType = null
 				, measurementType = null
 				, profile = self.model.profile_collection && self.model.get("current_profile") ? self.model.profile_collection.where({ internalid: self.model.get("current_profile") })[0] : null;
 
+			if(!itemType){
+				itemtype = jQuery('#custrecord_fp_product_type').val();
+			}
 			if (itemType) {
 				selectedItemType = _.where(self.fitprofile.measurement_config, { item_type: itemType })[0];
 			}
-
+			console.log('itemtype>',itemType);
+			console.log('self.fitprofile.measurement_config>',self.fitprofile.measurement_config);
+			console.log('selectedItemType>',selectedItemType);
 			if (selectedItemType) {
 				measurementType = _.pluck(selectedItemType.measurement, "type");
-				jQuery("#in-modal-measure-type").html(SC.macros.measureTypeDropdown(measurementType, profile ? profile.get("custrecord_fp_measure_type") : null));
-				jQuery("#in-modal-measure-form").html("");
+				console.log('measurementType',measurementType);
+				//console.log('profile.get>',profile.get("custrecord_fp_measure_type"));
+				// jQuery("#in-modal-measure-type").html(SC.macros.measureTypeDropdown(measurementType, profile ? profile.get("custrecord_fp_measure_type") : null));
+				// jQuery("#in-modal-measure-form").html("");
+				if($("#measure-type").length == 0) {
+					//it doesn't exist
+					jQuery("#in-modal-measure-type").html(SC.macros.measureTypeDropdown(measurementType, profile ? profile.get("custrecord_fp_measure_type") : null));
+					jQuery("#in-modal-measure-form").html("");
+				}else{
+					jQuery("#measure-type").html(SC.macros.measureTypeDropdown(measurementType, profile ? profile.get("custrecord_fp_measure_type") : null));
+					jQuery("#measure-form").html("");
+				}
+				
 			} else {
 				jQuery("#in-modal-measure-type").html("");
 				jQuery("#in-modal-measure-form").html("");
+				jQuery("#measure-type").html("");
+				jQuery("#measure-form").html("");
 			}
 		}
 
 		, buildMesureForm: function (e) {
 			console.log('buildMeasureForm');
 			var measureType = jQuery(e.target).val()
-				, itemType = jQuery("#in-modal-custrecord_fp_product_type").val()
+				//, itemType = jQuery("#in-modal-custrecord_fp_product_type").val()
+				, itemType = jQuery("#custrecord_fp_product_type").val()
 				, self = this
 				, fieldsForm = null;
 
-			var config = [];
- 
-			jQuery.get(_.getAbsoluteUrl('js/itemRangeConfig.json')).done(function (data) {
-				config = data;
-				if (measureType && itemType) {
-					fieldsForm = _.where(self.fitprofile.measurement_config, { item_type: itemType })[0];
-					fieldsForm = _.where(fieldsForm.measurement, { type: measureType })[0];
-					self.processBlockFields(fieldsForm, 'Regular');
-					self.fitprofile.selected_measurement = fieldsForm;
-					window.itemRangeConfig = data;
-					//console.log(config);
-					jQuery("#in-modal-measure-form").html(SC.macros.measureForm(fieldsForm));
-				} else {
-					jQuery("#in-modal-measure-form").html("");
-				}
-			});
+			if(itemType  === undefined){
+				itemType  = jQuery("#in-modal-custrecord_fp_product_type").val();
+			}
 
-			
+			if (measureType && itemType) {
+				fieldsForm = _.where(self.fitprofile.measurement_config, { item_type: itemType })[0];
+				fieldsForm = _.where(fieldsForm.measurement, { type: measureType })[0];
+				self.processBlockFields(fieldsForm, 'Regular');
+				self.fitprofile.selected_measurement = fieldsForm;
+				//window.itemRangeConfig = data;
+				//console.log(config);
+				jQuery("#in-modal-measure-form").html(SC.macros.measureForm(fieldsForm));
+				jQuery("#measure-form").html(SC.macros.measureForm(fieldsForm));
+			} else {
+				jQuery("#in-modal-measure-form").html("");
+				jQuery("#measure-form").html("");
+			}
 
 
 		}
@@ -357,24 +461,24 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 				, idPrefix = isModal ? "#in-modal-" : "#"
 				, idFinishPrefix = isModal ? "#in-modal-finish_" : "#finish_"
 				, id = isModal && !isAllowance ? field.prop("id").split("-modal-")[1] : id;
-			console.log('-------------------------------',field);
-			
-			if (jQuery("[id='"+idAllowancePrefix.replace('#','') + id+"']").val() && !jQuery("[id='"+idAllowancePrefix.replace('#','') + id+"']").val().length) {
+			console.log('-------------------------------', field);
+
+			if (jQuery("[id='" + idAllowancePrefix.replace('#', '') + id + "']").val() && !jQuery("[id='" + idAllowancePrefix.replace('#', '') + id + "']").val().length) {
 				idAllowancePrefix = idAllowancePrefix.replace("in-modal-", "");
 			}
 			if (isAllowance) {
-				if (_.isNaN(jQuery("[id='"+idAllowancePrefix.replace('#','') + id+"']").val()) || jQuery("[id='"+idAllowancePrefix.replace('#','') + id+"']").val() === "") {
+				if (_.isNaN(jQuery("[id='" + idAllowancePrefix.replace('#', '') + id + "']").val()) || jQuery("[id='" + idAllowancePrefix.replace('#', '') + id + "']").val() === "") {
 					finalMeasure = 0 + parseFloat(field.val());
-					console.log('finalMeasure>0 + parseFloat(field.val())',finalMeasure);
+					console.log('finalMeasure>0 + parseFloat(field.val())', finalMeasure);
 				} else {
-					finalMeasure = parseFloat(jQuery("[id='"+idPrefix.replace('#','') + id+"']").val()) + parseFloat(field.val());
-					console.log('finalMeasure>parseFloat(jQuery(idPrefix + id).val()) + parseFloat(field.val())',finalMeasure);
+					finalMeasure = parseFloat(jQuery("[id='" + idPrefix.replace('#', '') + id + "']").val()) + parseFloat(field.val());
+					console.log('finalMeasure>parseFloat(jQuery(idPrefix + id).val()) + parseFloat(field.val())', finalMeasure);
 				}
 			} else {
-				if (_.isNaN(jQuery("[id='"+idAllowancePrefix.replace('#','') + id+"']").val()) || jQuery("[id='"+idAllowancePrefix.replace('#','') + id+"']").val() === "") {
+				if (_.isNaN(jQuery("[id='" + idAllowancePrefix.replace('#', '') + id + "']").val()) || jQuery("[id='" + idAllowancePrefix.replace('#', '') + id + "']").val() === "") {
 					finalMeasure = 0 + parseFloat(field.val());
-					console.log('finalMeasure>not allowance>0 + parseFloat(field.val())',finalMeasure);
-				} else if (jQuery("[id='"+idAllowancePrefix.replace('#','') + id+"']").val() == 0) {
+					console.log('finalMeasure>not allowance>0 + parseFloat(field.val())', finalMeasure);
+				} else if (jQuery("[id='" + idAllowancePrefix.replace('#', '') + id + "']").val() == 0) {
 					var value = jQuery("#in-modal-fit").length ? jQuery("#in-modal-fit").val() : jQuery("#fit").val()
 						, self = this
 						, lookUpTable = self.fitprofile.selected_measurement["lookup-value"][value]
@@ -385,33 +489,43 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 
 					if (lookUpValue && lookUpValue.length) { // Update allowance field if there is a lookup value provided that allowance is 0
 						//jQuery(idAllowancePrefix + id).val(lookUpValue[0].value);
-						jQuery("[id='"+idAllowancePrefix.replace('#','') + id+"']").val(lookUpValue[0].value);
+						jQuery("[id='" + idAllowancePrefix.replace('#', '') + id + "']").val(lookUpValue[0].value);
 						//allowance = jQuery(idAllowancePrefix + id).val();
-						allowance = jQuery("[id='"+idAllowancePrefix.replace('#','') + id+"']").val();
-						console.log('allowance>jQuery(idAllowancePrefix + id).val()',allowance);
+						allowance = jQuery("[id='" + idAllowancePrefix.replace('#', '') + id + "']").val();
+						console.log('allowance>jQuery(idAllowancePrefix + id).val()', allowance);
 					}
-					finalMeasure = parseFloat(allowance) + parseFloat(jQuery("[id='"+idPrefix.replace('#','') + id+"']").val());
-					console.log('finalMeasure>parseFloat(allowance) + parseFloat(jQuery(idPrefix + id).val())',allowance);
+					finalMeasure = parseFloat(allowance) + parseFloat(jQuery("[id='" + idPrefix.replace('#', '') + id + "']").val());
+					console.log('finalMeasure>parseFloat(allowance) + parseFloat(jQuery(idPrefix + id).val())', allowance);
 				} else {
 					//finalMeasure = parseFloat(jQuery(idAllowancePrefix + id).val()) + parseFloat(jQuery(idPrefix + id).val());
-					console.log(jQuery("[id='"+idAllowancePrefix.replace('#','') + id+"']"));
-					console.log(jQuery("[id='"+idPrefix.replace('#','') + id+"']"));
-					finalMeasure = parseFloat(jQuery("[id='"+idAllowancePrefix.replace('#','') + id+"']").val()) + parseFloat(jQuery("[id='"+idPrefix.replace('#','') + id+"']").val());
-					console.log('idAllowancePrefix + id',idAllowancePrefix + id);
-					console.log('idPrefix + id',idPrefix + id)
-					console.log('finalMeasure>parseFloat(jQuery(idAllowancePrefix + id).val()) + parseFloat(jQuery(idPrefix + id).val())',allowance);
+					console.log(jQuery("[id='" + idAllowancePrefix.replace('#', '') + id + "']"));
+					console.log(jQuery("[id='" + idPrefix.replace('#', '') + id + "']"));
+					finalMeasure = parseFloat(jQuery("[id='" + idAllowancePrefix.replace('#', '') + id + "']").val()) + parseFloat(jQuery("[id='" + idPrefix.replace('#', '') + id + "']").val());
+					console.log('idAllowancePrefix + id', idAllowancePrefix + id);
+					console.log('idPrefix + id', idPrefix + id)
+					console.log('finalMeasure>parseFloat(jQuery(idAllowancePrefix + id).val()) + parseFloat(jQuery(idPrefix + id).val())', allowance);
 				}
 			}
 
-			console.log('finalMeasure',finalMeasure);
+			console.log('finalMeasure', finalMeasure);
 			if (!finalMeasure) finalMeasure = 0;
 			//jQuery(idFinishPrefix + id).html(Math.round(finalMeasure * 100) / 100);
-			jQuery("[id='"+idFinishPrefix.replace('#','')+id).html(Math.round(finalMeasure * 100) / 100);
+			jQuery("[id='" + idFinishPrefix.replace('#', '') + id).html(Math.round(finalMeasure * 100) / 100);
 		}
 		, updateAllowanceLookup: function (e) {
 			var value = jQuery(e.target).val()
 				, self = this
-				, lookUpTable = self.fitprofile.selected_measurement["lookup-value"][value];
+				, lookUpTable = JSON.parse(JSON.stringify(self.fitprofile.selected_measurement["lookup-value"][value]));
+			//, lookUpTable = self.fitprofile.selected_measurement["lookup-value"][value];
+
+			var selectedUnit = jQuery('#units').val();
+			_.each(lookUpTable, function (element, index, list) {
+				if (selectedUnit === 'Inches') {
+					console.log('NOTE:Testing| converting cm value to inch ', list[index].value);
+					list[index].value = (list[index].value * 0.39).toFixed(1);
+					console.log('NOTE:Testing| converted cm value to inch ', list[index].value);
+				}
+			});
 
 			jQuery(".allowance-fld").each(function () {
 				var id = jQuery(this).prop("id").split("_")[1]
@@ -419,21 +533,43 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 					, finalMeasure = 0
 					, modalId = 'in-modal-' + id;
 
-				id = jQuery(this).prop("id").split("_")[0] == 'in-modal-allowance' ? modalId : id;
+				jQuery(".allowance-fld").each(function () {
+					var id = jQuery(this).prop("id").split("_")[1]
+						, lookUpValue = _.where(lookUpTable, { field: id })
+						, finalMeasure = 0;
 
-				if (lookUpValue && lookUpValue.length) {
-					jQuery(this).data("baseval", lookUpValue[0].value);
+					if (lookUpValue && lookUpValue.length) {
+						jQuery(this).data("baseval", lookUpValue[0].value);
 
-					if (jQuery("#" + id).val() !== "") {
-						jQuery(this).val(lookUpValue[0].value);
+						console.log('id>', id);
+						if (jQuery("#" + id).val() !== "") {
+							jQuery(this).val(lookUpValue[0].value);
+						} else {
+							jQuery(this).val("0");
+						}
 					} else {
+						//jQuery(this).data("baseval", 0);
 						jQuery(this).val("0");
 					}
-				} else {
-					jQuery(this).val("0");
-				}
 
-				jQuery(this).trigger('change');
+					jQuery(this).trigger('change');
+				});
+
+				// id = jQuery(this).prop("id").split("_")[0] == 'in-modal-allowance' ? modalId : id;
+
+				// if (lookUpValue && lookUpValue.length) {
+				// 	jQuery(this).data("baseval", lookUpValue[0].value);
+
+				// 	if (jQuery("#" + id).val() !== "") {
+				// 		jQuery(this).val(lookUpValue[0].value);
+				// 	} else {
+				// 		jQuery(this).val("0");
+				// 	}
+				// } else {
+				// 	jQuery(this).val("0");
+				// }
+
+				// jQuery(this).trigger('change');
 			});
 		}
 		, submitProfile: function (e) {
@@ -453,7 +589,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 				"Back-Length": { min: 67, max: 95 }
 			};
 			var finishMeasurements = jQuery('#in-modal-profile-form span[id*="finish_"]');
-			console.log('finishMeasurements',finishMeasurements);
+			console.log('finishMeasurements', finishMeasurements);
 
 			var hasErrors = false;
 			for (var i = 0; i < finishMeasurements.length; i++) {

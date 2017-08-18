@@ -55,10 +55,18 @@ define('ItemDetails.View', ['FitProFile.Views', 'FitProfile.Model', 'Facets.Tran
 		}
 
 		, initialize: function (options) {
+			// jQuery.get(_.getAbsoluteUrl('js/itemRangeConfig.json')).done(function (data) {
+			// 	window.itemRangeConfig = data;
+			// 	//console.log('shopflow>ItemDetails.view.js>window.itemRangeConfig' > window.itemRangeConfig);
+			// });
+
 			jQuery.get(_.getAbsoluteUrl('js/itemRangeConfig.json')).done(function (data) {
-				window.itemRangeConfig = data;
-				//console.log('shopflow>ItemDetails.view.js>window.itemRangeConfig' > window.itemRangeConfig);
+				window.cmConfig = data;
 			});
+			jQuery.get(_.getAbsoluteUrl('js/itemRangeConfigInches.json')).done(function (data) {
+				window.inchConfig = data;
+			});
+			
 			this.application = options.application;
 			this.counted_clicks = {};
 			SC.sessioncheck();
@@ -273,6 +281,9 @@ define('ItemDetails.View', ['FitProFile.Views', 'FitProfile.Model', 'Facets.Tran
 				// update design option hidden fields
 				if (this.model.get('custitem_clothing_type') && this.model.get('custitem_clothing_type') != "&nbsp;") {
 					var clothingTypes = this.model.get('custitem_clothing_type').split(', ');
+
+					var selectedUnits = "CM";
+
 					_.each(clothingTypes, function (clothingType) {
 						//Design Option
 						var internalId = "custcol_designoptions_" + clothingType.toLowerCase();
@@ -284,7 +295,31 @@ define('ItemDetails.View', ['FitProFile.Views', 'FitProfile.Model', 'Facets.Tran
 						if (selectedProfile) {
 							var fitColumn = "custcol_fitprofile_" + clothingType.toLowerCase();
 							var fitValue = window.currentFitProfile.profile_collection.get(selectedProfile).get('custrecord_fp_measure_value');
-							self.model.setOption(fitColumn, fitValue);
+							console.log('ShopFlow>ItemDetails.View.js>fitColumn>',fitColumn);
+							console.log('ShopFlow>ItemDetails.View.js>fitValue>',fitValue);
+
+							var fitProfileValue = JSON.parse(fitValue);
+							if(fitProfileValue[0].value=='Inches'){
+								_.each(fitProfileValue,function(value,key,obj){
+
+									if(obj[key].name==='units'){
+										console.log('converting CM...');
+										obj[key].value = 'CM';
+									}
+									//Try parse if value is number
+									if(!isNaN(obj[key].value) ){
+										console.log('converting value to inch of '+obj[key].name,obj[key].value);
+										obj[key].value = (obj[key].value * 2.54).toFixed(2);
+										console.log('converted value to cm of '+obj[key].name,obj[key].value);
+									}
+								});
+								
+							}
+
+							console.log('JSON.stringify(fitProfileValue)',JSON.stringify(fitProfileValue));
+							self.model.setOption(fitColumn, JSON.stringify(fitProfileValue));
+
+							
 						}
 					});
 
@@ -314,6 +349,7 @@ define('ItemDetails.View', ['FitProFile.Views', 'FitProfile.Model', 'Facets.Tran
 								}
 							});
 
+							
 							fitProfileSummary.push({
 								'name': $el.attr('data-type'),
 								'value': $el.find(":selected").text(),

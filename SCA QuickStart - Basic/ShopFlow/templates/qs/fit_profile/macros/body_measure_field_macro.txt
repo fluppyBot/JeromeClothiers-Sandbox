@@ -29,6 +29,9 @@
 	if(selectedProductType==='' || selectedProductType === null || selectedProductType === undefined){
 		//selectedProductType = window.selectedProductType;
 		selectedProductType = jQuery("#in-modal-custrecord_fp_product_type option:selected").text();
+		if(selectedProductType === undefined || selectedProductType === null || selectedProductType === ''){
+			selectedProductType = jQuery("#custrecord_fp_product_type option:selected").text();
+		}
 		console.log('from null>selectedProductType',selectedProductType);
 	}
 	console.log('selectedProductType',selectedProductType);

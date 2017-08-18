@@ -1,0 +1,172 @@
+[
+    {
+        "type": "Shirt",
+        "config": [
+            {
+                "name": "Neck",
+                "min": 12.2,
+                "max": 23.2
+            },
+            {
+                "name": "Shoulder",
+                "min": 14.2,
+                "max": 28.4
+            },
+            {
+                "name": "Chest",
+                "min": 34.7,
+                "max": 72.4
+            },
+            {
+                "name": "Waist",
+                "min": 29.9,
+                "max": 71.7
+            },
+            {
+                "name": "Hips",
+                "min": 32.3,
+                "max": 72.4
+            },
+            {
+                "name": "Upperarm",
+                "min": 12.6,
+                "max":23.6
+            },
+            {
+                "name": "Sleeve-Left",
+                "min": 20.5,
+                "max": 31.1
+            },
+            {
+                "name": "Sleeve-Right",
+                "min":20.5,
+                "max": 31.1
+            },
+            {
+                "name": "Cuff-Left",
+                "min": 8.3,
+                "max": 12.9
+            },
+            {
+                "name": "Cuff-Right",
+                "min": 8.3,
+                "max": 12.9
+            },
+            {
+                "name": "Back-Length",
+                "min": 26.4,
+                "max": 37.4
+            }
+        ]
+    },
+    {
+        "type": "Jacket",
+        "config": [
+            {
+                "name": "Shoulder",
+                "min": 14.2,
+                "max": 28.3
+            },
+            {
+                "name": "Chest",
+                "min": 32.3,
+                "max": 77.9
+            },
+            {
+                "name": "Waist",
+                "min": 29.2,
+                "max": 76.4
+            },
+            {
+                "name": "Seat",
+                "min": 32.7,
+                "max": 78.7
+            },
+            {
+                "name": "Back-Lt",
+                "min": 23.6,
+                "max": 35.6
+            },
+            {
+                "name": "Sleeve L",
+                "min": 18.5,
+                "max": 32.3
+            },
+            {
+                "name": "Sleeve R",
+                "min": 18.5,
+                "max": 32.3
+            },
+            {
+                "name": "Upperarm",
+                "min": 13.8,
+                "max": 25.2
+            },
+            {
+                "name": "Cuff",
+                "min": 8.3,
+                "max": 17.7
+            }
+        ]
+    },
+    {
+        "type": "Trouser",
+        "config": [
+            {
+                "name": "waist",
+                "min": 25.2,
+                "max": 71.7
+            },
+            {
+                "name": "seat",
+                "min": 33.5,
+                "max": 76.8
+            },
+            {
+                "name": "u-rise",
+                "min": 20.0,
+                "max": 39.8
+            },
+            {
+                "name": "outseam-l",
+                "min": 30.7,
+                "max": 52.4
+            },
+            {
+                "name": "outseam-r",
+                "min": 30.7,
+                "max": 52.4
+            },
+            {
+                "name": "crotch",
+                "min": 22.0,
+                "max": 45.7
+            },
+            {
+                "name": "foot",
+                "min": 10.6,
+                "max": 27.9
+            }
+        ]
+    },
+    { 
+        "type": "Waistcoat",
+        "config": [
+            {
+                "name": "chest",
+                "min": 30.7,
+                "max": 75.9
+            },
+            {
+                "name": "waist",
+                "min": 29.1,
+                "max": 74.8
+            },
+            {
+                "name": "back-lt",
+                "min": 16.5,
+                "max": 30.3
+            }
+        ]
+    }
+]
