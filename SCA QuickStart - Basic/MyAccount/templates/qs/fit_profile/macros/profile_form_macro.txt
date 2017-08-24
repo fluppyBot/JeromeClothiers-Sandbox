@@ -14,7 +14,7 @@
 
 
 <button id="butt-modal" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modal-xyla" style="display: none;">Modal Butt</button>
-<div class="modal fade" id="modal-xyla" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="modal-xyla" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
    <div class="modal-dialog">
 	  <div class="modal-content">
 		 <div class="modal-header">

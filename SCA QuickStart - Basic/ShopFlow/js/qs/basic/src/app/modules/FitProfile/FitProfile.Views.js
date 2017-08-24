@@ -519,6 +519,9 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 			//, lookUpTable = self.fitprofile.selected_measurement["lookup-value"][value];
 
 			var selectedUnit = jQuery('#units').val();
+			if(selectedUnit === undefined ){
+				selectedUnit = jQuery('#in-modal-units').val();
+			}
 			_.each(lookUpTable, function (element, index, list) {
 				if (selectedUnit === 'Inches') {
 					console.log('NOTE:Testing| converting cm value to inch ', list[index].value);

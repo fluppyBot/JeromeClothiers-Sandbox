@@ -403,11 +403,11 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 		}
 
 		, swxFitProfileModalButtRemove: function (e) {
-			var $ = jQuery;
-			var message = _("Are you sure that you want to delete this client and their fit profiles?").translate();
-			if (window.confirm(message)) {
-				jQuery("[id='swx-fitprofile-remove']").click();
-			}
+			//var $ = jQuery;
+			//var message = _("Are you sure that you want to delete this client and their fit profiles?").translate();
+			//if (window.confirm(message)) {
+			jQuery("[id='swx-fitprofile-remove']").click();
+			//}
 		}
 
 		, swxFitProfileModalButtCopy: function (e) {
@@ -472,7 +472,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 		}
 		, removeRec: function (e) {
 			e.preventDefault();
-
+			console.log('Path:MyAccount>FitProfile.Views.js>removeRec>triggered');
 			// April CSD Issue #036
 			var message = _("Are you sure that you want to delete this client and their fit profiles?").translate()
 				, conditionContent = jQuery(e.target).data('type') === "client" ? window.confirm(message) : true;
