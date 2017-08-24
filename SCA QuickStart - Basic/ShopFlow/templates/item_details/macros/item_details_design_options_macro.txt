@@ -20,11 +20,21 @@
 
 			//console.log('objDesignOpt: ' + '\n' + JSON.stringify(objDesignOpt, 'key', '\t'))
 		%>
-		<h2 class="section-header">Fabric Availability</h2><hr/>
-		<div class="control-group" data-input="designoption-message">
-			<label class="control-label" for="designoption-message" style="font-size: 13px;font-weight: normal;line-height: 18px;">Vendor Link : </label>
-			<a href='<%= window.vendor.vendorLink %>' style="text-decoration:underline;" target="_blank"><%= window.vendor.vendorLink %></a>
-		</div>
+		<% if( window.vendor){%>
+			<h2 class="section-header">Fabric Availability</h2><hr/>
+			<div class="control-group" data-input="designoption-message">
+				<label class="control-label" for="designoption-message" style="font-size: 13px;font-weight: normal;line-height: 18px;">Vendor Link : </label>
+				<a href='<%= window.vendor.vendorLink %>' style="text-decoration:underline;" target="_blank"><%= window.vendor.vendorLink %></a>
+			</div>
+			<div class="control-group" data-input="designoption-message">
+				<label class="control-label" for="designoption-message" style="font-size: 13px;font-weight: normal;line-height: 18px;margin-right:10px;">Checked ?</label>
+				<label style="font-size: 1em">
+                	<input type="checkbox" value="">
+            	</label>
+			</div>
+		<%}%>
+		
+		
 
 		<h2 class="section-header"><%= _('Design Options').translate() %></h2><hr/>
 

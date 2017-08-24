@@ -88,6 +88,11 @@ define('ItemDetails.View', ['FitProFile.Views', 'FitProfile.Model', 'Facets.Tran
 			}
 
 			console.log('Location:Shopflow>ItemDetails.View.js>initialize>this.model', this.model);
+			console.log('Location:Shopflow>ItemDetails.View.js>initialize>this.itemList', this.itemList);
+			console.log('Location:Shopflow>ItemDetails.View.js>initialize>this.productList', this.productList);
+			console.log('Location:Shopflow>ItemDetails.View.js>initialize>this.application', this.application);
+
+
 			if (!this.model) {
 				throw new Error('A model is needed');
 			}
