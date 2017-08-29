@@ -1,4 +1,4 @@
-<% registerMacro('itemDetailsDesignOptions', function (designOptions) { %>
+<% registerMacro('itemDetailsDesignOptions', function (designOptions,isItemCheck) { %>
 	<%
 	var Jacket = ['Trims','Monogram Underside Collar','Monogram Lining','Branding'];
 	var Trouser = ['Trims','Monogram','Branding'];
@@ -11,6 +11,7 @@
 	collapse['Waistcoat'] = Waistcoat;
 	collapse['Overcoat'] = Overcoat;
 	collapse['Shirt'] = Shirt;
+	console.log('isItemCheck',isItemCheck);
 		%>
 
 	<% if (designOptions && Object.keys(designOptions).length > 0) { %>
@@ -29,14 +30,19 @@
 			<div class="control-group" data-input="designoption-message">
 				<label class="control-label" for="designoption-message" style="font-size: 13px;font-weight: normal;line-height: 18px;margin-right:10px;">Checked ?</label>
 				<label style="font-size: 1em">
-                	<input type="checkbox" value="">
+					<%if(isItemCheck ==='T'){%>
+						<input type="checkbox" value="" id='chkItem' checked>
+					<%}else{%>
+						<input type="checkbox" value="" id='chkItem' >
+					<%}%>
+                	
             	</label>
 			</div>
 		<%}%>
 		
 		
 
-		<h2 class="section-header"><%= _('Design Options').translate() %></h2><hr/>
+		<h2 class="section-header" style="margin-top: 30px"><%= _('Design Options').translate() %></h2><hr/>
 
 	    <div class="accordion" id="design-option">
 			<% var count = 0; %>

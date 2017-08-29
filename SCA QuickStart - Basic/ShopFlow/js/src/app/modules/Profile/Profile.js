@@ -164,8 +164,15 @@ define('Profile', ['Facets.Model'], function (FacetsModel)
 			}
 
 			//console.log('cartLines: ' + '\n' + JSON.stringify(cartLines, 'key', '\t'))
-			var objCartDesignOptionsMapping = _.getObjDesignOptionsMappingFromCartId(cartLines, orderItemInternalId);
-			
+            var objCartDesignOptionsMapping = _.getObjDesignOptionsMappingFromCartId(cartLines, orderItemInternalId);
+            var cartLine = _.findWhere(cartLines, { internalid: orderItemInternalId });
+            var itemCheck = "F";
+            if (cartLine) {
+                console.log('cartLine.options.custcolcustcol_item_check', cartLine.options.custcolcustcol_item_check);
+                itemCheck = cartLine.options.custcolcustcol_item_check;
+            }
+            console.log('ShopFlow>Profile.js>cartLine>', cartLine);
+
 			console.log('objCartDesignOptionsMapping: ' + '\n' + JSON.stringify(objCartDesignOptionsMapping, 'key', '\t'))
 			
 			
@@ -285,8 +292,8 @@ define('Profile', ['Facets.Model'], function (FacetsModel)
 			});
 			
 			//console.log('xyla: ' + '\n' + JSON.stringify(designOptions, 'key', '\t'))
-			
-			jQuery('#clothing-details').html(SC.macros.itemDetailsDesignOptions(designOptions));
+
+            jQuery('#clothing-details').html(SC.macros.itemDetailsDesignOptions(designOptions, itemCheck));
 		}
 	};
 		
