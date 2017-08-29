@@ -23,10 +23,21 @@
 		%>
 		<% if( window.vendor){%>
 			<h2 class="section-header">Fabric Availability</h2><hr/>
-			<div class="control-group" data-input="designoption-message">
-				<label class="control-label" for="designoption-message" style="font-size: 13px;font-weight: normal;line-height: 18px;">Vendor Link : </label>
-				<a href='<%= window.vendor.vendorLink %>' style="text-decoration:underline;" target="_blank"><%= window.vendor.vendorLink %></a>
-			</div>
+			
+			<% if(window.vendor.vendorLink){ %>
+				<div class="control-group" data-input="designoption-message">
+					<label class="control-label" for="designoption-message" style="font-size: 13px;font-weight: normal;line-height: 18px;">Vendor Link : </label>
+					<a href='<%= window.vendor.vendorLink %>' style="text-decoration:underline;" target="_blank"><%= window.vendor.vendorLink %></a>
+				</div>
+				
+			<% }else{ %>
+				<div class="control-group" data-input="designoption-message">
+					<label class="control-label" for="designoption-message" style="font-size: 13px;font-weight: normal;line-height: 18px;">Vendor File : </label>
+					<a href='<%= window.vendor.vendorFile %>' style="text-decoration:underline;" target="_blank"><%= window.vendor.vendorFileName %></a>
+				</div>
+			<% } %>
+			
+
 			<div class="control-group" data-input="designoption-message">
 				<label class="control-label" for="designoption-message" style="font-size: 13px;font-weight: normal;line-height: 18px;margin-right:10px;">Checked ?</label>
 				<label style="font-size: 1em">
