@@ -55,30 +55,50 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 
 		, swxOrderClientSearch: function (e) {
 			var $ = jQuery;
-			//var clientModel = this.model.get('current_client')
-			var clientCollection = this.model.client_collection
-			var stClientCollection = JSON.stringify(clientCollection);
-			var arrObjClientCollection = (!_.isNullOrEmpty(stClientCollection)) ? JSON.parse(stClientCollection) : [];
-			this.model.set('swx_order_client_name', this.$('input[name=swx-order-client-name]').val());
-			this.model.set('swx_order_client_email', this.$('input[name=swx-order-client-email]').val());
-			this.model.set('swx_order_client_phone', this.$('input[name=swx-order-client-phone]').val());
+			var self = this;
+			// var clientModel = this.model.get('current_client');
+			var filters = [];
+			filters.push("custrecord_tc_tailor||anyof|list|" + SC.Application('Shopping').user_instance.id);
+			if(this.$('input[name=swx-order-client-name]').val()){
+				filters.push("custrecord_tc_first_name||contains|text|"+this.$('input[name=swx-order-client-name]').val());
+				//filters.push("custrecord_tc_last_name||contains|text|"+this.$('input[name=swx-order-client-name]').val());
+			}
+			if(this.$('input[name=swx-order-client-email]').val())
+				filters.push("custrecord_tc_email||contains|email|"+this.$('input[name=swx-order-client-email]').val());
+			if(this.$('input[name=swx-order-client-phone]').val())
+				filters.push("custrecord_tc_phone||contains|text|"+this.$('input[name=swx-order-client-phone]').val());
+			var param = new Object();
+			param.type = "get_client";
+			param.data = JSON.stringify({filters:filters,
+			columns: ["internalid", "custrecord_tc_first_name", "custrecord_tc_last_name", "custrecord_tc_email", "custrecord_tc_addr1", "custrecord_tc_addr2", "custrecord_tc_country", "custrecord_tc_city", "custrecord_tc_state", "custrecord_tc_zip", "custrecord_tc_phone"]});
+			jQuery.get(_.getAbsoluteUrl('services/fitprofile.ss'), param).always(function(data){
+				if(data){
+					self.model.client_collection.reset(data);
+					clientCollection =  self.model.client_collection;
+					var stClientCollection = JSON.stringify(clientCollection);
+					var arrObjClientCollection = (!_.isNullOrEmpty(stClientCollection)) ? JSON.parse(stClientCollection) : [];
+					self.model.set('swx_order_client_name', self.$('input[name=swx-order-client-name]').val());
+					self.model.set('swx_order_client_email', self.$('input[name=swx-order-client-email]').val());
+					self.model.set('swx_order_client_phone', self.$('input[name=swx-order-client-phone]').val());
 
-			var objFilters = {};
-			objFilters['name'] = this.model.get('swx_order_client_name');
-			objFilters['email'] = this.model.get('swx_order_client_email');
-			objFilters['phone'] = this.model.get('swx_order_client_phone');
+					var objFilters = {};
+					objFilters['name'] = self.model.get('swx_order_client_name');
+					objFilters['email'] = self.model.get('swx_order_client_email');
+					objFilters['phone'] = self.model.get('swx_order_client_phone');
 
-			var arrObjClient = _.getArrObjOrderClientList(arrObjClientCollection, objFilters)
+					var arrObjClient = _.getArrObjOrderClientList(arrObjClientCollection, objFilters)
 
-			//console.log('objFilters: ' + '\n' + JSON.stringify(objFilters, 'key', '\t'))
-			//console.log('arrObjClient: ' + '\n' + JSON.stringify(arrObjClient, 'key', '\t'))
-			//console.log('swxOrderClientSearch: ' + '\n' + JSON.stringify(clientCollection, 'key', '\t'))
+					// console.log('objFilters: ' + '\n' + JSON.stringify(objFilters, 'key', '\t'))
+					// console.log('arrObjClient: ' + '\n' + JSON.stringify(arrObjClient, 'key', '\t'))
+					// console.log('swxOrderClientSearch: ' + '\n' + JSON.stringify(clientCollection, 'key', '\t'))
+					//
+					var arrObjClientList = [];
+					$("#swx-order-client-list").empty();
+					$("#swx-order-client-list").html(SC.macros.swxOrderClientList(arrObjClient));
+					_.toggleMobileNavButt();
+				}
+			});
 
-			var arrObjClientList = [];
-			$("#swx-order-client-list").empty();
-			$("#swx-order-client-list").html(SC.macros.swxOrderClientList(arrObjClient));
-
-			_.toggleMobileNavButt();
 		}
 
 		, swxOrderClientAdd: function (e) {

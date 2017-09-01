@@ -110,19 +110,19 @@ define('FormRenderer.View',  ['Client.Model', 'Profile.Model'], function (Client
 				} else {
 					formData.name = field;
 				}
-				
+
 				formData.value = value.replace("+", " ");
 				formData.type = jQuery("[name=" + field + "]").data("rectype");
 				formData.sublist = jQuery("[name=" + field + "]").data("sublist");
-				
+
 				if(self.id != "new"){
 					if(field != "custrecord_tc_tailor" && field != "custrecord_fp_client" && field != "custrecord_fm_fit_profile" && field != "custrecord_fm_tailor"){
 						dataToSend.push(formData);
 					}
 				} else {
 					dataToSend.push(formData);
-				} 
-				
+				}
+
 				if(field != "custrecord_tc_tailor"){
 					if(field == "state"){
 						self.model.set("custrecord_tc_state", jQuery("[name=" + field + "]").val());
@@ -134,7 +134,6 @@ define('FormRenderer.View',  ['Client.Model', 'Profile.Model'], function (Client
 							self.model2.set(field, jQuery("[name=" + field + "]").val());
 						}
 					}
-					
 				}
 			});
 
@@ -156,7 +155,7 @@ define('FormRenderer.View',  ['Client.Model', 'Profile.Model'], function (Client
 							self.options.profileModel[self.type + "_collection"].add(newRec.rec);
 						}
 						jQuery(".cancel-action").trigger("click");
-
+						console.log(self.options.application.getLayout().currentView)
 						self.options.application.getLayout().currentView.showContent();
 						self.options.application.getLayout().currentView.displayProfiles(JSON.parse(data.responseText), self.id, true);
 					}

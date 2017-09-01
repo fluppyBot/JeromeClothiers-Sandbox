@@ -39,7 +39,9 @@
 		<div class="cart-summary-subtotal">
 			<p class="strong">
 				<span class="pull-right summary-subtotal-formatted"><%= _.formatCurrency(subtotal) %></span>
-				<%= _('Subtotal (<span class="summary-item-quantity-subtotal">$(0)</span> $(1))').translate( item_count, item_count === 1 ? _('item').translate() : _('items').translate() ) %>
+				<%= 'Item Count ( '+cart.get("lines").length+' Items )' %>
+				<br/>
+				<%= _('Fabric Length Total ( <span class="summary-item-quantity-subtotal">$(0)</span> $(1) )').translate( item_count, item_count === 1 ? _('meters').translate() : _('meters').translate() ) %>
 			</p>
 			<% if (!is_estimate && false) { %>
 				<p class="no-margin-bottom small">
