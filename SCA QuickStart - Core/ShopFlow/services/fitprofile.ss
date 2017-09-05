@@ -1,6 +1,6 @@
 /**
  * Module Description
- * 
+ *
  * Version    Date            Author           Remarks
  * 1.00       26 Mar 2015     rvindal
  *
@@ -14,14 +14,14 @@
  var	session = container.getShoppingSession();
 function service(request, response){
 	try{
-		
+
 		var type = request.getParameter('type');
 		var responseData = "sample";
-		
+
 		switch(type){
 			case "get_client":
 				var data = request.getParameter('data');
-				
+
 				if(data){
 					data = JSON.parse(data);
 					nlapiLogExecution("Debug", "Test1", JSON.stringify(recordFunctions.processColumnData(data.columns)));
@@ -74,12 +74,12 @@ function service(request, response){
 				var id = request.getParameter('id');
 				if(id){
 					responseData = recordFunctions.deleteRecord("customrecord_sc_fit_profile", id);
-				}				
-				break;				
+				}
+				break;
 		}
 
 		Application.sendContent(responseData);
-		
+
 	} catch(ex) {
 		var errorStr = (ex.getCode != null) ? ex.getCode() + '\n' + ex.getDetails() + '\n' : ex.toString();
         nlapiLogExecution('Debug', 'Error encountered', 'Error: ' + errorStr);
@@ -90,7 +90,7 @@ function service(request, response){
         } else {
         	 errData.message = errorStr;
         }
-       
+
         response.setContentType("JAVASCRIPT");
 		response.write(JSON.stringify(errData));
 	}
@@ -101,15 +101,15 @@ var recordFunctions = {
 	/** Basic CRUD Record Functions */
 	fetchRecord: function(type, filters, columns){
 		if(type){
-			var arrFilter = [], 
+			var arrFilter = [],
 				arrColumn = [],
 				results = [];
-			
+
 			arrFilter.push(new nlobjSearchFilter('isinactive', '', 'is', 'F'));
 			if(filters.length > 0){
 				for(var i=0; i < filters.length; i++){
 					var filter = filters[i];
-					
+
 					if(filter.type == "list"){
 						arrFilter.push(new nlobjSearchFilter(filter.field, filter.join, filter.operand, filter.value.split(",")));
 					} else {
@@ -117,11 +117,11 @@ var recordFunctions = {
 					}
 				}
 			}
-			
+
 			if(columns.length > 0){
 				for(var k=0; k < columns.length; k++){
 					var column = columns[k];
-					
+
 					if(column.join != ""){
 						arrColumn.push(new nlobjSearchColumn(column.field, column.join));
 					} else {
@@ -129,17 +129,20 @@ var recordFunctions = {
 					}
 				}
 			}
-			
-			var searchResults = nlapiSearchRecord(type, null, arrFilter, arrColumn);
-			if(searchResults != null){
-				for(var j=0; j < searchResults.length; j++){
+
+      var search = nlapiCreateSearch(type, arrFilter, arrColumn);
+      var searchSet = search.runSearch();
+      var start = 0;
+      do{
+        var searchResults = searchSet.getResults(start,start+1000);
+        for(var j=0; j < searchResults.length; j++){
 					var searchResult = searchResults[j];
 					var result = new Object();
-					
+
 					if(columns.length > 0){
 						for(var l=0; l < columns.length; l++){
 							var column = columns[l];
-							
+
 							if(column.join){
 								result[column.field] = searchResult.getValue(column.field, column.join);
 							} else {
@@ -151,29 +154,58 @@ var recordFunctions = {
 							}
 						}
 					}
-					
+
+					if(result){
+						results.push(result);
+					}
+				}
+        start+=1000;
+      }while(searchResults.length == 1000);
+      nlapiLogExecution('debug','Results Length Fit Profiles Clients', results.length);
+			/*var searchResults = nlapiSearchRecord(type, null, arrFilter, arrColumn);
+			if(searchResults != null){
+				for(var j=0; j < searchResults.length; j++){
+					var searchResult = searchResults[j];
+					var result = new Object();
+
+					if(columns.length > 0){
+						for(var l=0; l < columns.length; l++){
+							var column = columns[l];
+
+							if(column.join){
+								result[column.field] = searchResult.getValue(column.field, column.join);
+							} else {
+								if(column.field == "custrecord_fp_product_type" || column.field == "custrecord_fp_measure_type"){
+									result[column.field] = searchResult.getText(column.field);
+								} else {
+									result[column.field] = searchResult.getValue(column.field);
+								}
+							}
+						}
+					}
+
 					if(result){
 						results.push(result);
 					}
 				}
 			}
-			
+      */
 			return results;
 		}
 	},
-	
+
 	updateRecord: function(type, id, data){
 		if(type && id && data){
 			var rec = nlapiLoadRecord(type, id);
 			var selectedLineitem = false;
 			var sublist_group = "";
 			var recObj = new Object();
-			
+
 			for(var i = 0; i < data.length; i++){
 				var field_name = data[i].name,
 					field_value = data[i].value,
 					field_type = data[i].type;
-				
+
 				if(field_type == "sublist"){
 					var field_sublist = data[i].field_sublist;
 					if(!selectedLineitem){
@@ -197,7 +229,7 @@ var recordFunctions = {
 				}
 			}
 			rec.commitLineItem(sublist_group);
-			
+
 			var recID = nlapiSubmitRecord(rec, true, true);
 			if(recID){
 				var recDetails = new Object();
@@ -213,20 +245,20 @@ var recordFunctions = {
 			return recDetails;
 		}
 	},
-	
+
 	createRecord: function(type, data){
 		if(type){
 			var newRec = nlapiCreateRecord(type);
 			var selectedLineitem = false;
 			var sublist_group = "";
 			var rec = new Object();
-			
+
 			if(data.length > 0){
 				for(var i=0; i < data.length; i++ ){
 					var field_name = data[i].name,
 						field_value = data[i].value,
 						field_type = data[i].type;
-						
+
 					if(field_type == "sublist"){
 						var field_sublist = data[i].sublist;
 						if(!selectedLineitem){
@@ -238,7 +270,7 @@ var recordFunctions = {
 							newRec.setCurrentLineItemValue(field_sublist, field_name, unescape(field_value));
 						}
 
-						
+
 					} else {
 						if(unescape(field_value) && unescape(field_value) != "undefined"){
 							var value = unescape(field_value.replace(/%2B/g, " "));
@@ -252,7 +284,7 @@ var recordFunctions = {
 					}
 				}
 				newRec.commitLineItem(sublist_group);
-				
+
 				var recID = nlapiSubmitRecord(newRec, true, true);
 				var recDetails = new Object();
 				if(recID){
@@ -269,7 +301,7 @@ var recordFunctions = {
 			}
 		}
 	},
-	
+
 	deleteRecord: function(type, id){
 		if(type && id){
 			var recID = nlapiDeleteRecord(type, id);
@@ -285,7 +317,7 @@ var recordFunctions = {
 			return recDetails;
 		}
 	},
-	
+
 	submitMultiField: function(type, id, field, value){
 		if(type && id && field && value){
 			var currentRec = nlapiLoadRecord(type, id);
@@ -300,12 +332,12 @@ var recordFunctions = {
 					currentValue.push(value);
 				}
 			}
-			
+
 			currentRec.setFieldValues(field, currentValue);
 			var recID = nlapiSubmitRecord(currentRec, true, true);
-			
+
 			var recDetails = new Object();
-			
+
 			if(recID){
 				recDetails.id = recID;
 				recDetails.message = "Field was updated";
@@ -317,7 +349,7 @@ var recordFunctions = {
 			return recDetails;
 		}
 	},
-	
+
 	/** Utilities */
 	processFilterData: function(filterData){
 		if(filterData && filterData.length > 0){
@@ -325,29 +357,29 @@ var recordFunctions = {
 			for(var i = 0; i < filterData.length; i++){
 				var filter = new Object();
 				var filterDataArr = filterData[i].split("|");
-				
+
 				filter.field = filterDataArr[0];
 				filter.join = filterDataArr[1];
 				filter.operand = filterDataArr[2];
 				filter.type = filterDataArr[3];
 				filter.value = filterDataArr[4];
-				
+
 				filters.push(filter);
 			}
 			return filters;
 		}
 	},
-	
+
 	processColumnData: function(columnData){
 		if(columnData && columnData.length > 0){
 			var columns = new Array();
 			for(var i = 0; i < columnData.length; i++){
 				var column = new Object();
 				var columnDataArr = columnData[i].split("|");
-				
+
 				column.field = columnDataArr[0];
 				column.join = columnDataArr[1];
-				
+
 				columns.push(column);
 			}
 			return columns;

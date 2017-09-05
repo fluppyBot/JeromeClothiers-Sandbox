@@ -483,7 +483,7 @@ Application.defineModel('PlacedOrder', {
 		}
 
 		//console.log('clientName',clientName);
-		
+
 		var result = Application.getSalesOrderPaginatedSearchResults({
 			record_type: 'salesorder'
 			, filters: filters
@@ -527,7 +527,7 @@ Application.defineModel('PlacedOrder', {
 		result.records = result.records.slice(0, 1000);
 		result.totalRecordsFound = 1000;
 		result.records = _.map(result.records || [], function (record) {
-			
+
 			var dateneeded = record.getValue('custcol_avt_date_needed');//this
 			var expdeliverydate = record.getValue('custcol_expected_delivery_date');
 			var fabricstatus = record.getValue('custcol_avt_fabric_status');
@@ -4327,7 +4327,7 @@ Application.defineModel('ProductList', {
 		}
 	}
 
-	// Returns the user's saved for later product list	
+	// Returns the user's saved for later product list
 ,	getSavedForLaterProductList: function (paramStFilterClientName)
 	{
 		'use strict';
@@ -4346,7 +4346,7 @@ Application.defineModel('ProductList', {
 		else
 		{
 			var self = this
-			,	sfl_template = _(_(this.configuration.list_templates).filter(function (pl) 
+			,	sfl_template = _(_(this.configuration.list_templates).filter(function (pl)
 			{
 				return pl.type && pl.type.id && pl.type.id === self.later_type_id;
 			})).first();
@@ -4367,7 +4367,7 @@ Application.defineModel('ProductList', {
 			}
 
 			throw notFoundError;
-		}	
+		}
 	}
 
 	// Sanitize html input

@@ -110,19 +110,19 @@ define('FormRenderer.View',  ['Client.Model', 'Profile.Model'], function (Client
 				} else {
 					formData.name = field;
 				}
-				
+
 				formData.value = value.replace("+", " ");
 				formData.type = jQuery("[name=" + field + "]").data("rectype");
 				formData.sublist = jQuery("[name=" + field + "]").data("sublist");
-				
+
 				if(self.id != "new"){
 					if(field != "custrecord_tc_tailor" && field != "custrecord_fp_client" && field != "custrecord_fm_fit_profile" && field != "custrecord_fm_tailor"){
 						dataToSend.push(formData);
 					}
 				} else {
 					dataToSend.push(formData);
-				} 
-				
+				}
+
 				if(field != "custrecord_tc_tailor"){
 					if(field == "state"){
 						self.model.set("custrecord_tc_state", jQuery("[name=" + field + "]").val());
@@ -134,7 +134,7 @@ define('FormRenderer.View',  ['Client.Model', 'Profile.Model'], function (Client
 							self.model2.set(field, jQuery("[name=" + field + "]").val());
 						}
 					}
-					
+
 				}
 			});
 
@@ -162,6 +162,37 @@ define('FormRenderer.View',  ['Client.Model', 'Profile.Model'], function (Client
 					}
 				});
 			}
+			var client_model = SC.Application('MyAccount').getLayout().currentView.model
+			var $ = jQuery;
+			client_model.set('swx_client_profile_order_history', '');
+
+			jQuery("div[data-type='alert-placeholder']").empty();
+			//var clientModel = this.model.get('current_client')
+			var clientCollection = client_model.client_collection
+			var stClientCollection = JSON.stringify(clientCollection);
+			var arrObjClientCollection = (!_.isNullOrEmpty(stClientCollection)) ? JSON.parse(stClientCollection) : [];
+			client_model.set('swx_order_client_name', this.$('input[name=custrecord_tc_first_name]').val() + ' ' + this.$('input[name=custrecord_tc_last_name]').val());
+			client_model.set('swx_order_client_email', this.$('input[name=custrecord_tc_email]').val());
+			client_model.set('swx_order_client_phone', this.$('input[name=custrecord_tc_phone]').val());
+			client_model.set('swx_is_display_client_details', '');
+
+			var objFilters = {};
+			objFilters['name'] = client_model.get('swx_order_client_name');
+			objFilters['email'] = client_model.get('swx_order_client_email');
+			objFilters['phone'] = client_model.get('swx_order_client_phone');
+
+			var arrObjClient = _.getArrObjOrderClientList(arrObjClientCollection, objFilters)
+
+			//console.log('objFilters: ' + '\n' + JSON.stringify(objFilters, 'key', '\t'))
+			//console.log('arrObjClient: ' + '\n' + JSON.stringify(arrObjClient, 'key', '\t'))
+			//console.log('swxOrderClientSearch: ' + '\n' + JSON.stringify(clientCollection, 'key', '\t'))
+
+			$("[id='order-history']").empty();
+			var arrObjClientList = [];
+			$("#swx-order-client-list").empty();
+			$("#swx-order-client-list").html(SC.macros.swxOrderClientList(arrObjClient));
+
+			_.toggleMobileNavButt();
 		}
 	});
 });
