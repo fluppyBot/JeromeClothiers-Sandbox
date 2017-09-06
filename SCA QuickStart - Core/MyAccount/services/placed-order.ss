@@ -15,22 +15,29 @@ function service (request)
 			,	id = request.getParameter('internalid')
 			,	page = request.getParameter('page') || 1
 			//  custom parameter used for searching.
-			,	clientName = request.getParameter('search')
+			,	search = request.getParameter('search')
+			,	clientName = ''
+			,	soid = ''
+			,	clientId = request.getParameter('clientName')
 			//  Order model is defined on ssp library Models.js
 			,	PlacedOrder = Application.getModel('PlacedOrder'),
 			data = JSON.parse(request.getBody() || '{}')
 			, sort = request.getParameter('sort');
-
-
+			if(search){
+				if(search.indexOf('SO-') == 0)
+				soid = search.split('SO-')[1];
+				else
+				clientName = search;
+			}
 			switch (method)
 			{
 				case 'GET':
 					//If the id exist, sends the response of Order.get(id), else sends the response of (Order.list(page) || [])
-					if (clientName){
-						Application.sendContent(id ? PlacedOrder.get(id) : (PlacedOrder.list(page, clientName,sort) || []));
-					} else {
-						Application.sendContent(id ? PlacedOrder.get(id) : (PlacedOrder.list(page,clientName,sort) || []));
-					}
+					//if (clientNameandSOID){
+					//	Application.sendContent(id ? PlacedOrder.get(id) : (PlacedOrder.list(page, clientName,soid,sort,clientId) || []));
+					//} else {
+						Application.sendContent(id ? PlacedOrder.get(id) : (PlacedOrder.list(page,clientName,soid,sort,clientId) || []));
+					//}
 
 				break;
 				case 'PUT':

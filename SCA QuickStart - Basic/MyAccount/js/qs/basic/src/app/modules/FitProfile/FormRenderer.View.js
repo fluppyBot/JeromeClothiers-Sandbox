@@ -97,7 +97,10 @@ define('FormRenderer.View',  ['Client.Model', 'Profile.Model'], function (Client
 			var formValues = jQuery("#in-modal-" + this.type + "_form").serialize().split("&");
 			var self = this;
 			var dataToSend = new Array();
-
+			var firstname = jQuery('input[name=custrecord_tc_first_name]').val();
+			var lastname = jQuery('input[name=custrecord_tc_last_name]').val();
+			var email = jQuery('input[name=custrecord_tc_email]').val();
+			var phone = jQuery('input[name=custrecord_tc_phone]').val();
 			_.each(formValues, function(formValue){
 				var field = formValue.split("=")[0],
 					value = formValue.split("=")[1],
@@ -157,42 +160,50 @@ define('FormRenderer.View',  ['Client.Model', 'Profile.Model'], function (Client
 						}
 						jQuery(".cancel-action").trigger("click");
 
+						var param = new Object();
+						param.type = "get_client";
+						param.data = JSON.stringify({filters: ["custrecord_tc_tailor||anyof|list|" + SC.Application('MyAccount').getLayout().currentView.model.get('current_user')], columns: ["internalid", "created", "custrecord_tc_first_name", "custrecord_tc_last_name", "custrecord_tc_dob", "custrecord_tc_company", "custrecord_tc_email", "custrecord_tc_addr1", "custrecord_tc_addr2", "custrecord_tc_country", "custrecord_tc_city", "custrecord_tc_state", "custrecord_tc_zip", "custrecord_tc_phone", "custrecord_tc_notes"]});
+						_.requestUrl("customscript_ps_sl_set_scafieldset", "customdeploy_ps_sl_set_scafieldset", "GET", param).always(function(data){
+							if(data){
+								var client_model = SC.Application('MyAccount').getLayout().currentView.model;
+								client_model.set('swx_client_profile_order_history', '');
+
+								jQuery("div[data-type='alert-placeholder']").empty();
+								client_model.client_collection.reset(JSON.parse(data));
+								var clientCollection = client_model.client_collection;
+								var stClientCollection = JSON.stringify(clientCollection);
+								var arrObjClientCollection = (!_.isNullOrEmpty(stClientCollection)) ? JSON.parse(stClientCollection) : [];
+								client_model.set('swx_order_client_name', firstname + ' ' + lastname);
+								client_model.set('swx_order_client_email',email);
+								client_model.set('swx_order_client_phone',phone);
+								client_model.set('swx_is_display_client_details', '');
+
+								var objFilters = {};
+								objFilters['name'] = client_model.get('swx_order_client_name');
+								objFilters['email'] = client_model.get('swx_order_client_email');
+								objFilters['phone'] = client_model.get('swx_order_client_phone');
+
+								var arrObjClient = _.getArrObjOrderClientList(arrObjClientCollection, objFilters)
+
+								jQuery("[id='order-history']").empty();
+								var arrObjClientList = [];
+								jQuery("#swx-order-client-list").empty();
+								jQuery("#swx-order-client-list").html(SC.macros.swxOrderClientList(arrObjClient));
+
+								_.toggleMobileNavButt();
+								jQuery('#swx-order-client-name').val(firstname + ' ' + lastname);
+								jQuery('#swx-order-client-email').val(email);
+								jQuery('#swx-order-client-phone').val(phone);
+
+							}
+						});
+
 						self.options.application.getLayout().currentView.showContent();
 						self.options.application.getLayout().currentView.displayProfiles(JSON.parse(data.responseText), self.id, true);
 					}
 				});
 			}
-			var client_model = SC.Application('MyAccount').getLayout().currentView.model
-			var $ = jQuery;
-			client_model.set('swx_client_profile_order_history', '');
 
-			jQuery("div[data-type='alert-placeholder']").empty();
-			//var clientModel = this.model.get('current_client')
-			var clientCollection = client_model.client_collection
-			var stClientCollection = JSON.stringify(clientCollection);
-			var arrObjClientCollection = (!_.isNullOrEmpty(stClientCollection)) ? JSON.parse(stClientCollection) : [];
-			client_model.set('swx_order_client_name', this.$('input[name=custrecord_tc_first_name]').val() + ' ' + this.$('input[name=custrecord_tc_last_name]').val());
-			client_model.set('swx_order_client_email', this.$('input[name=custrecord_tc_email]').val());
-			client_model.set('swx_order_client_phone', this.$('input[name=custrecord_tc_phone]').val());
-			client_model.set('swx_is_display_client_details', '');
-
-			var objFilters = {};
-			objFilters['name'] = client_model.get('swx_order_client_name');
-			objFilters['email'] = client_model.get('swx_order_client_email');
-			objFilters['phone'] = client_model.get('swx_order_client_phone');
-
-			var arrObjClient = _.getArrObjOrderClientList(arrObjClientCollection, objFilters)
-
-			//console.log('objFilters: ' + '\n' + JSON.stringify(objFilters, 'key', '\t'))
-			//console.log('arrObjClient: ' + '\n' + JSON.stringify(arrObjClient, 'key', '\t'))
-			//console.log('swxOrderClientSearch: ' + '\n' + JSON.stringify(clientCollection, 'key', '\t'))
-
-			$("[id='order-history']").empty();
-			var arrObjClientList = [];
-			$("#swx-order-client-list").empty();
-			$("#swx-order-client-list").html(SC.macros.swxOrderClientList(arrObjClient));
-
-			_.toggleMobileNavButt();
 		}
 	});
 });

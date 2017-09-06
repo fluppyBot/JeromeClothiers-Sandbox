@@ -33,7 +33,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 			, 'click [id=butt-modal-remove]': 'swxFitProfileModalButtRemove'
 			, 'click [id=swx-later-add-order]': 'swxFitProfileAddOrder'
 			, 'blur [name="oh_dateneeded"]': 'updateDateNeeded'
-			
+
 			//, 'keypress [id="swx-order-client-name"]':'keyPressSwxOrderClientSearch'
 			//, 'keypress [id="swx-order-client-email"]':'keyPressSwxOrderClientSearch'
 			//, 'keypress [id="swx-order-client-phone"]':'keyPressSwxOrderClientSearch'
@@ -181,7 +181,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 			//var itemDetails = this.getItemForCart(itemToAdd.internalid,itemToAdd.quantity);
 			//console.log('itemToAdd.internalid',itemToAdd.internalid);
 
-			// var self = this			
+			// var self = this
 			// ,	selected_product_list_item_id = itemToAdd.internalid
 			// ,	selected_product_list_item = self.model.get('items').findWhere({
 			//  		internalid: selected_product_list_item_id.toString()
@@ -199,7 +199,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 			// if (this.sflMode)
 			// {
 			// 	whole_promise = jQuery.when(add_to_cart_promise, this.deleteListItem(selected_product_list_item)).then(jQuery.proxy(this, 'executeAddToCartCallback'));
-			// }			
+			// }
 			// else
 			// {
 			// 	whole_promise = jQuery.when(add_to_cart_promise).then(jQuery.proxy(this, 'showConfirmationHelper', selected_product_list_item));
@@ -227,9 +227,10 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 			var $ = jQuery;
 
 			console.log('swxClientProfileOrderHistory');
+
 			var optionsearch = {
 				page: 1,
-				search: this.model.get('swx_order_client_name')
+				search: this.model.get('current_client')//this.model.get('swx_order_client_name')
 			};
 
 			//Backbone.Relational.store.reset();
@@ -258,7 +259,6 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 				});
 				$("#order-history").html(SC.macros.fitProfileClientorderHistoryMacro(filteredClientOrderHistory));
 			});
-
 		}
 		, swxClientProfileSelect: function (e) {
 
@@ -357,7 +357,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 			$("[id='swx-client-profile-list']").show();
 			$("[id='swx-order-client-contents']").show();
 		}
- 
+
 		, swxFitProfileAdd: function (e) {
 			var $ = jQuery;
 			jQuery("a[id='swx-fitprofile-dropdown-add']").click();
@@ -510,10 +510,10 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 				var selectedUnit = JSON.parse(selectedProfile.get('custrecord_fp_measure_value'))[0].value;
 
 				console.log('[NOTE:Testing only]MyAccount>FitProfile.Views.js>getProfileDetails>selectedUnit',selectedUnit);
-				
+
 				profileView.render(selectedUnit);
 				jQuery("#profile-section").html(profileView.$el);
-				
+
 			} else {
 				jQuery("#profile-actions").html("<a id='swx-fitprofile-dropdown-add' data-action='add-profile' data-toggle='show-in-modal' data-type='profile'>Add</a>");
 				// check if event was triggered by add button
@@ -670,7 +670,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 		,changedUnits : function(el){
 			console.log('MyAccount>FitProfile.Views.js>changeUnits-triggered');
 			var $ = jQuery;
-			
+
 			var productType = $('#custrecord_fp_product_type').val();
 			var unit = $('#units').val();
 
@@ -700,7 +700,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 		}
 
 		, render: function (selectedUnit) {
-			
+
 			var $ = jQuery;
 			var self = this;
 
@@ -716,11 +716,11 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 			// 	window.itemRangeConfig = data;
 			// 	//self.renderProfileForm();
 			// 	//self._render();
-				
+
 			// 	//_.toggleMobileNavButt();
 			// });
 
-			
+
 			//this._render();
 			this.$("#profile-details").html(SC.macros.profileForm(this.fitprofile));
 			_.toggleMobileNavButt();
@@ -1081,7 +1081,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 				});
 
 				console.log('MyAccount>FitProfile.Views.js>measurementValues>',measurementValues);
-				
+
 				var param = new Object();
 				dataToSend.push({ "name": "custrecord_fp_measure_value", "value": JSON.stringify(measurementValues), "type": "field", "sublist": "" })
 				param.type = self.fitprofile.get("current_profile") ? "update_profile" : "create_profile";
