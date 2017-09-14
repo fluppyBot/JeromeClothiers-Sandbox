@@ -622,10 +622,11 @@ Application.defineModel('PlacedOrder', {
 				return (a.tranline_status === b.tranline_status)? 0 : a.tranline_status? -1 : 1
 			});
 
-			var range_start = (page * results_per_page) - results_per_page
-			,	range_end = page * results_per_page;
-			result.records = result.records.slice(range_start, range_end);
 		}
+
+					var range_start = (page * results_per_page) - results_per_page
+					,	range_end = page * results_per_page;
+					result.records = result.records.slice(range_start, range_end);
 
 		/**
 		var arrObjRecords = [];

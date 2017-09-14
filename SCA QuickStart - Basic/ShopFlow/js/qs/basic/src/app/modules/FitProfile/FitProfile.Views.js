@@ -35,7 +35,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 			this.application.getLayout().showContent(this, 'tailorclient', []);
 
 			if (this.model.get("current_client")) {
-				console.log('self.model', self.model);
+				//console.log('self.model', self.model);
 				jQuery("#profile-options").html(SC.macros.fitProfileOptionDropdown(self.model.profile_collection, this.model.get("current_client")));
 			}
 
@@ -56,6 +56,9 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 
 		, swxOrderClientSearch: function (e) {
 			var $ = jQuery;
+			this.model.set('swx_client_profile_order_history', '');
+
+			jQuery("div[data-type='alert-placeholder']").empty();
 			//var clientModel = this.model.get('current_client')
 			var clientCollection = this.model.client_collection
 			var stClientCollection = JSON.stringify(clientCollection);
@@ -63,6 +66,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 			this.model.set('swx_order_client_name', this.$('input[name=swx-order-client-name]').val());
 			this.model.set('swx_order_client_email', this.$('input[name=swx-order-client-email]').val());
 			this.model.set('swx_order_client_phone', this.$('input[name=swx-order-client-phone]').val());
+			this.model.set('swx_is_display_client_details', '');
 
 			var objFilters = {};
 			objFilters['name'] = this.model.get('swx_order_client_name');
@@ -75,6 +79,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 			//console.log('arrObjClient: ' + '\n' + JSON.stringify(arrObjClient, 'key', '\t'))
 			//console.log('swxOrderClientSearch: ' + '\n' + JSON.stringify(clientCollection, 'key', '\t'))
 
+			$("[id='order-history']").empty();
 			var arrObjClientList = [];
 			$("#swx-order-client-list").empty();
 			$("#swx-order-client-list").html(SC.macros.swxOrderClientList(arrObjClient));
@@ -237,13 +242,13 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 			, 'submit #in-modal-profile-form': 'submitProfile'
 			, 'change [id="units"]': 'changedUnits'
 			, 'change [id="in-modal-units"]': 'changedUnits',
-			
+
 		}
 
 		, initialize: function (options) {
 			this.model = options.model;
 			this.fitprofile = options.fitprofile;
-			
+
 			jQuery.get(_.getAbsoluteUrl('js/itemRangeConfig.json')).done(function (data) {
 				window.cmConfig = data;
 			});
@@ -254,7 +259,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 		}
 
 		, changedUnits: function (el) {
-			console.log('ShopFlow>FitProfile.Views.js>changeUnits-triggered');
+			//console.log('ShopFlow>FitProfile.Views.js>changeUnits-triggered');
 			var $ = jQuery;
 
 			//var productType = jQuery('#in-modal-custrecord_fp_product_type').val();
@@ -267,15 +272,15 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 				unit = $('#in-modal-units').val();
 			}
 
-			console.log('ShopFlow>FitProfile.Views.js>productType', productType);
-			console.log('ShopFlow>FitProfile.Views.js>unit', unit);
+			//console.log('ShopFlow>FitProfile.Views.js>productType', productType);
+			//console.log('ShopFlow>FitProfile.Views.js>unit', unit);
 			var configUrl = unit === 'CM' ? 'js/itemRangeConfig.json' : 'js/itemRangeConfigInches.json';
 
-			
+
 			$.get(_.getAbsoluteUrl(configUrl)).done(function (data) {
-				console.log('data>', JSON.parse(data));
+				//console.log('data>', JSON.parse(data));
 				var selectedMeasurementConfig = _.findWhere(JSON.parse(data), { type: productType });
-				console.log('selectedMeasurementConfig>', selectedMeasurementConfig);
+				//console.log('selectedMeasurementConfig>', selectedMeasurementConfig);
 				_.each(selectedMeasurementConfig.config, function (el) {
 					//console.log('Range config '+el);
 					var fiedlName = el.name;
@@ -304,26 +309,26 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 			//var selectedUnit = JSON.parse(selectedProfile.get('custrecord_fp_measure_value'))[0].value;
 
 			var configUrl = 'js/itemRangeConfig.json';
-			console.log('ShowFlow>FitProfile.Views.js>render>this.fitprofile.profile_collection>', this.fitprofile.profile_collection);
-			console.log('ShowFlow>FitProfile.Views.js>render>this.fitprofile.get("current_profile")>', this.fitprofile.get("current_profile"));
-			
+			//console.log('ShowFlow>FitProfile.Views.js>render>this.fitprofile.profile_collection>', this.fitprofile.profile_collection);
+			//console.log('ShowFlow>FitProfile.Views.js>render>this.fitprofile.get("current_profile")>', this.fitprofile.get("current_profile"));
+
 			var self = this;
 			var selectedUnit = "CM";
 			if (this.fitprofile.get("current_profile") !== null) {
 				var selectedProfile = this.fitprofile.profile_collection.where({ internalid: this.fitprofile.get("current_profile") })[0];
-				console.log('ShowFlow>FitProfile.Views.js>render>selectedProfile>', selectedProfile);
+				//console.log('ShowFlow>FitProfile.Views.js>render>selectedProfile>', selectedProfile);
 				selectedUnit = JSON.parse(selectedProfile.get('custrecord_fp_measure_value'))[0].value;
-			} 
+			}
 
-			console.log('ShowFlow>FitProfile.Views.js>render>selectedUnit>', selectedUnit);
+			//console.log('ShowFlow>FitProfile.Views.js>render>selectedUnit>', selectedUnit);
 
 			window.itemRangeConfig = window.cmConfig;
 			if (selectedUnit === 'Inches' && (selectedUnit !== null || selectedUnit !== undefined)) {
 				window.itemRangeConfig = window.inchConfig;
-				console.log('inch');
+				//console.log('inch');
 			}
 
-			console.log('ShopFlow>FitProfile.Views.js>render>window.itemRangeConfig>', window.itemRangeConfig);
+			//console.log('ShopFlow>FitProfile.Views.js>render>window.itemRangeConfig>', window.itemRangeConfig);
 
 			self._render();
 			self.$("#profile-details").html(SC.macros.profileForm(self.fitprofile));
@@ -333,7 +338,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 
 		, getMeasurementType: function (e) {
 			var $ = jQuery;
-			console.log('e.target>',e.target);
+			//console.log('e.target>',e.target);
 			var itemType = jQuery(e.target).val()
 				, self = this
 				, selectedItemType = null
@@ -346,12 +351,12 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 			if (itemType) {
 				selectedItemType = _.where(self.fitprofile.measurement_config, { item_type: itemType })[0];
 			}
-			console.log('itemtype>',itemType);
-			console.log('self.fitprofile.measurement_config>',self.fitprofile.measurement_config);
-			console.log('selectedItemType>',selectedItemType);
+			//console.log('itemtype>',itemType);
+			//console.log('self.fitprofile.measurement_config>',self.fitprofile.measurement_config);
+			//console.log('selectedItemType>',selectedItemType);
 			if (selectedItemType) {
 				measurementType = _.pluck(selectedItemType.measurement, "type");
-				console.log('measurementType',measurementType);
+				//console.log('measurementType',measurementType);
 				//console.log('profile.get>',profile.get("custrecord_fp_measure_type"));
 				// jQuery("#in-modal-measure-type").html(SC.macros.measureTypeDropdown(measurementType, profile ? profile.get("custrecord_fp_measure_type") : null));
 				// jQuery("#in-modal-measure-form").html("");
@@ -363,7 +368,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 					jQuery("#measure-type").html(SC.macros.measureTypeDropdown(measurementType, profile ? profile.get("custrecord_fp_measure_type") : null));
 					jQuery("#measure-form").html("");
 				}
-				
+
 			} else {
 				jQuery("#in-modal-measure-type").html("");
 				jQuery("#in-modal-measure-form").html("");
@@ -373,7 +378,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 		}
 
 		, buildMesureForm: function (e) {
-			console.log('buildMeasureForm');
+			//console.log('buildMeasureForm');
 			var measureType = jQuery(e.target).val()
 				//, itemType = jQuery("#in-modal-custrecord_fp_product_type").val()
 				, itemType = jQuery("#custrecord_fp_product_type").val()
@@ -401,7 +406,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 
 		}
 		, rebuildMeasureForm: function (e) {
-			console.log('rebuildMeasureForm');
+			//console.log('rebuildMeasureForm');
 			var fitType = jQuery(e.target).val()
 				, measureType = jQuery("#custrecord_fp_measure_type").val()
 				, itemType = jQuery("#in-modal-custrecord_fp_product_type").val()
@@ -461,7 +466,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 				, idPrefix = isModal ? "#in-modal-" : "#"
 				, idFinishPrefix = isModal ? "#in-modal-finish_" : "#finish_"
 				, id = isModal && !isAllowance ? field.prop("id").split("-modal-")[1] : id;
-			console.log('-------------------------------', field);
+			//console.log('-------------------------------', field);
 
 			if (jQuery("[id='" + idAllowancePrefix.replace('#', '') + id + "']").val() && !jQuery("[id='" + idAllowancePrefix.replace('#', '') + id + "']").val().length) {
 				idAllowancePrefix = idAllowancePrefix.replace("in-modal-", "");
@@ -469,15 +474,15 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 			if (isAllowance) {
 				if (_.isNaN(jQuery("[id='" + idAllowancePrefix.replace('#', '') + id + "']").val()) || jQuery("[id='" + idAllowancePrefix.replace('#', '') + id + "']").val() === "") {
 					finalMeasure = 0 + parseFloat(field.val());
-					console.log('finalMeasure>0 + parseFloat(field.val())', finalMeasure);
+					//console.log('finalMeasure>0 + parseFloat(field.val())', finalMeasure);
 				} else {
 					finalMeasure = parseFloat(jQuery("[id='" + idPrefix.replace('#', '') + id + "']").val()) + parseFloat(field.val());
-					console.log('finalMeasure>parseFloat(jQuery(idPrefix + id).val()) + parseFloat(field.val())', finalMeasure);
+					//console.log('finalMeasure>parseFloat(jQuery(idPrefix + id).val()) + parseFloat(field.val())', finalMeasure);
 				}
 			} else {
 				if (_.isNaN(jQuery("[id='" + idAllowancePrefix.replace('#', '') + id + "']").val()) || jQuery("[id='" + idAllowancePrefix.replace('#', '') + id + "']").val() === "") {
 					finalMeasure = 0 + parseFloat(field.val());
-					console.log('finalMeasure>not allowance>0 + parseFloat(field.val())', finalMeasure);
+					//console.log('finalMeasure>not allowance>0 + parseFloat(field.val())', finalMeasure);
 				} else if (jQuery("[id='" + idAllowancePrefix.replace('#', '') + id + "']").val() == 0) {
 					var value = jQuery("#in-modal-fit").length ? jQuery("#in-modal-fit").val() : jQuery("#fit").val()
 						, self = this
@@ -492,22 +497,22 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 						jQuery("[id='" + idAllowancePrefix.replace('#', '') + id + "']").val(lookUpValue[0].value);
 						//allowance = jQuery(idAllowancePrefix + id).val();
 						allowance = jQuery("[id='" + idAllowancePrefix.replace('#', '') + id + "']").val();
-						console.log('allowance>jQuery(idAllowancePrefix + id).val()', allowance);
+						//console.log('allowance>jQuery(idAllowancePrefix + id).val()', allowance);
 					}
 					finalMeasure = parseFloat(allowance) + parseFloat(jQuery("[id='" + idPrefix.replace('#', '') + id + "']").val());
-					console.log('finalMeasure>parseFloat(allowance) + parseFloat(jQuery(idPrefix + id).val())', allowance);
+					//console.log('finalMeasure>parseFloat(allowance) + parseFloat(jQuery(idPrefix + id).val())', allowance);
 				} else {
 					//finalMeasure = parseFloat(jQuery(idAllowancePrefix + id).val()) + parseFloat(jQuery(idPrefix + id).val());
-					console.log(jQuery("[id='" + idAllowancePrefix.replace('#', '') + id + "']"));
-					console.log(jQuery("[id='" + idPrefix.replace('#', '') + id + "']"));
+					//console.log(jQuery("[id='" + idAllowancePrefix.replace('#', '') + id + "']"));
+					//console.log(jQuery("[id='" + idPrefix.replace('#', '') + id + "']"));
 					finalMeasure = parseFloat(jQuery("[id='" + idAllowancePrefix.replace('#', '') + id + "']").val()) + parseFloat(jQuery("[id='" + idPrefix.replace('#', '') + id + "']").val());
-					console.log('idAllowancePrefix + id', idAllowancePrefix + id);
-					console.log('idPrefix + id', idPrefix + id)
-					console.log('finalMeasure>parseFloat(jQuery(idAllowancePrefix + id).val()) + parseFloat(jQuery(idPrefix + id).val())', allowance);
+					//console.log('idAllowancePrefix + id', idAllowancePrefix + id);
+					//console.log('idPrefix + id', idPrefix + id)
+					//console.log('finalMeasure>parseFloat(jQuery(idAllowancePrefix + id).val()) + parseFloat(jQuery(idPrefix + id).val())', allowance);
 				}
 			}
 
-			console.log('finalMeasure', finalMeasure);
+			//console.log('finalMeasure', finalMeasure);
 			if (!finalMeasure) finalMeasure = 0;
 			//jQuery(idFinishPrefix + id).html(Math.round(finalMeasure * 100) / 100);
 			jQuery("[id='" + idFinishPrefix.replace('#', '') + id).html(Math.round(finalMeasure * 100) / 100);
@@ -524,9 +529,9 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 			}
 			_.each(lookUpTable, function (element, index, list) {
 				if (selectedUnit === 'Inches') {
-					console.log('NOTE:Testing| converting cm value to inch ', list[index].value);
+					//console.log('NOTE:Testing| converting cm value to inch ', list[index].value);
 					list[index].value = (list[index].value * 0.39).toFixed(1);
-					console.log('NOTE:Testing| converted cm value to inch ', list[index].value);
+					//console.log('NOTE:Testing| converted cm value to inch ', list[index].value);
 				}
 			});
 
@@ -544,7 +549,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 					if (lookUpValue && lookUpValue.length) {
 						jQuery(this).data("baseval", lookUpValue[0].value);
 
-						console.log('id>', id);
+						//console.log('id>', id);
 						if (jQuery("#" + id).val() !== "") {
 							jQuery(this).val(lookUpValue[0].value);
 						} else {
@@ -577,7 +582,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 		}
 		, submitProfile: function (e) {
 			e.preventDefault();
-			console.log(e);
+			//console.log(e);
 			var range = {
 				"Neck": { min: 31, max: 59 },
 				"Shoulder": { min: 37, max: 67 },
@@ -592,11 +597,11 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 				"Back-Length": { min: 67, max: 95 }
 			};
 			var finishMeasurements = jQuery('#in-modal-profile-form span[id*="finish_"]');
-			console.log('finishMeasurements', finishMeasurements);
+			//console.log('finishMeasurements', finishMeasurements);
 
 			var hasErrors = false;
 			for (var i = 0; i < finishMeasurements.length; i++) {
-				console.log(finishMeasurements[i]);
+				//console.log(finishMeasurements[i]);
 				if (finishMeasurements[i].attributes['min-value'] && finishMeasurements[i].attributes['max-value']) {
 					var min = parseFloat(finishMeasurements[i].attributes['min-value'].value),
 						max = parseFloat(finishMeasurements[i].attributes['max-value'].value),
