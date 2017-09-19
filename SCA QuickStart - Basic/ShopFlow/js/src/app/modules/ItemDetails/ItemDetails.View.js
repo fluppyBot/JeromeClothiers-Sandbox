@@ -71,8 +71,8 @@ define('ItemDetails.View', ['FitProFile.Views', 'FitProfile.Model', 'Facets.Tran
             this.counted_clicks = {};
             SC.sessioncheck();
             var historyFragment = decodeURIComponent(Backbone.history.fragment);
-						console.log('options.pList');
-						console.log(options.pList);
+						//console.log('options.pList');
+						//console.log(options.pList);
             if (options.pList) {
                 options.pList = decodeURIComponent(options.pList);
                 // this.client = options.pList.split("=")[1].split("|")[0];
@@ -85,12 +85,10 @@ define('ItemDetails.View', ['FitProFile.Views', 'FitProfile.Model', 'Facets.Tran
                 this.client = this.getClientId(historyFragment) || historyFragment.split("?")[1].split("client=")[1].split("&")[0] || null;
             }
 
-            console.log('Location:Shopflow>ItemDetails.View.js>initialize>this.model', this.model);
-            console.log('Location:Shopflow>ItemDetails.View.js>initialize>this.itemList', this.itemList);
-            console.log('Location:Shopflow>ItemDetails.View.js>initialize>this.productList', this.productList);
-            console.log('Location:Shopflow>ItemDetails.View.js>initialize>this.application', this.application);
-
-
+            //console.log('Location:Shopflow>ItemDetails.View.js>initialize>this.model', this.model);
+            //console.log('Location:Shopflow>ItemDetails.View.js>initialize>this.itemList', this.itemList);
+            //console.log('Location:Shopflow>ItemDetails.View.js>initialize>this.productList', this.productList);
+            //console.log('Location:Shopflow>ItemDetails.View.js>initialize>this.application', this.application);
             if (!this.model) {
                 throw new Error('A model is needed');
             }
@@ -231,7 +229,7 @@ define('ItemDetails.View', ['FitProFile.Views', 'FitProfile.Model', 'Facets.Tran
             window.tempFitProfile = "";
             window.tempQuantity = "";
             window.tempFitProfileMessage = "";
-            console.log('ShopFlow>ItemDetails.Views.js>addToCart>window.tempFitProfile', window.tempFitProfile);
+            //console.log('ShopFlow>ItemDetails.Views.js>addToCart>window.tempFitProfile', window.tempFitProfile);
 			/**
 			var arrAllSelectedOptions = _.getArrAllSelectedOptions();
 			var arrErrConflictCodes = _.getArrErrConflictCodes(arrAllSelectedOptions);
@@ -302,28 +300,28 @@ define('ItemDetails.View', ['FitProFile.Views', 'FitProfile.Model', 'Facets.Tran
                         if (selectedProfile) {
                             var fitColumn = "custcol_fitprofile_" + clothingType.toLowerCase();
                             var fitValue = window.currentFitProfile.profile_collection.get(selectedProfile).get('custrecord_fp_measure_value');
-                            console.log('ShopFlow>ItemDetails.View.js>fitColumn>', fitColumn);
-                            console.log('ShopFlow>ItemDetails.View.js>fitValue>', fitValue);
+                            //console.log('ShopFlow>ItemDetails.View.js>fitColumn>', fitColumn);
+                            //console.log('ShopFlow>ItemDetails.View.js>fitValue>', fitValue);
 
                             var fitProfileValue = JSON.parse(fitValue);
                             if (fitProfileValue[0].value == 'Inches') {
                                 _.each(fitProfileValue, function (value, key, obj) {
 
                                     if (obj[key].name === 'units') {
-                                        console.log('converting CM...');
+                                        //console.log('converting CM...');
                                         obj[key].value = 'CM';
                                     }
                                     //Try parse if value is number
                                     if (!isNaN(obj[key].value)) {
-                                        console.log('converting value to inch of ' + obj[key].name, obj[key].value);
+                                        //console.log('converting value to inch of ' + obj[key].name, obj[key].value);
                                         obj[key].value = (obj[key].value * 2.54).toFixed(2);
-                                        console.log('converted value to cm of ' + obj[key].name, obj[key].value);
+                                        //console.log('converted value to cm of ' + obj[key].name, obj[key].value);
                                     }
                                 });
 
                             }
 
-                            console.log('JSON.stringify(fitProfileValue)', JSON.stringify(fitProfileValue));
+                            //console.log('JSON.stringify(fitProfileValue)', JSON.stringify(fitProfileValue));
                             self.model.setOption(fitColumn, JSON.stringify(fitProfileValue));
 
 
@@ -611,12 +609,12 @@ define('ItemDetails.View', ['FitProFile.Views', 'FitProfile.Model', 'Facets.Tran
             this.page_header = this.model.get('_pageHeader');
             //console.log('prepView>this.model.get("facets")',_.where(this.model.get("facets"), { id: "custitem_vendor_name" })[0]);
             var vendorName = _.where(this.model.get("facets"), { id: "custitem_vendor_name" })[0].values[0].label;
-            console.log('prepView>vendorName', vendorName);
+            //console.log('prepView>vendorName', vendorName);
             _.suiteRest('getVendorLink', this.model.get('internalid')).always(function (data) {
 
                 if (data) {
                     window.vendor = data;
-                    console.log('vendor>', vendor);
+                    //console.log('vendor>', vendor);
                 }
 
             });
@@ -737,7 +735,6 @@ define('ItemDetails.View', ['FitProFile.Views', 'FitProfile.Model', 'Facets.Tran
             });
 
             var self = this;
-
             window.tempQuantity = window.tempQuantity ? window.tempQuantity : 0;
             // Once the showContent has been called, this make sure that the state is preserved
             // REVIEW: the following code might change, showContent should recieve an options parameter
@@ -775,7 +772,6 @@ define('ItemDetails.View', ['FitProFile.Views', 'FitProfile.Model', 'Facets.Tran
                         }
                     }
                 }
-
                 var profileView = new FitProfileViews.ProfileSelector({
                     application: self.application
                     , model: new FitProfileModel(self.application.getUser().get("internalid"))
@@ -806,13 +802,13 @@ define('ItemDetails.View', ['FitProFile.Views', 'FitProfile.Model', 'Facets.Tran
 
                             // set fit profiles
                             var fitProfileItems = JSON.parse(optionsHolder['CUSTCOL_FITPROFILE_SUMMARY'].value);
-                            console.log('set fitProfile from cart');
-                            console.log('ItemDetails.View.js>fitProfileItems>', fitProfileItems);
+                            //console.log('set fitProfile from cart');
+                            //console.log('ItemDetails.View.js>fitProfileItems>', fitProfileItems);
                             for (var x = 0; x < fitProfileItems.length; x++) {
                                 var currentFitProfileItem = fitProfileItems[x];
                                 jQuery("#profiles-options-" + currentFitProfileItem.name + " option").filter(function () {
-                                    console.log('this.text>', this.text);
-                                    console.log('currentFitProfileItem>', currentFitProfileItem);
+                                    //console.log('this.text>', this.text);
+                                    //console.log('currentFitProfileItem>', currentFitProfileItem);
                                     //return this.text.replace('+',' ') == currentFitProfileItem.value.replace('+',' ');
                                     //.replace(/\+/g,' ')
                                     return this.text.replace(/\+/g, ' ').replace(/ /g, '') == currentFitProfileItem.value.replace(/\+/g, ' ').replace(/ /g, '');
@@ -834,8 +830,8 @@ define('ItemDetails.View', ['FitProFile.Views', 'FitProfile.Model', 'Facets.Tran
                     } else {
                         // set fit profile based on window.tempFitProfile if it has value stored
                         if (window.tempFitProfile && window.tempFitProfile.length > 0) {
-                            console.log('set fitProfile from window.tempFitProfile ');
-                            console.log('ItemDetails.View.js>window.tempFitProfile >', window.tempFitProfile);
+                            //console.log('set fitProfile from window.tempFitProfile ');
+                            //console.log('ItemDetails.View.js>window.tempFitProfile >', window.tempFitProfile);
                             for (var i = window.tempFitProfile.length - 1; i >= 0; i--) {
                                 jQuery("#profiles-options-" + window.tempFitProfile[i].name + " option").filter(function () {
                                     return this.value == window.tempFitProfile[i].value;
@@ -891,6 +887,7 @@ define('ItemDetails.View', ['FitProFile.Views', 'FitProfile.Model', 'Facets.Tran
 
             });
             this.application.on('profileRefresh', function () {
+              if(self.cid == SC._applications.Shopping.getLayout().currentView.cid){
                 var profileView = new FitProfileViews.ProfileSelector({
                     application: self.application
                     , model: new FitProfileModel(self.application.getUser().get("internalid"))
@@ -906,7 +903,7 @@ define('ItemDetails.View', ['FitProFile.Views', 'FitProfile.Model', 'Facets.Tran
                     self.updateFitProfileDetails(profileView.$el);
                     //Hack on setting the profile
                     if (window.tempFitProfile) {
-                        console.log('ItemDetails.View.js>afterProfileFetch>window.tempFitProfile', window.tempFitProfile);
+                        //console.log('ItemDetails.View.js>afterProfileFetch>window.tempFitProfile', window.tempFitProfile);
                         for (var i = 0; i < window.tempFitProfile.length; i++) {
                             var profileID = window.tempFitProfile[i].value;
                             jQuery('#profiles-options-' + window.tempFitProfile[i].name).val(window.tempFitProfile[i].value);
@@ -917,18 +914,19 @@ define('ItemDetails.View', ['FitProFile.Views', 'FitProfile.Model', 'Facets.Tran
                         }
                     }
                 });
+              }
             });
         }
         , updateFitProfileDetails: function ($el) {
 
-            console.log('ItemDetails.View.js>updateFitProfileDetails>');
+            //console.log('ItemDetails.View.js>updateFitProfileDetails>');
 
             // retain old values before updating HTML
             var oldValues = [];
             jQuery("#fitprofile-details select.profiles-options").each(function (index) {
                 oldValues[index] = jQuery(this).val();
-                console.log('retain old values');
-                console.log('oldValues[' + index + ']>', oldValues[index]);
+                //console.log('retain old values');
+                //console.log('oldValues[' + index + ']>', oldValues[index]);
             });
 
             jQuery("#fitprofile-details").html($el);
@@ -936,8 +934,8 @@ define('ItemDetails.View', ['FitProFile.Views', 'FitProfile.Model', 'Facets.Tran
             // re-set previous values into HTML
             jQuery("#fitprofile-details select.profiles-options").each(function (index) {
                 jQuery(this).val(oldValues[index]);
-                console.log('reset previous values to html');
-                console.log('oldValues[' + index + ']>', oldValues[index]);
+                //console.log('reset previous values to html');
+                //console.log('oldValues[' + index + ']>', oldValues[index]);
             });
         }
         , afterAppend: function () {
@@ -1066,9 +1064,9 @@ define('ItemDetails.View', ['FitProFile.Views', 'FitProfile.Model', 'Facets.Tran
             for (var i = jQuery('#fitprofile-details select.profiles-options').length - 1; i >= 0; i--) {
                 var elem = jQuery('#fitprofile-details select.profiles-options')[i];
                 var type = jQuery(elem).attr('data-type');
-                console.log('ItemDetails.View.js>fitProfileChange>elem>', elem);
-                console.log('ItemDetails.View.js>fitProfileChange>type>', type);
-                console.log('ItemDetails.View.js>fitProfileChange>value>', jQuery(elem).val());
+                //console.log('ItemDetails.View.js>fitProfileChange>elem>', elem);
+                //console.log('ItemDetails.View.js>fitProfileChange>type>', type);
+                //console.log('ItemDetails.View.js>fitProfileChange>value>', jQuery(elem).val());
                 window.tempFitProfile.push({ name: type, value: jQuery(elem).val() });
             };
         }

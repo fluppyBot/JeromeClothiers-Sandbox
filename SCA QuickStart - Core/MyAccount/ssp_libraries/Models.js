@@ -1014,12 +1014,14 @@ Application.defineModel('PlacedOrder', {
 						, name: 'Tailor Client'
 						, value: clientId
 					});
-
+					//nlapiLogExecution('debug','Tailor Client', placed_order.getLineItemValue('item', 'custcol_tailor_client', i));
+					//nlapiLogExecution('debug','Tailor Client Name', placed_order.getFieldValue('custbody_customer_name'));
 					lineOption.push({
 						id: 'custcol_tailor_client_name'
 						, name: 'Client Name'
-						, value: getClientName(clientId)
+						, value: placed_order.getFieldValue('custbody_customer_name')//getClientName(clientId)
 					});
+
 				}
 				if (placed_order.getLineItemValue('item', 'custcol_itm_category_url', i)) {
 					lineOption.push({
