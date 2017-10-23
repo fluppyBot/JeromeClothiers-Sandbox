@@ -6,12 +6,15 @@
 	if(clientid){
 		var param = new Object();
 		param.type = "get_client";
-		param.data = JSON.stringify({filters: ["internalid||anyof|integer|" + clientid], columns: ["internalid", "custrecord_tc_first_name", "custrecord_tc_last_name", "custrecord_tc_email", "custrecord_tc_addr1", "custrecord_tc_addr2", "custrecord_tc_country", "custrecord_tc_city", "custrecord_tc_state", "custrecord_tc_zip", "custrecord_tc_phone"]});
+		param.data = JSON.stringify({filters: ["internalid||anyof|integer|" + clientid,'custrecord_tc_tailor||is|integer|'+SC.Application('Shopping').getUser().id], columns: ["internalid", "custrecord_tc_first_name", "custrecord_tc_last_name", "custrecord_tc_email", "custrecord_tc_addr1", "custrecord_tc_addr2", "custrecord_tc_country", "custrecord_tc_city", "custrecord_tc_state", "custrecord_tc_zip", "custrecord_tc_phone"]});
 		jQuery.get(_.getAbsoluteUrl('services/fitprofile.ss'), param).always(function(data){
-			if(data){
+			if(data[0]){
 					clientname = data[0].custrecord_tc_first_name + " " + data[0].custrecord_tc_last_name;
 					jQuery('#clientnameheader').html(clientname);
 			}
+			//else{
+			//	window.location.href= "http://store.jeromeclothiers.com";
+			//}
 		});
 	}
  %>
@@ -40,7 +43,7 @@
 
 			</span>
 		<% } %>
-		<div id="banner-breadcrumb-bottom" class="content-banner banner-breadcrumb-bottom"></div>
+		<div id="banner-breadcrumb-bottom" class="content-banner banner-breadcrumb-bottom" style="margin-bottom:1.5%;"></div>
 
 <% } %>
 <% }) %>

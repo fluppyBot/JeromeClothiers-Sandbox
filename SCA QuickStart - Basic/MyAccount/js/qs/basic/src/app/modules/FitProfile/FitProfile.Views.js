@@ -245,6 +245,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'ClientOrderHistory
 				self.clientOrderHistory.each(function (model) {
 					if (model.get('client_name') == clientFullName) {
 						filteredClientOrderHistory.push({
+							transtatus: model.get('status'),
 							orderDate: model.get('date'),
 							orderNum: model.get('so_id'),
 							item: model.get('item'),

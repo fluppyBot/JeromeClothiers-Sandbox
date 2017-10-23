@@ -28,7 +28,7 @@
                 <a data-target="#fitProfileClientorderHistoryMacroContent" data-toggle="collapse" aria-expanded="true" aria-controls="collapseOne"
                     class="accordion-toggle" style="text-decoration:none;color:grey;">
 								Order History
-							</a></h3> 
+							</a></h3>
             <div id="fitProfileClientorderHistoryMacroContent" class="collapse" data-permissions="transactions.tranFind.1,transactions.tranSalesOrd.1">
                 <table class="table">
                     <thead style="font-size: 12px;">
@@ -77,7 +77,9 @@
                                     <input name="oh_dateneeded" placeholder="" id="<%= order.solinekey %>" type="date" value="<%= order.dateNeeded %>" style="width:100px;font-size:10px;">
                                 </td>
                                 <td style="text-align:center;">
-                                    <% if(order.status){ %>
+                                <% if(order.transtatus == 'Cancelled' || order.transtatus == 'Billed' || order.transtatus == 'Closed'){ %>
+                      						<img src="https://checkout.na2.netsuite.com/c.3857857/myaccount/img/clear.png">
+                      					<% }else if(order.status){ %>
                                         <img src="https://checkout.netsuite.com/c.3857857/myaccount/img/red.png">
                                         <% }else{ %>
                                             <img src="https://checkout.netsuite.com/c.3857857/myaccount/img/green.png">

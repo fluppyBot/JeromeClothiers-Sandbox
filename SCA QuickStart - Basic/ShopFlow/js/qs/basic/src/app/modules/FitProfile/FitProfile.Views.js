@@ -154,6 +154,8 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 			this.types = options.types;
 
 			window.currentFitProfile = this.model;
+			//console.log('this.types');
+			//console.log(this.types);
 		}
 
 		, events: {
@@ -164,7 +166,8 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 		, render: function () {
 			var self = this;
 			self.groupProfile = new Array();
-
+			//console.log('self.types')
+			//console.log(self.types)
 			if (self.model.profile_collection && self.types && self.types[0] != "&nbsp;") {
 				_.each(self.types, function (type) {
 					var profileObj = new Object()
@@ -484,7 +487,7 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 					finalMeasure = 0 + parseFloat(field.val());
 					//console.log('finalMeasure>not allowance>0 + parseFloat(field.val())', finalMeasure);
 				} else if (jQuery("[id='" + idAllowancePrefix.replace('#', '') + id + "']").val() == 0) {
-					var value = jQuery("#in-modal-fit").length ? jQuery("#in-modal-fit").val() : jQuery("#fit").val()
+					var value = jQuery("#in-modal-fit").val() ? jQuery("#in-modal-fit").val() : jQuery("#fit").val()
 						, self = this
 						, lookUpTable = self.fitprofile.selected_measurement["lookup-value"][value]
 						, name = jQuery(e.target).attr('name')
@@ -492,9 +495,16 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 						, finalMeasure = 0
 						, allowance = 0;
 
-					if (lookUpValue && lookUpValue.length) { // Update allowance field if there is a lookup value provided that allowance is 0
+					if (lookUpValue[0]) { // Update allowance field if there is a lookup value provided that allowance is 0
+						var selectedUnit = jQuery('#units').val();
+						if(selectedUnit === 'Inches'){
+							lookUpValue = (parseFloat(lookUpValue[0].value) / 2.54);
+							if(lookUpValue>0){
+								lookUpValue = (Math.floor(10 * lookUpValue) / 10).toFixed(1);
+							}
+						}
 						//jQuery(idAllowancePrefix + id).val(lookUpValue[0].value);
-						jQuery("[id='" + idAllowancePrefix.replace('#', '') + id + "']").val(lookUpValue[0].value);
+						jQuery("[id='" + idAllowancePrefix.replace('#', '') + id + "']").val(lookUpValue);
 						//allowance = jQuery(idAllowancePrefix + id).val();
 						allowance = jQuery("[id='" + idAllowancePrefix.replace('#', '') + id + "']").val();
 						//console.log('allowance>jQuery(idAllowancePrefix + id).val()', allowance);
@@ -512,10 +522,10 @@ define('FitProFile.Views', ['Client.Model', 'Profile.Model', 'Profile.Collection
 				}
 			}
 
-			//console.log('finalMeasure', finalMeasure);
+			console.log('finalMeasure', finalMeasure);
 			if (!finalMeasure) finalMeasure = 0;
 			//jQuery(idFinishPrefix + id).html(Math.round(finalMeasure * 100) / 100);
-			jQuery("[id='" + idFinishPrefix.replace('#', '') + id).html(Math.round(finalMeasure * 100) / 100);
+			jQuery("[id='" + idFinishPrefix.replace('#', '') + id+"']").html(Math.round(finalMeasure * 100) / 100);
 		}
 		, updateAllowanceLookup: function (e) {
 			var value = jQuery(e.target).val()

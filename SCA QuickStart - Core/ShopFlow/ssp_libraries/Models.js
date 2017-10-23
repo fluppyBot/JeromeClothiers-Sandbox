@@ -4,14 +4,14 @@
 
 function isNullOrEmpty(valueStr)
 {
-   return(valueStr == null || valueStr == "" || valueStr == undefined); 
+   return(valueStr == null || valueStr == "" || valueStr == undefined);
 }
 
-function isNullOrEmptyObject(obj) 
+function isNullOrEmptyObject(obj)
 {
    var hasOwnProperty = Object.prototype.hasOwnProperty;
-   
-   if (obj.length && obj.length > 0) { return false; }   
+
+   if (obj.length && obj.length > 0) { return false; }
    for (var key in obj) { if (hasOwnProperty.call(obj, key)) return false; }
    return true;
 }
@@ -158,7 +158,7 @@ Application.defineModel('SiteSettings', {
 // ----------
 // Contains customer information
 Application.defineModel('Profile', {
-	
+
 	get: function ()
 	{
 		'use strict';
@@ -173,13 +173,13 @@ Application.defineModel('Profile', {
 		profile.isLoggedIn = session.isLoggedIn2() ? 'T' : 'F';
 		profile.isGuest = session.getCustomer().isGuest() ? 'T' : 'F';
 		profile.priceLevel = session.getShopperPriceLevel().internalid ? session.getShopperPriceLevel().internalid : session.getSiteSettings('defaultpricelevel');
-		
+
 		// set favourite options and restricted options
 		var customerFieldValues = customer.getCustomFieldValues();
 		profile.custentity_design_options_restriction = _.find(customerFieldValues, function(field){
 			return field.name === "custentity_design_options_restriction";
 		}).value;
-		
+
 		profile.custentity_fav_design_options = _.find(customerFieldValues, function(field){
 			return field.name === "custentity_fav_design_options";
 		}).value;
@@ -542,6 +542,8 @@ Application.defineModel('LiveOrder', {
 
 		_.each(lines_data, function (line_data)
 		{
+      var tcrec = nlapiLoadRecord('customrecord_sc_tailor_client',line_data.options.custcol_tailor_client);
+      if(tcrec.getFieldValue('custrecord_tc_tailor') == nlapiGetContext().getUser()){
 			var item = {
 					internalid: line_data.item.internalid.toString()
 				,	quantity:  _.isNumber(line_data.quantity) ? parseInt(line_data.quantity, 10) : 1
@@ -549,6 +551,7 @@ Application.defineModel('LiveOrder', {
 			};
 
 			items.push(item);
+    }
 		});
 
 		var lines_ids = order.addItems(items)
@@ -1349,7 +1352,7 @@ Application.defineModel('ProductReview', {
 	// id of the approvedStatus
 ,	approvedStatus: SC.Configuration.product_reviews.approvedStatus
 	// id of pendingApprovalStatus
-,	pendingApprovalStatus: SC.Configuration.product_reviews.pendingApprovalStatus 
+,	pendingApprovalStatus: SC.Configuration.product_reviews.pendingApprovalStatus
 ,	resultsPerPage: SC.Configuration.product_reviews.resultsPerPage
 
 	// Returns a review based on the id
@@ -1358,10 +1361,10 @@ Application.defineModel('ProductReview', {
 		'use strict';
 
 		var review = nlapiLoadRecord('customrecord_ns_pr_review', id);
-		
+
 		if (review)
 		{
-			/// Loads Review main information 
+			/// Loads Review main information
 			var result = {
 					internalid: review.getId()
 				,	status: review.getFieldValue('custrecord_ns_prr_status')
@@ -1386,7 +1389,7 @@ Application.defineModel('ProductReview', {
 			,	filters = [
 					new nlobjSearchFilter('custrecord_ns_prar_review', null, 'is', id)
 				]
-			
+
 			,	columns = [
 					new nlobjSearchColumn('custrecord_ns_prar_attribute')
 				,	new nlobjSearchColumn('custrecord_ns_prar_rating')
@@ -1398,7 +1401,7 @@ Application.defineModel('ProductReview', {
 			{
 				result.rating_per_attribute[rating_per_attribute.getText('custrecord_ns_prar_attribute')] = rating_per_attribute.getValue('custrecord_ns_prar_rating');
 			});
-			
+
 			return result;
 		}
 		else
@@ -1406,11 +1409,11 @@ Application.defineModel('ProductReview', {
 			throw notFoundError;
 		}
 	}
-	
+
 ,	search: function (filters, order, page, records_per_page)
 	{
 		'use strict';
-		
+
 		var review_filters = [
 				// only approved reviews
 				new nlobjSearchFilter('custrecord_ns_prr_status', null, 'is', this.approvedStatus)
@@ -1419,7 +1422,7 @@ Application.defineModel('ProductReview', {
 			]
 		,	review_columns = {}
 		,	result = {};
-		
+
 		// Creates the filters for the given arguments
 		if (filters.itemid)
 		{
@@ -1427,7 +1430,7 @@ Application.defineModel('ProductReview', {
 				new nlobjSearchFilter('custrecord_ns_prr_item_id', null, 'equalto', filters.itemid)
 			);
 		}
-		
+
 		// Only by verified buyer
 		if (filters.writer)
 		{
@@ -1435,7 +1438,7 @@ Application.defineModel('ProductReview', {
 				new nlobjSearchFilter('custrecord_ns_prr_writer', null, 'equalto', filters.writer)
 			);
 		}
-		
+
 		// only by a rating
 		if (filters.rating)
 		{
@@ -1443,14 +1446,14 @@ Application.defineModel('ProductReview', {
 				new nlobjSearchFilter('custrecord_ns_prr_rating', null, 'equalto', filters.rating)
 			);
 		}
-		
+
 		if (filters.q)
 		{
 			review_filters.push(
 				new nlobjSearchFilter('custrecord_ns_prr_text', null, 'contains', filters.q)
 			);
 		}
-		
+
 		// Selects the columns
 		review_columns = {
 			internalid: new nlobjSearchColumn('internalid')
@@ -1465,14 +1468,14 @@ Application.defineModel('ProductReview', {
 		,	writer_name: new nlobjSearchColumn('custrecord_ns_prr_writer_name')
 		,	created_on: new nlobjSearchColumn('created')
 		};
-		
+
 		// Sets the sort order
 		var order_tokens = order && order.split(':') || []
 		,	sort_column = order_tokens[0] || 'created'
 		,	sort_direction = order_tokens[1] || 'ASC';
-		
+
 		review_columns[sort_column] && review_columns[sort_column].setSort(sort_direction === 'DESC');
-		
+
 		// Makes the request and format the response
 		result = Application.getPaginatedSearchResults({
 			record_type: 'customrecord_ns_pr_review'
@@ -1481,10 +1484,10 @@ Application.defineModel('ProductReview', {
 		,	page: parseInt(page, 10) || 1
 		,	records_per_page: parseInt(records_per_page, 10) || this.resultsPerPage
 		});
-		
+
 		var reviews_by_id = {}
 		,	review_ids = [];
-		
+
 		_.each(result.records, function (review)
 		{
 			review_ids.push(review.getId());
@@ -1506,20 +1509,20 @@ Application.defineModel('ProductReview', {
 			,	rating_per_attribute: {}
 			};
 		});
-		
+
 		if (review_ids.length)
 		{
 			/// Loads Attribute Rating
 			var attribute_filters = [
 					new nlobjSearchFilter('custrecord_ns_prar_review', null, 'anyof', review_ids)
 				]
-			
+
 			,	attribute_columns = [
 					new nlobjSearchColumn('custrecord_ns_prar_attribute')
 				,	new nlobjSearchColumn('custrecord_ns_prar_rating')
 				,	new nlobjSearchColumn('custrecord_ns_prar_review')
 				]
-			
+
 			,	ratings_per_attribute = Application.getAllSearchResults('customrecord_ns_pr_attribute_rating', attribute_filters, attribute_columns);
 
 			_.each(ratings_per_attribute, function (rating_per_attribute)
@@ -1527,16 +1530,16 @@ Application.defineModel('ProductReview', {
 				var review_id = rating_per_attribute.getValue('custrecord_ns_prar_review')
 				,	attribute_name = rating_per_attribute.getText('custrecord_ns_prar_attribute')
 				,	rating = rating_per_attribute.getValue('custrecord_ns_prar_rating');
-				
+
 				if (reviews_by_id[review_id])
 				{
 					reviews_by_id[review_id].rating_per_attribute[attribute_name] = rating;
 				}
 			});
 		}
-		
+
 		result.records = _.values(reviews_by_id);
-		
+
 		return result;
 	}
 
@@ -1557,29 +1560,29 @@ Application.defineModel('ProductReview', {
 		}
 
 		var review = nlapiCreateRecord('customrecord_ns_pr_review');
-		
+
 		data.writer && data.writer.id && review.setFieldValue('custrecord_ns_prr_writer', data.writer.id);
 		data.writer && data.writer.name && review.setFieldValue('custrecord_ns_prr_writer_name', this.sanitize(data.writer.name));
-		
+
 		data.rating && review.setFieldValue('custrecord_ns_prr_rating', data.rating);
 		data.title && review.setFieldValue('name', this.sanitize(data.title));
 		data.text && review.setFieldValue('custrecord_ns_prr_text', this.sanitize(data.text));
 		data.itemid && review.setFieldValue('custrecord_ns_prr_item_id', data.itemid);
-		
+
 		var review_id = nlapiSubmitRecord(review);
-		
+
 		_.each(data.rating_per_attribute, function (rating, name)
 		{
 			var review_attribute = nlapiCreateRecord('customrecord_ns_pr_attribute_rating');
-			
+
 			review_attribute.setFieldValue('custrecord_ns_prar_item', data.itemid);
 			review_attribute.setFieldValue('custrecord_ns_prar_review', review_id);
 			review_attribute.setFieldValue('custrecord_ns_prar_rating', rating);
 			review_attribute.setFieldText('custrecord_ns_prar_attribute', name);
-			
+
 			nlapiSubmitRecord(review_attribute);
 		});
-		
+
 		return data;
 	}
 	// This function updates the quantity of the counters
@@ -1596,7 +1599,7 @@ Application.defineModel('ProductReview', {
 			}
 
 		,	field_name = field_name_by_action[action];
-		
+
 		if (field_name)
 		{
 			var review = nlapiLoadRecord('customrecord_ns_pr_review', id)
@@ -1625,13 +1628,13 @@ Application.defineModel('ProductReview', {
 // We HAVE to use "new String"
 // So we (disable the warning)[https:// groups.google.com/forum/#!msg/jshint/O-vDyhVJgq4/hgttl3ozZscJ]
 Application.defineModel('StoreItem', {
-	
+
 	// Returns a collection of items with the items iformation
 	// the 'items' parameter is an array of objects {id,type}
 	preloadItems: function (items)
 	{
 		'use strict';
-		
+
 		var self = this
 		,	items_by_id = {}
 		,	parents_by_id = {};
@@ -1672,7 +1675,7 @@ Application.defineModel('StoreItem', {
 				/*
 				if (!is_advanced)
 				{
-					// Load related & correlated items if the site type is standard. 
+					// Load related & correlated items if the site type is standard.
 					// If the site type is advanced will be loaded by getItemFieldValues function
 					item.relateditems_detail = session.getRelatedItems(items_by_id[item.internalid]);
 					item.correlateditems_detail = session.getCorrelatedItems(items_by_id[item.internalid]);
@@ -1687,7 +1690,7 @@ Application.defineModel('StoreItem', {
 					,	itemfields: SC.Configuration.items_fields_standard_keys
 					};
 				}
-				
+
 				self.preloadedItems[item.internalid] = item;
 			}
 		});
@@ -1713,10 +1716,10 @@ Application.defineModel('StoreItem', {
 				item.matrix_parent = self.preloadedItems[item.itemoptions_detail.parentid];
 			}
 		});
-		
+
 		return this.preloadedItems;
 	}
-	
+
 ,	getItemFieldValues: function (items_by_id)
 	{
 		'use strict';
@@ -1744,13 +1747,13 @@ Application.defineModel('StoreItem', {
 		}
 	}
 
-	// Return the information for the given item	
+	// Return the information for the given item
 ,	get: function (id, type)
 	{
 		'use strict';
 
 		this.preloadedItems = this.preloadedItems || {};
-		
+
 		if (!this.preloadedItems[id])
 		{
 			this.preloadItems([{
@@ -1820,7 +1823,7 @@ Application.defineModel('ProductList', {
 		if (request.getURL().indexOf('https') === 0)
 		{
 			this.verifySession();
-		}		
+		}
 
 		var filters = [new nlobjSearchFilter('internalid', null, 'is', id)
 			,	new nlobjSearchFilter('isinactive', null, 'is', 'F')
@@ -1834,10 +1837,10 @@ Application.defineModel('ProductList', {
 		else
 		{
 			throw notFoundError;
-		}			
+		}
 	}
 
-	// Returns the user's saved for later product list	
+	// Returns the user's saved for later product list
 ,	getSavedForLaterProductList: function (paramStFilterClientName)
 	{
 		'use strict';
@@ -1856,7 +1859,7 @@ Application.defineModel('ProductList', {
 		else
 		{
 			var self = this
-			,	sfl_template = _(_(this.configuration.list_templates).filter(function (pl) 
+			,	sfl_template = _(_(this.configuration.list_templates).filter(function (pl)
 			{
 				return pl.type && pl.type.id && pl.type.id === self.later_type_id;
 			})).first();
@@ -1877,7 +1880,7 @@ Application.defineModel('ProductList', {
 			}
 
 			throw notFoundError;
-		}	
+		}
 	}
 
 	// Sanitize html input
@@ -1889,7 +1892,7 @@ Application.defineModel('ProductList', {
 	}
 
 ,	searchHelper: function(filters, columns, include_store_items, order, template_ids)
-	{	
+	{
 		'use strict';
 
 		// Sets the sort order
@@ -1897,8 +1900,8 @@ Application.defineModel('ProductList', {
 		,	sort_column = order_tokens[0] || 'name'
 		,	sort_direction = order_tokens[1] || 'ASC'
 		,	productLists = [];
-		
-		columns[sort_column] && columns[sort_column].setSort(sort_direction === 'DESC');		
+
+		columns[sort_column] && columns[sort_column].setSort(sort_direction === 'DESC');
 
 		// Makes the request and format the response
 		var records = Application.getAllSearchResults('customrecord_ns_pl_productlist', filters, _.values(columns))
@@ -1939,7 +1942,7 @@ Application.defineModel('ProductList', {
 			}
 
 			productLists.push(productList);
-		});		
+		});
 
 		return productLists;
 	}
@@ -1953,7 +1956,7 @@ Application.defineModel('ProductList', {
 		if (request.getURL().indexOf('https') === 0)
 		{
 			this.verifySession();
-		}	
+		}
 
 		var filters = [new nlobjSearchFilter('isinactive', null, 'is', 'F')
 			,	new nlobjSearchFilter('custrecord_ns_pl_pl_owner', null, 'is', nlapiGetUser())]
@@ -1980,7 +1983,7 @@ Application.defineModel('ProductList', {
 					{
 						template.description = '';
 					}
-				
+
 					if (!template.type)
 					{
 						template.type = { id: '3', name: 'predefined' };
@@ -1990,7 +1993,7 @@ Application.defineModel('ProductList', {
 				}
 			}
 		});
-		
+
 		if (this.isSingleList())
 		{
 			return _.filter(product_lists, function(pl)
@@ -2001,7 +2004,7 @@ Application.defineModel('ProductList', {
 		}
 
 		return product_lists.filter(function (pl)
-		{ 
+		{
 			return pl.type.id !== self.later_type_id;
 		});
 	}
@@ -2022,15 +2025,15 @@ Application.defineModel('ProductList', {
 		this.verifySession();
 
 		var productList = nlapiCreateRecord('customrecord_ns_pl_productlist');
-		
+
 		data.templateid && productList.setFieldValue('custrecord_ns_pl_pl_templateid', data.templateid);
 		data.scope && data.scope.id && productList.setFieldValue('custrecord_ns_pl_pl_scope', data.scope.id);
 		data.type && data.type.id && productList.setFieldValue('custrecord_ns_pl_pl_type', data.type.id);
 		data.name && productList.setFieldValue('name', this.sanitize(data.name));
 		data.description && productList.setFieldValue('custrecord_ns_pl_pl_description', this.sanitize(data.description));
-		
+
 		productList.setFieldValue('custrecord_ns_pl_pl_owner', nlapiGetUser());
-		
+
 		return nlapiSubmitRecord(productList);
 	}
 
@@ -2047,7 +2050,7 @@ Application.defineModel('ProductList', {
 		{
 			throw unauthorizedError;
 		}
-		
+
 		data.templateid && product_list.setFieldValue('custrecord_ns_pl_pl_templateid', data.templateid);
 		data.scope && data.scope.id && product_list.setFieldValue('custrecord_ns_pl_pl_scope', data.scope.id);
 		data.type && data.type.id && product_list.setFieldValue('custrecord_ns_pl_pl_type', data.type.id);
@@ -2070,7 +2073,7 @@ Application.defineModel('ProductList', {
 		{
 			throw unauthorizedError;
 		}
-		
+
 		product_list.setFieldValue('isinactive', 'T');
 
 		var internalid = nlapiSubmitRecord(product_list);
@@ -2100,7 +2103,7 @@ Application.defineModel('ProductListItem', {
 	// Returns a product list item based on a given id
 ,	get: function (id)
 	{
-		'use strict';		
+		'use strict';
 
 		this.verifySession();
 
@@ -2124,9 +2127,9 @@ Application.defineModel('ProductListItem', {
 ,	delete: function (id)
 	{
 		'use strict';
-		
-		this.verifySession();				
-		
+
+		this.verifySession();
+
 		var ProductList = Application.getModel('ProductList')
 		,	product_list_item = nlapiLoadRecord('customrecord_ns_pl_productlistitem', id)
 		,	parent_product_list = ProductList.get(product_list_item.getFieldValue('custrecord_ns_pl_pli_productlist'));
@@ -2179,7 +2182,7 @@ Application.defineModel('ProductListItem', {
 		{
 			throw notFoundError;
 		}
-		
+
 		var ProductList = Application.getModel('ProductList')
 		,	parent_product_list = ProductList.get(data.productList.id);
 
@@ -2189,7 +2192,7 @@ Application.defineModel('ProductListItem', {
 		}
 
 		var productListItem = nlapiCreateRecord('customrecord_ns_pl_productlistitem');
-		
+
 		data.description && productListItem.setFieldValue('custrecord_ns_pl_pli_description', this.sanitize(data.description));
 
 		if (data.options)
@@ -2203,7 +2206,7 @@ Application.defineModel('ProductListItem', {
 		productListItem.setFieldValue('custrecord_ns_pl_pli_productlist', data.productList.id);
 
 		data.internalid = nlapiSubmitRecord(productListItem);
-		
+
 		return data;
 	}
 
@@ -2230,7 +2233,7 @@ Application.defineModel('ProductListItem', {
 		data.item && data.item.id && product_list_item.setFieldValue('custrecord_ns_pl_pli_item', data.item.id);
 		data.priority && data.priority.id && product_list_item.setFieldValue('custrecord_ns_pl_pli_priority', data.priority.id);
 		data.productList && data.productList.id && product_list_item.setFieldValue('custrecord_ns_pl_pli_productlist', data.productList.id);
-		
+
 		nlapiSubmitRecord(product_list_item);
 	}
 
@@ -2238,7 +2241,7 @@ Application.defineModel('ProductListItem', {
 ,	search: function (product_list_id, include_store_item, sort_and_paging_data)
 	{
 		'use strict';
-		
+
 		this.verifySession();
 
 		if (!product_list_id)
@@ -2272,48 +2275,48 @@ Application.defineModel('ProductListItem', {
 		objRet['internalid'] = '';
 		objRet['firstname'] = '';
 		objRet['lastname'] = '';
-		
+
 		var objRef = paramOptions;
 		var isObjKeyTailorClientExist = (isObjectExist(objRef['custcol_tailor_client'])) ? true : false;
 		//var isObjKeyTailorClientExist = false;
-		
+
 		if (isObjKeyTailorClientExist)
 		{
 			var clientInternalId = objRef['custcol_tailor_client']['value'];
 			var hasClientInternalId = (!isNullOrEmpty(clientInternalId)) ? true : false;
-			
+
 			if (hasClientInternalId)
 			{
 				var tailorClient = nlapiLookupField('customrecord_sc_tailor_client', clientInternalId, ['custrecord_tc_first_name', 'custrecord_tc_last_name']);
-				
+
 				objRet['internalid'] = clientInternalId;
 				objRet['firstname'] = tailorClient.custrecord_tc_first_name;
 				objRet['lastname'] = tailorClient.custrecord_tc_last_name;
-				
+
 			}
 		}
-		
+
 		return objRet;
 	}
 
 ,	getObjClientInternalid: function (paramOptions)
 	{
 		var clientInternalId = '';
-		
+
 		var objPlOptions= paramOptions;
 		var isObjKeyTailorClientExist = (isObjectExist(objPlOptions['custcol_tailor_client'])) ? true : false;
-		
+
 		if (isObjKeyTailorClientExist)
 		{
 			var objCustColClient = objPlOptions['custcol_tailor_client'];
 			var isObjKeyCustcolTailorClientValueExist = (isObjectExist(objCustColClient['value'])) ? true : false;
-			
+
 			if (isObjKeyCustcolTailorClientValueExist)
 			{
-				clientInternalId = objCustColClient['value'];	
+				clientInternalId = objCustColClient['value'];
 			}
 		}
-		
+
 		return clientInternalId;
 	}
 
@@ -2323,7 +2326,7 @@ Application.defineModel('ProductListItem', {
 		var arrClientIds = (!isNullOrEmpty(paramArrClientIds)) ? paramArrClientIds : [];
 		var arrClientIdsTotal = (!isNullOrEmpty(arrClientIds)) ? arrClientIds.length : 0;
 		var hasArrClientIds = (arrClientIdsTotal != 0) ? true : false;
-		
+
 		if (hasArrClientIds)
 		{
 			var arrFilters = [  new nlobjSearchFilter('internalid', null, 'anyof', arrClientIds) ];
@@ -2331,7 +2334,7 @@ Application.defineModel('ProductListItem', {
 			var searchResults = nlapiSearchRecord('customrecord_sc_tailor_client', null, arrFilters, arrColumns);
 			var searchResultsTotal = (!isNullOrEmpty(searchResults)) ? searchResults.length : 0;
 			var hasSearchResults = (searchResultsTotal != 0) ? true : false;
-			
+
 			if (hasSearchResults)
 			{
 				for (var xj = 0; xj < searchResultsTotal; xj++)
@@ -2340,9 +2343,9 @@ Application.defineModel('ProductListItem', {
 					var clientInternalId = searchResult.getId();
 					var clientFirstName = searchResult.getValue('custrecord_tc_first_name');
 					var clientLastName = searchResult.getValue('custrecord_tc_last_name');
-					
+
 					var isObjKeyMappingExist = (isObjectExist(objRet['' + clientInternalId + ''])) ? true : false;
-					
+
 					if (!isObjKeyMappingExist)
 					{
 						objRet['' + clientInternalId + ''] = {};
@@ -2353,7 +2356,7 @@ Application.defineModel('ProductListItem', {
 				}
 			}
 		}
-		
+
 		return objRet;
 	}
 
@@ -2375,31 +2378,31 @@ Application.defineModel('ProductListItem', {
 		,	priority: new nlobjSearchColumn('custrecord_ns_pl_pli_priority')
 		,	lastmodified: new nlobjSearchColumn('lastmodified')
 		};
-		
+
 		productListItemColumns[sort_column] && productListItemColumns[sort_column].setSort(sort_direction === 'DESC');
-		
+
 		// Makes the request and format the response
 		var records = Application.getAllSearchResults('customrecord_ns_pl_productlistitem', filters, _.values(productListItemColumns))
 		,	productlist_items = []
 		,	StoreItem = Application.getModel('StoreItem')
 		,	self = this;
-		
+
 		var arrClientRecord = [];
-		
+
 		_(records).each(function (productListItemSearchRecord)
 		{
 			var objPlOptions = JSON.parse(productListItemSearchRecord.getValue('custrecord_ns_pl_pli_options') || '{}');
 			var hasObjPlOptions = (!isNullOrEmptyObject(objPlOptions)) ? true : false;
-			
+
 			if (hasObjPlOptions)
 			{
 				var isObjKeyTailorClientExist = (isObjectExist(objPlOptions['custcol_tailor_client'])) ? true : false;
-				
+
 				if (isObjKeyTailorClientExist)
 				{
 					var objCustColClient = objPlOptions['custcol_tailor_client']
 					var isObjKeyCustcolTailorClientValueExist = (isObjectExist(objCustColClient['value'])) ? true : false;
-					
+
 					if (isObjKeyCustcolTailorClientValueExist)
 					{
 						var clientInternalId = objCustColClient['value'];
@@ -2409,7 +2412,7 @@ Application.defineModel('ProductListItem', {
 				}
 			}
 		});
-		
+
 		var objClientMapping = self.getObjClientMapping(arrClientRecord)
 
 		_(records).each(function (productListItemSearchRecord)
@@ -2435,27 +2438,27 @@ Application.defineModel('ProductListItem', {
 					,	lastname: ''
 					}
 				};
-				
+
 			/**
 			var objClient = self.getObjClient(productListItem['options']);
-			
+
 			productListItem['client']['id'] = objClient['internalid']
 			productListItem['client']['firstname'] = objClient['firstname']
 			productListItem['client']['lastname'] = objClient['lastname']
 			**/
-			
+
 			var clientInternalId = self.getObjClientInternalid(productListItem['options']);
 			var isClientInternalIdExistInMapping = (isObjectExist(objClientMapping['' + clientInternalId + ''])) ? true : false;
-			
+
 			if (isClientInternalIdExistInMapping)
 			{
 				productListItem['client']['id'] = objClientMapping['' + clientInternalId + '']['internalid']
 				productListItem['client']['firstname'] = objClientMapping['' + clientInternalId + '']['firstname']
 				productListItem['client']['lastname'] = objClientMapping['' + clientInternalId + '']['lastname']
-				
+
 			}
-			
-			
+
+
 			productlist_items.push(productListItem);
 		});
 
@@ -2477,20 +2480,20 @@ Application.defineModel('ProductListItem', {
 			{
 				return;
 			}
-			
+
 			if (include_store_item)
 			{
-				productlist_item.item = store_item; 
+				productlist_item.item = store_item;
 			}
 			else
 			{
 				// only include basic store item data - fix the name to support matrix item names.
-				productlist_item.item = { 
+				productlist_item.item = {
 					internalid: store_item_reference.id
 				,	displayname: self.getProductName(store_item)
 				,	ispurchasable: store_item.ispurchasable
 				,	itemoptions_detail: store_item.itemoptions_detail
-				}; 
+				};
 			}
 
 			if (!include_store_item && store_item && store_item.matrix_parent)

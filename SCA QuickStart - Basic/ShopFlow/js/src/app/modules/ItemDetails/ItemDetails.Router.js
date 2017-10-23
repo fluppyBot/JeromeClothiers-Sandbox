@@ -6,14 +6,14 @@
 define('ItemDetails.Router', [], function ()
 {
 	'use strict';
-	
+
 	return Backbone.Router.extend({
-		
+
 		routes: {
 			':url': 'productDetailsByUrl'
 		,	'imagegallery/:key': 'imageGallery'
 		}
-		
+
 	,	initialize: function (options)
 		{
 			this.application = options.application;
@@ -23,7 +23,7 @@ define('ItemDetails.Router', [], function ()
 			this.route(/^(.*?)$/, 'productDetailsByUrl');
 			this.Model = options.model;
 			this.View = options.view;
-			
+
 			// This is the fallback url if a product does not have a url component.
 			this.route('product/:id', 'productDetailsById');
 			this.route('product/:id?:options', 'productDetailsById');
@@ -31,12 +31,12 @@ define('ItemDetails.Router', [], function ()
 		}
 
 	,	imageGallery: function(key){
-			
+
 		}
-		
+
 	,	productDetailsByUrl: function (url)
 		{
-			if (!url) 
+			if (!url)
 			{
 				return;
 			}
@@ -52,27 +52,44 @@ define('ItemDetails.Router', [], function ()
 			// Now go grab the data and show it
 			if (options)
 			{
-				this.productDetails({url: url}, url, options);				
+				this.productDetails({url: url}, url, options);
 			}
 			else
 			{
-				this.productDetails({url: url}, url);				
+				this.productDetails({url: url}, url);
 			}
 		}
-		
+
 	,	productDetailsById: function (id, options)
 		{
-			// Now go grab the data and show it
-			if(options.indexOf("|") > -1){
-				this.productDetails({id: id}, '/product/'+id, null, options.split("?")[0]);
+			var self= this;
+			if (options.indexOf("|") > -1) {
+					this.client = options.split("client=")[1].split("|")[0];
 			} else {
-				this.productDetails({id: id}, '/product/'+id, SC.Utils.parseUrlOptions(options));
+					this.client = options.split("client=")[1].split("&")[0];
 			}
-		}	
-		
+			var param = new Object();
+			param.type = "get_client";
+			param.data = JSON.stringify({filters: ["internalid||anyof|integer|" + this.client,'custrecord_tc_tailor||is|integer|'+SC.Application('Shopping').getUser().id], columns: ["internalid", "custrecord_tc_first_name", "custrecord_tc_last_name", "custrecord_tc_email", "custrecord_tc_addr1", "custrecord_tc_addr2", "custrecord_tc_country", "custrecord_tc_city", "custrecord_tc_state", "custrecord_tc_zip", "custrecord_tc_phone"]});
+			jQuery.get(_.getAbsoluteUrl('services/fitprofile.ss'), param).always(function(data){
+				if(data[0]){
+					// Now go grab the data and show it
+					if(options.indexOf("|") > -1){
+						self.productDetails({id: id}, '/product/'+id, null, options.split("?")[0]);
+					} else {
+						self.productDetails({id: id}, '/product/'+id, SC.Utils.parseUrlOptions(options));
+					}
+				}
+				else{
+					window.location.href= "http://store.jeromeclothiers.com";
+				}
+			});
+
+		}
+
 	,	productDetails: function (api_query, base_url, options, plist)
 		{
-			// Decodes url options 
+			// Decodes url options
 			_.each(options, function (value, name)
 			{
 				options[name] = decodeURIComponent(value);
@@ -105,15 +122,15 @@ define('ItemDetails.Router', [], function ()
 
 						// once the item is fully loadede we set its options
 						model.parseQueryStringOptions(options);
-						
+
 						if (!(options && options.quantity))
 						{
 							model.set('quantity', model.get('_minimumQuantity'));
 						}
-						
+
 						// we first prepare the view
 						view.prepView();
-						
+
 						// then we show the content
 						view.showContent();
 					}
@@ -125,9 +142,9 @@ define('ItemDetails.Router', [], function ()
 				}
 				// Error function
 			,	function (model, jqXhr)
-				{					
+				{
 					// this will stop the ErrorManagment module to process this error
-					// as we are taking care of it 
+					// as we are taking care of it
 					jqXhr.preventDefault = true;
 
 					// We just show the 404 page
